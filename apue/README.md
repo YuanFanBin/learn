@@ -249,7 +249,7 @@ main(void)
 
 执行结果：
 ```sh
-[fanbin@localhost apue]$ ./a.out 
+[fanbin@localhost apue]$ ./a.out
 % ps
   PID TTY          TIME CMD
   611 pts/22   00:00:00 a.out
@@ -258,7 +258,7 @@ main(void)
 % pwd
 /home/fanbin/learn/apue
 % ^C
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 [BACK TO TOP](#目录)
@@ -293,10 +293,10 @@ main(int argc, char *argv[])
 执行结果：
 
 ```sh
-[fanbin@localhost apue]$ ./a.out 
+[fanbin@localhost apue]$ ./a.out
 EACCESS: Permission denied
 ./a.out: No such file or directory
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 **出错恢复**
@@ -391,7 +391,7 @@ sig_int(int signo)
 执行结果：
 
 ```sh
-[fanbin@localhost apue]$ ./a.out 
+[fanbin@localhost apue]$ ./a.out
 % ps
   PID TTY          TIME CMD
   657 pts/22   00:00:00 a.out
@@ -400,7 +400,7 @@ sig_int(int signo)
 % pwd
 /home/fanbin/learn/apue
 % ^Cinterrupt
-% [fanbin@localhost apue]$ 
+% [fanbin@localhost apue]$
 ```
 
 此函数由 [Figure-1.7.c](#figure-17c)，改造而成。
@@ -517,13 +517,13 @@ pr_pathconf(char *mesg, char *path, int name)
 
 执行结果：
 ```sh
-[fanbin@localhost apue]$ gcc apue.h apue_err.c figure-2.14.c 
+[fanbin@localhost apue]$ gcc apue.h apue_err.c figure-2.14.c
 [fanbin@localhost apue]$ ./a.out .
 no symbol for ARG_MAX
 ARG_MAX = 2621440
 MAX_CANON defined to be 255
 MAX_CANON = 255
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 [BACK TO TOP](#目录)
@@ -683,7 +683,7 @@ main(void)
 ```sh
 [fanbin@localhost apue]$ ./a.out < /etc/passwd
 seek OK
-[fanbin@localhost apue]$ cat < /etc/passwd| ./a.out 
+[fanbin@localhost apue]$ cat < /etc/passwd| ./a.out
 cann't seek
 [fanbin@localhost apue]$
 ```
@@ -738,7 +738,7 @@ main(void)
 *
 0040000   A   B   C   D   E   F   G   H   I   J
 0040012
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 **文件偏移量可以大于文件的当前长度，在这种情况下，对该文件的下一次写将加长该文件，并在文件中构成一个 [空洞（spare file）](https://en.wikipedia.org/wiki/Sparse_file 'Spare file - wikipedia') ，这一点是允许的。** 位于文件中但没有写过的字节都被读为0。
@@ -813,7 +813,7 @@ int
 main(int argc, char *argv[])
 {
     int     val;
-    
+
     if (argc != 2)
         err_quit("usage: a.out <descriptor#>");
 
@@ -828,7 +828,7 @@ main(int argc, char *argv[])
     case O_WRONLY:
         printf("write only");
         break;
-        
+
     case O_RDWR:
         printf("read write");
         break;
@@ -860,17 +860,17 @@ main(int argc, char *argv[])
 [fanbin@localhost apue]$ ./a.out 0 < /dev/tty
 read only
 [fanbin@localhost apue]$ ./a.out 1 > temp.foo
-[fanbin@localhost apue]$ cat temp.foo 
+[fanbin@localhost apue]$ cat temp.foo
 write only
 [fanbin@localhost apue]$ ./a.out 2 2>>temp.foo
 write only, append
 [fanbin@localhost apue]$ ./a.out 5 5<>temp.foo
 read write
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 `5<>temp.foo` 表示在文件描述符5上打开文件来读写。
- 
+
 ### Figure-3.12.c
 
 功能：清除/设置指定文件标志
@@ -898,7 +898,7 @@ void
 clr_fl(int fd, int flags) /* flags turn off */
 {
     int     val;
-    
+
     if ((val = fcntl(fd, F_GETFL, 0)) < 0)
         err_sys("fcntl F_GETFL error");
 
@@ -993,13 +993,13 @@ main(int argc, char *argv[])
 
 执行结果：
 ```sh
-[fanbin@localhost apue]$ ./a.out /etc/passwd /etc /dev/log /dev/sr0 /dev/cdrom 
+[fanbin@localhost apue]$ ./a.out /etc/passwd /etc /dev/log /dev/sr0 /dev/cdrom
 /etc/passwd: regular
 /etc: directory
 /dev/log: socket
 /dev/sr0: character special
 /dev/cdrom: symbolic link
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 利用 `lstat` 查看某一文件/目录的 `struct stat` 结构：
@@ -1049,7 +1049,7 @@ buf.st_blocks  : 8
 buf.st_atime   : 1456737027
 buf.st_mtime   : 1456737018
 buf.st_ctime   : 1456737018
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 [BACK TO TOP](#目录)
@@ -1123,7 +1123,7 @@ open for reading OK
 access error for /etc/shadow: Permission denied
 open error for /etc/shadow: Permission denied
 [fanbin@localhost apue]$ su              # 成为超级用户
-Password: 
+Password:
 [root@localhost apue]# chown root a.out  # 将文件用户ID改为root
 [root@localhost apue]# chmod u+s a.out   # 并打开设置用户ID位
 [root@localhost apue]# ls -l a.out       # 检查所有者和SUID位
@@ -1133,7 +1133,7 @@ exit
 [fanbin@localhost apue]$ ./a.out /etc/shadow
 access error for /etc/shadow: Permission denied
 open for reading OK
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 由本节内容结合4.5节内容可知，当用 `open` 函数打开一个文件时，内核以进程的有效用户ID和有效组ID为基础执行其访问权限测试，当用 `access` 和 `faccessat` 函数时，是按实际用户ID和实际组ID进行访问权限测试。
@@ -1170,13 +1170,13 @@ main(void)
 ```sh
 [fanbin@localhost apue]$ umask # 先打印当前文件模式创建屏蔽字
 0002
-[fanbin@localhost apue]$ ./a.out 
+[fanbin@localhost apue]$ ./a.out
 [fanbin@localhost apue]$ ls -l foo bar
 -rw-------. 1 fanbin fanbin 0 Mar  1 10:45 bar
 -rw-rw-rw-. 1 fanbin fanbin 0 Mar  1 10:45 foo
 [fanbin@localhost apue]$ umask # 观察文件模式创建屏蔽字是否更改
 0002
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 当编写创建新文件的程序时，如果我们想确保指定的访问权限位已经激活，那么必须在进程运行时修改 `umask` 值。
@@ -1208,7 +1208,7 @@ main(void)
         err_sys("chmod error for foo");
 
     /* set absolute mode to "rw-r--r--" */
-    
+
     if (chmod("bar", S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) < 0)
         err_sys("chmod error for bar");
     exit(0);
@@ -1224,7 +1224,7 @@ main(void)
 [fanbin@localhost apue]$ ls -l foo bar
 -rw-r--r--. 1 fanbin fanbin 0 Mar  1 10:45 bar
 -rw-rwSrw-. 1 fanbin fanbin 0 Mar  1 10:45 foo
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 **`ls` 命令将组执行权限表示为 `S`，它表示设置组ID为已经打开，同时，组执行位未设置。** 在程序运行之后，`ls` 命令列出的时间和日期并没有改变。在 [4.19](##) 节中，我们会了解到 `chmod` 函数更新的只是 `i` 节点最近一次被更改的时间。按系统默认方式，`ls -l` 列出的是最后修改文件内容的时间。
@@ -1290,7 +1290,7 @@ Filesystem           1K-blocks    Used Available Use% Mounted on
 /dev/mapper/vg_centos-lv_root
                       17969940 8273320   9512792  47% /
 [1]+  Done                    ./a.out
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 **`unlink` 的这种特性经常被程序用来确保即使是在程序崩溃时，它所创建的临时文件也不会遗留下来。**
@@ -1360,7 +1360,7 @@ Tue Mar  1 18:05:48 CST 2016
 [fanbin@localhost apue]$ ls -lc changemod times      # 检查状态更改时间
 -rw-rw-r--. 1 fanbin fanbin 0 Mar  1 18:06 changemod
 -rw-rw-r--. 1 fanbin fanbin 0 Mar  1 18:06 times
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 在本机 `man 2 stat` 中对应的 `struct stat` 结构文档过旧，查询在线 `man` 后获取新文档说明，说明中指示了新结构在 kernel 2.6 之后支持新结构，利用命令 `uname -a` 查询本机系统内核版本，以了解本机内核是否支持新结构。
@@ -1524,7 +1524,7 @@ char special    =       0,  0.00 %
 FIFOs           =       0,  0.00 %
 suymbolic links =       0,  0.00 %
 sockets         =       0,  0.00 %
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 #### **.GCH**
@@ -1537,9 +1537,9 @@ apue.h:54: note: previous declaration of ‘path_alloc’ was here
 
 一开始并没有看明白错误，GOOGLE了一下，参考 [知足常乐](http://blog.sina.com.cn/s/blog_5420e000010185o2.html) 的博客，
 > 原因一：原来是因为没有先做函数声明，而函数位于main()之后，在main函数前声明了函数原型后，一切ok.
->  
+>
 > 原因二：头文件的被循环引用，在引用时考虑清楚包含顺序
->  
+>
 > 原因三： 头文件声明和定义参数稍有不同。例：
 > 头文件中声明 `void Hanlder(const char *buf);`
 > 在定义时写作 `void Hanlder(char *buf);`
@@ -1628,7 +1628,7 @@ char special    =       0,  0.00 %
 FIFOs           =       0,  0.00 %
 suymbolic links =       0,  0.00 %
 sockets         =       0,  0.00 %
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 额外参考资料：
@@ -1662,11 +1662,11 @@ main(void)
 
 执行结果：
 ```sh
-[fanbin@localhost apue]$ ./a.out 
+[fanbin@localhost apue]$ ./a.out
 chdir to /tmp succeeded
 [fanbin@localhost apue]$ pwd
 /home/fanbin/learn/apue
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 [BACK TO TOP](#目录)
@@ -1684,7 +1684,7 @@ chdir to /tmp succeeded
 [fanbin@localhost usr]$ sudo ln -s ../var/spool /usr/spool      # 构建软链
 [fanbin@localhost usr]$ cd -                                    # 切换回当前目录
 /home/fanbin/learn/apue
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 源程序：
@@ -1710,10 +1710,10 @@ main(void)
 
 执行结果：
 ```sh
-[fanbin@localhost apue]$ sudo ./a.out 
-[sudo] password for fanbin: 
+[fanbin@localhost apue]$ sudo ./a.out
+[sudo] password for fanbin:
 cwd = /var/spool/cron
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 ## 4.24 设备特殊文件
@@ -1746,7 +1746,7 @@ main(int argc, char *argv[])
         }
         printf("dev = %d/%d", major(buf.st_dev), minor(buf.st_dev));
         if (S_ISCHR(buf.st_mode) || S_ISBLK(buf.st_mode)) {
-            printf(" (%s) rdev = %d/%d", 
+            printf(" (%s) rdev = %d/%d",
                    (S_ISCHR(buf.st_mode)) ? "character" : "block",
                    major(buf.st_rdev), minor(buf.st_rdev));
         }
@@ -1777,19 +1777,19 @@ brw-rw----. 1 root disk 8, 1 Sep 21 17:01 /dev/sda1
 brw-rw----. 1 root disk 8, 2 Sep 21 17:01 /dev/sda2
 crw--w----. 1 root tty  4, 0 Sep 21 17:01 /dev/tty0
 crw--w----. 1 root tty  4, 1 Dec 30 10:44 /dev/tty1
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 若按照原书所示样例，在我所用的环境下会编译失败：
 ```c
-[fanbin@localhost apue]$ gcc apue.h apue_err.c figure-4.25.c 
+[fanbin@localhost apue]$ gcc apue.h apue_err.c figure-4.25.c
 /tmp/ccorxZHa.o: In function `main':
 figure-4.25.c:(.text+0x75): undefined reference to `minor'
 figure-4.25.c:(.text+0x8b): undefined reference to `major'
 figure-4.25.c:(.text+0xd4): undefined reference to `minor'
 figure-4.25.c:(.text+0xea): undefined reference to `major'
 collect2: ld returned 1 exit status
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 既然提示是未定义的引用，第一反应当然是没有 include 头文件，man 了下，发现包含 `<sys/types.h>` 就可以，查了一下自己的 include 确实是包含了的，至此怀疑是否本地文档过旧，查了一下在线的 [major](http://man7.org/linux/man-pages/man3/major.3.html)，发现这么一句话 `#define _BSD_SOURCE /* See feature_test_macros(7) */` ，咦？比我本地 man 多了那么个注释，好吧，我就瞅瞅这个 [feature_test_macros(7)](http://man7.org/linux/man-pages/man7/feature_test_macros.7.html)，粗暴的 `CTRL+F` 搜索了一下 `_BSD_SOURCE`，行了，人家括弧里写的明明白白：
 
@@ -1840,7 +1840,7 @@ http://blog.csdn.net/cinmyheart/article/details/21877487
 * 第二，任何时候只要通过标准I/O库要求从 (a) 或者 (b) 得到输入数据，那么就会冲洗所有行缓冲输出流。
     * (a) 一个不带缓冲的流
     * (b) 一个行缓冲的流（它从内核请求需要数据）
-    
+
 （3）**不带缓冲**，标准I/O库不对字符进行缓冲存储。
 
 **标准错误流 [stderr](http://man7.org/linux/man-pages/man3/stderr.3.html) 通常是不带缓冲的，这就使得出错信息可以尽快的显示出来，而不管他们是否含有一个换行符。**
@@ -1900,13 +1900,13 @@ int main(int argc, char *argv[])
 执行结果：
 ```sh
 [fanbin@localhost apue]$ gcc section-5.4.c
-[fanbin@localhost apue]$ ./a.out 
+[fanbin@localhost apue]$ ./a.out
 -----------------------
 waiting 2 second.
 <terminal>io line buf, waiting\n... <terminal> line buf
 io no buf, now!\n test
 -----------------------
-waiting 2 second.[fanbin@localhost apue]$ 
+waiting 2 second.[fanbin@localhost apue]$
 ```
 
 单单从执行结果其实看不出太多内容，建议实际执行一下理解。 简单描述一下执行顺序：
@@ -1965,13 +1965,13 @@ main(int argc, char *argv[])
 
 至头文件中去粗略查看一下宏定义（`/usr/include/stdio.h`）
 ```c
-/* The C standard explicitly says this is a macro, so we always do the              
-   optimization for it.  */                                                         
+/* The C standard explicitly says this is a macro, so we always do the
+   optimization for it.  */
 #define getc(_fp) _IO_getc (_fp)
 ...
-/* The C standard explicitly says this can be a macro,                              
-   so we always do the optimization for it.  */                                     
-#define putc(_ch, _fp) _IO_putc (_ch, _fp) 
+/* The C standard explicitly says this can be a macro,
+   so we always do the optimization for it.  */
+#define putc(_ch, _fp) _IO_putc (_ch, _fp)
 ```
 
 ### Figure-5.5.c
@@ -2201,7 +2201,7 @@ stream = stdin       , fileno = 0, line buffered  , buffer size = 1024
 stream = stdout      , fileno = 1, line buffered  , buffer size = 1024
 stream = stderr      , fileno = 2, unbuffered     , buffer size = 1
 stream = /etc/passwd , fileno = 3, fully buffered , buffer size = 4096
-[fanbin@localhost apue]$ cat a.txt 
+[fanbin@localhost apue]$ cat a.txt
 a
 [fanbin@localhost apue]$ ./a.out < a.txt            # 标准输入：文件；标准输出：终端
 enter any character
@@ -2227,13 +2227,13 @@ stream = stdin       , fileno = 0, fully buffered , buffer size = 4096
 stream = stdout      , fileno = 1, fully buffered , buffer size = 4096
 stream = stderr      , fileno = 2, unbuffered     , buffer size = 1
 stream = /etc/passwd , fileno = 3, fully buffered , buffer size = 4096
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 通过以上执行结果，我们可了解标准输入、标准输出、标准错误默认情况下在终端，文件时的缓冲模式，及对应的buffer大小。buffer大小由系统决定，通常为磁盘块长度4096（参见 [3.9 I/O的效率](#39-io的效率)）
 
 当标准输入、标准输出重定向到普通文件时，它们就变成是全缓冲的，其缓冲区长度是该文件系统优先选用的I/O长度（从 stat 结构中得到的 st_blksize 值，参见 [Figure-4.3.c](#figure-43c) or `man 2 stat`）。
- 
+
 ## 5.13 临时文件
 
 ### Figure-5.12.c
@@ -2267,14 +2267,14 @@ main(int argc, char *argv[])
     }
     fputs("one line of output\n", fp); /* write to temp file */
     /*
-     * equivalent to : (void) fseek(stream, 0L, SEEK_SET)  
+     * equivalent to : (void) fseek(stream, 0L, SEEK_SET)
      */
     rewind(fp); /* then read it back */
     if (fgets(line, sizeof(line), fp) == NULL) {
         err_sys("fgets error");
     }
     fputs(line, stdout); /* print the line we wrote */
-    
+
     exit(0);
 }
 ```
@@ -2284,12 +2284,12 @@ main(int argc, char *argv[])
 [fanbin@localhost apue]$ gcc apue.h apue_err.c figure-5.12.c
 /tmp/ccj3SNsC.o: In function `main':
 figure-5.12.c:(.text+0x14): warning: the use of `tmpnam' is dangerous, better use `mkstemp'
-[fanbin@localhost apue]$ ./a.out 
+[fanbin@localhost apue]$ ./a.out
 /tmp/filedocXWG
 /tmp/file1wwEcC
 TMP_MAX = 238328
 one line of output
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 ISO C 标准I/O提供了创建临时文件方式，**但用 `tmpnam` 和 `tempnam` 创建文件时有一个缺点：在返回唯一的路径名和用该名字创建文件之间存在一个时间窗口，在这个时间窗口中，另一进程可以用相同的名字创建文件。（非原子性操作）**
@@ -2359,13 +2359,13 @@ make_temp(char *template)
 
 执行结果：
 ```sh
-[fanbin@localhost apue]$ ./a.out 
+[fanbin@localhost apue]$ ./a.out
 trying to create first temp file...
 temp name = /tmp/dirCPBmhO
 file exists
 trying to create second temp file...
 Segmentation fault
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 以上例子展示出如何利用 `mkstemp` 创建临时文件，其中有两个点需要小心：
@@ -2391,7 +2391,7 @@ Segmentation fault
 #define BSZ 48
 
 /* gcc apue.h apue_err.h figure-5.15.c */
-/* 内存流，更适用于字符串操作 
+/* 内存流，更适用于字符串操作
  * open_memstream, open_wmemstream缓冲区可增长，
  * 非常适合创建字符串 */
 int
@@ -2435,9 +2435,9 @@ main(int argc, char *argv[])
 
 执行结果：
 ```sh
-[fanbin@localhost apue]$ ./a.out 
-initial buffer contents: 
-before flush: 
+[fanbin@localhost apue]$ ./a.out
+initial buffer contents:
+before flush:
 after fflush: hello, world
 len of string in buf = 12
 
@@ -2488,7 +2488,7 @@ len of string in buf = 46
 
 [MTU](https://en.wikipedia.org/wiki/Maximum_transmission_unit 'maximum transmission unit - wikipedia')：1500， 576
 
-套接字通信是双向的。可以采用 [shutdown(2)](http://man7.org/linux/man-pages/man2/shutdown.2.html) 
+套接字通信是双向的。可以采用 [shutdown(2)](http://man7.org/linux/man-pages/man2/shutdown.2.html)
 函数来禁止一个套接字的I/O。
 
 ```c
@@ -2547,7 +2547,7 @@ http://blog.sina.com.cn/s/blog_46d93f190100ojap.html
  #include <sys/socket.h>
  #include <netinet/in.h>
  #endif
- 
+
  void
  print_family(struct addrinfo *aip)
  {
@@ -2569,7 +2569,7 @@ http://blog.sina.com.cn/s/blog_46d93f190100ojap.html
          printf("unknown");
      }
  }
- 
+
  void
  print_type(struct addrinfo *aip)
  {
@@ -2591,7 +2591,7 @@ http://blog.sina.com.cn/s/blog_46d93f190100ojap.html
          printf("unknown (%d)", aip->ai_socktype);
      }
  }
- 
+
  void
  print_protocol(struct addrinfo *aip)
  {
@@ -2613,7 +2613,7 @@ http://blog.sina.com.cn/s/blog_46d93f190100ojap.html
          printf("unknown (%d)", aip->ai_protocol);
      }
  }
- 
+
  void
  print_flags(struct addrinfo *aip)
  {
@@ -2635,7 +2635,7 @@ http://blog.sina.com.cn/s/blog_46d93f190100ojap.html
              printf(" all");
      }
  }
- 
+
  /* gcc apue.h apue_err.c figure-16.9.c */
  int
  main(int argc, char *argv[])
@@ -2646,7 +2646,7 @@ http://blog.sina.com.cn/s/blog_46d93f190100ojap.html
      const char          *addr;
      int                  err;
      char                 abuf[INET_ADDRSTRLEN];
- 
+
      if (argc != 3)
          err_quit("usage: %s nodename service", argv[0]);
      hint.ai_flags = AI_CANONNAME;
@@ -2690,10 +2690,10 @@ http://blog.sina.com.cn/s/blog_46d93f190100ojap.html
          host - address 127.0.0.1 port 2049
  flags canon family inet type seqpacket protocol unknown (132)
          host - address 127.0.0.1 port 2049
- [fanbin@localhost apue]$ 
+ [fanbin@localhost apue]$
 ```
 
-在 `getaddrinfo` 的定义中，*node* 节点涉及 `/etc/hosts` 文件， *service* 涉及 
+在 `getaddrinfo` 的定义中，*node* 节点涉及 `/etc/hosts` 文件， *service* 涉及
 `/etc/services`，若使用此函数，那么对应的服务需要添加到 `/etc/services` 中以便
 使用。
 
@@ -2737,7 +2737,7 @@ http://baike.baidu.com/link?url=dnX_XbfcfkpkhEAakBiqwWZVmmwd5cATlXY63x65uLzxObsV
 ## 16.4 建立连接
 
 将一个客户端的套接字关联上一个地址没有多少新意，可以让系统选一个默认的地址。
-然而，对于服务器，需要给一个接受客户端请求的服务器套接字关联上一个 **众所周知** 
+然而，对于服务器，需要给一个接受客户端请求的服务器套接字关联上一个 **众所周知**
 的地址。客户端有一种方法来发现连接服务器所需要的地址，最简单的方法就是服务器保留
 一个地址并且注册在 `/etc/services` 或者某个名字服务中
 
@@ -2752,7 +2752,7 @@ http://baike.baidu.com/link?url=dnX_XbfcfkpkhEAakBiqwWZVmmwd5cATlXY63x65uLzxObsV
 `connect` 函数还可以用于无连接的网络服务（SOCK_DGRAM）。这点看起来有点矛盾，实际
 上却是一个不错的选择。如果用 SOCK_DGRAM 套接字调用 `connect`，传送的报文的目标地
 址会设置成 `connect` 调用中所指定的地址，这样每次传送报文时就不需要再提供地址。
-另外，仅能接受来自指定地址的报文。 
+另外，仅能接受来自指定地址的报文。
 
 ### Figure-16.10.c
 
@@ -2770,14 +2770,14 @@ http://baike.baidu.com/link?url=dnX_XbfcfkpkhEAakBiqwWZVmmwd5cATlXY63x65uLzxObsV
 
  #include "apue.h"
  #include <sys/socket.h>
- 
+
  #define MAXSLEEP 128
- 
+
  int
  connect_retry(int sockfd, const struct sockaddr *addr, socklen_t alen)
  {
      int     numsec;
- 
+
      /*
       * Try to connect with exponential backoff.
       */
@@ -2788,7 +2788,7 @@ http://baike.baidu.com/link?url=dnX_XbfcfkpkhEAakBiqwWZVmmwd5cATlXY63x65uLzxObsV
               */
              return(0);
          }
- 
+
          /*
           * Delay before trying again.
           */
@@ -2808,7 +2808,7 @@ http://baike.baidu.com/link?url=dnX_XbfcfkpkhEAakBiqwWZVmmwd5cATlXY63x65uLzxObsV
 因此，如果 `connect` 失败，可迁移的应用程序需要关闭套接字。如果想重试，必须打开
 一个新的套接字。例：[Figure-16.11.c](#figure-1611c)
 
-Note：关于 Linux, Solaris, FresBSD, Mac OS X 的关系，参见 
+Note：关于 Linux, Solaris, FresBSD, Mac OS X 的关系，参见
 [Wikipedia - Linux](https://en.wikipedia.org/wiki/Linux#Development 'linux - wikipedia')
 
 ### Figure-16.11.c
@@ -2819,15 +2819,15 @@ Note：关于 Linux, Solaris, FresBSD, Mac OS X 的关系，参见
 
  #include "apue.h"
  #include <sys/socket.h>
- 
+
  #define MAXSLEEP 128
- 
+
  int
  connect_retry(int domain, int type, int protocol, const struct sockaddr *addr,
                socklen_t alen)
  {
      int     numsec, fd;
- 
+
      /*
       * Try to connect with exponential backoff.
       */
@@ -2841,7 +2841,7 @@ Note：关于 Linux, Solaris, FresBSD, Mac OS X 的关系，参见
              return(fd);
          }
          close(fd);
- 
+
          /*
           * Delay before trying again.
           */
@@ -2888,13 +2888,13 @@ TCP 的连接过程流程参见 [wikipedia - Berkeley sockets](https://en.wikipe
  #include "apue.h"
  #include <errno.h>
  #include <sys/socket.h>
- 
+
  int
  initserver(int type, const struct sockaddr *addr, socklen_t alen, int qlen)
  {
      int     fd;
      int     err = 0;
- 
+
      if ((fd = socket(addr->sa_family, type, 0)) < 0)
          return(-1);
      if (bind(fd, addr, alen) < 0)
@@ -2904,7 +2904,7 @@ TCP 的连接过程流程参见 [wikipedia - Berkeley sockets](https://en.wikipe
              goto errout;
      }
      return(fd);
- 
+
  errout:
      err = errno;
      close(fd);
@@ -2919,7 +2919,7 @@ TCP 有一些奇怪的地址复用规则，这使得 **这个例子并不完备�
 
 ## 16.5 数据传输
 
-既然一个套接字端点表示为一个文件描述符，那么只要建立连接，就可以使用 `read` 和 
+既然一个套接字端点表示为一个文件描述符，那么只要建立连接，就可以使用 `read` 和
 `write`来通过套接字通信。**在套接字描述符上使用 `read` 和 `write` 是非常有意义
 的，因为这意味着可以将套接字描述符传递给那些原先为处理本地文件而设计的函数。**而
 且还可以安排将套接字描述符传递给子进程，而该子进程执行的程序并不了解套接字。
@@ -2948,23 +2948,23 @@ TCP 有一些奇怪的地址复用规则，这使得 **这个例子并不完备�
  #include <netdb.h>
  #include <errno.h>
  #include <sys/socket.h>
- 
+
  #define BUFLEN  128
- 
+
  extern int connect_retry(int, int, int, const struct sockaddr *, socklen_t);
- 
+
  void
  print_uptime(int sockfd)
  {
      int     n;
      char    buf[BUFLEN];
- 
+
      while ((n = recv(sockfd, buf, BUFLEN, 0)) > 0)
          write(STDOUT_FILENO, buf, n);
      if (n < 0)
          err_sys("recv error");
  }
- 
+
  /* gcc apue.h apue_err.c figure-16.11.c figure-16.16.c -o ruptime */
  int
  main(int argc, char *argv[])
@@ -2972,7 +2972,7 @@ TCP 有一些奇怪的地址复用规则，这使得 **这个例子并不完备�
      struct addrinfo     *ailist, *aip;
      struct addrinfo      hint;
      int                  sockfd, err;
- 
+
      if (argc != 2)
          err_quit("usage: ruptime hostname");
      memset(&hint, 0, sizeof(hint));
@@ -3008,7 +3008,7 @@ TCP 有一些奇怪的地址复用规则，这使得 **这个例子并不完备�
 [accept(2)](http://man7.org/linux/man-pages/man2/accept.2.html)，
 [popen(3)](http://man7.org/linux/man-pages/man3/popen.3.html)，
 [send(2)](http://man7.org/linux/man-pages/man2/send.2.html)，
-[pclose(3)](http://man7.org/linux/man-pages/man3/pclose.3.html), 
+[pclose(3)](http://man7.org/linux/man-pages/man3/pclose.3.html),
 [gethostname(2)](http://man7.org/linux/man-pages/man2/gethostname.2.html)，
 [getaddrinfo(3)](http://man7.org/linux/man-pages/man3/getaddrinfo.3.html)，
 [syslog(2)](http://man7.org/linux/man-pages/man2/syslog.2.html)
@@ -3022,24 +3022,24 @@ TCP 有一些奇怪的地址复用规则，这使得 **这个例子并不完备�
  #include <errno.h>
  #include <syslog.h>
  #include <sys/socket.h>
- 
+
  #define BUFLEN  128
  #define QLEN    10
- 
+
  #ifndef HOST_NAME_MAX
  #define HOST_NAME_MAX 256
  #endif
- 
+
  /* figure-16.12.c => figure-16.22.c */
  extern int initserver(int, const struct sockaddr *, socklen_t, int);
- 
+
  void
  serve(int sockfd)
  {
      int     clfd;
      FILE   *fp;
      char    buf[BUFLEN];
- 
+
      set_cloexec(sockfd);    /* figure-13.9.c */
      for (;;) {
          if ((clfd = accept(sockfd, NULL, NULL)) < 0) {
@@ -3058,7 +3058,7 @@ TCP 有一些奇怪的地址复用规则，这使得 **这个例子并不完备�
          close(clfd);
      }
  }
- 
+
  /* gcc apue.h apue_err.c figure-13.1.c figure-13.9.c figure-16.22.c figure-16.17.c -o server */
  int
  main(int argc, char *argv[])
@@ -3067,7 +3067,7 @@ TCP 有一些奇怪的地址复用规则，这使得 **这个例子并不完备�
      struct addrinfo      hint;
      int                  sockfd, err, n;
      char                *host;
- 
+
      if (argc != 1)
          err_quit("usage: ruptime");
      if ((n = sysconf(_SC_HOST_NAME_MAX)) < 0)
@@ -3105,7 +3105,7 @@ TCP 有一些奇怪的地址复用规则，这使得 **这个例子并不完备�
  [fanbin@localhost apue]$ ./server
  [fanbin@localhost apue]$ ./ruptime localhost
   16:32:04 up 47 days,  2:48,  3 users,  load average: 0.01, 0.01, 0.00
- [fanbin@localhost apue]$ 
+ [fanbin@localhost apue]$
 ```
 
 若在执行时遇到如下错误：
@@ -3115,8 +3115,8 @@ TCP 有一些奇怪的地址复用规则，这使得 **这个例子并不完备�
  Mar 14 16:19:01 localhost ruptimed: ruptimed: getaddrinfo error: Servname not supported for ai_socktype
 ```
 
-请参考 [yjie_life](http://blog.163.com/yjie_life/blog/static/16319833720110311528528/) 
-博客所写的解决方案及 [andyxie407](http://blog.csdn.net/andyxie407/article/details/1672325) 
+请参考 [yjie_life](http://blog.163.com/yjie_life/blog/static/16319833720110311528528/)
+博客所写的解决方案及 [andyxie407](http://blog.csdn.net/andyxie407/article/details/1672325)
 对 `getaddrinfo` 的理解。
 
 ### Figure-16.18.c
@@ -3150,22 +3150,22 @@ TCP 有一些奇怪的地址复用规则，这使得 **这个例子并不完备�
  #include <fcntl.h>
  #include <sys/socket.h>
  #include <sys/wait.h>
- 
+
  #define QLEN    10
- 
+
  #ifndef HOST_NAME_MAX
  #define HOST_NAME_MAX   256
  #endif
- 
+
  /* figure-16.12.c => figure-16.22.c */
  extern int initserver(int, const struct sockaddr *, socklen_t, int);
- 
+
  void
  serve(int sockfd)
  {
      int     clfd, status;
      pid_t   pid;
- 
+
      set_cloexec(sockfd);    /* figure-13.9.c */
      for (;;) {
          if ((clfd = accept(sockfd, NULL, NULL)) < 0) {
@@ -3198,7 +3198,7 @@ TCP 有一些奇怪的地址复用规则，这使得 **这个例子并不完备�
          }
      }
  }
- 
+
  /* gcc apue.h apue_err.c figure-13.1.c figure-13.9.c figure-16.22.c figure-16.18.c -o server */
  int
  main(int argc, char *argv[])
@@ -3207,7 +3207,7 @@ TCP 有一些奇怪的地址复用规则，这使得 **这个例子并不完备�
      struct addrinfo      hint;
      int                  sockfd, err, n;
      char                *host;
- 
+
      if (argc != 1)
          err_quit("usage: ruptimed");
      if ((n = sysconf(_SC_HOST_NAME_MAX)) < 0)
@@ -3256,18 +3256,18 @@ TCP 有一些奇怪的地址复用规则，这使得 **这个例子并不完备�
  (Not all processes could be identified, non-owned process info
   will not be shown, you would have to be root to see it all.)
  Active Internet connections (only servers)
- Proto Recv-Q Send-Q Local Address               Foreign Address             State       PID/Program name   
+ Proto Recv-Q Send-Q Local Address               Foreign Address             State       PID/Program name
  tcp        0      0 *:mysql                     *:*                         LISTEN      -
- tcp        0      0 *:6379                      *:*                         LISTEN      17279/./src/redis-s 
- tcp        0      0 localhost.localdoma:ruptime *:*                         LISTEN      7945/./server       
- tcp        0      0 *:6380                      *:*                         LISTEN      17282/./src/redis-s 
+ tcp        0      0 *:6379                      *:*                         LISTEN      17279/./src/redis-s
+ tcp        0      0 localhost.localdoma:ruptime *:*                         LISTEN      7945/./server
+ tcp        0      0 *:6380                      *:*                         LISTEN      17282/./src/redis-s
  tcp        0      0 *:http                      *:*                         LISTEN      -
  tcp        0      0 *:ssh                       *:*                         LISTEN      -
- tcp        0      0 *:6379                      *:*                         LISTEN      17279/./src/redis-s 
- tcp        0      0 *:6380                      *:*                         LISTEN      17282/./src/redis-s 
+ tcp        0      0 *:6379                      *:*                         LISTEN      17279/./src/redis-s
+ tcp        0      0 *:6380                      *:*                         LISTEN      17282/./src/redis-s
  tcp        0      0 *:ssh                       *:*                         LISTEN      -
  udp        0      0 *:bootpc                    *:*                                     -
- [fanbin@localhost apue]$ 
+ [fanbin@localhost apue]$
 ```
 
 **前面说过，采用文件描述符来访问套接字是非常有意义的，因为它允许程序对联网环境的
@@ -3311,21 +3311,21 @@ http://blog.csdn.net/andyxie407/article/details/1672325
  #include <netdb.h>
  #include <errno.h>
  #include <sys/socket.h>
- 
+
  #define BUFLEN  128
  #define TIMEOUT 20
- 
+
  void
  sigalrm(int signo)
  {
  }
- 
+
  void
  print_uptime(int sockfd, struct addrinfo *aip)
  {
      int     n;
      char    buf[BUFLEN];
- 
+
      buf[0] = 0;
      if (sendto(sockfd, buf, 1, 0, aip->ai_addr, aip->ai_addrlen) < 0)
          err_sys("sendto error");
@@ -3338,7 +3338,7 @@ http://blog.csdn.net/andyxie407/article/details/1672325
      alarm(0);   /* 取消 SIGALRM 中断 */
      write(STDOUT_FILENO, buf, n);
  }
- 
+
  /* gcc apue.h apue_err.c figure-16.19.c -o ruptime */
  int
  main(int argc, char *argv[])
@@ -3347,7 +3347,7 @@ http://blog.csdn.net/andyxie407/article/details/1672325
      struct addrinfo      hint;
      int                  sockfd, err;
      struct sigaction     sa;
- 
+
      if (argc != 2)
          err_quit("usage: ruptime hostname");
      sa.sa_handler = sigalrm;
@@ -3362,7 +3362,7 @@ http://blog.csdn.net/andyxie407/article/details/1672325
      hint.ai_next = NULL;
      if ((err = getaddrinfo(argv[1], "ruptime", &hint, &ailist)) != 0)
          err_quit("getaddrinfo error: %s", gai_strerror(err));
- 
+
      for (aip = ailist; aip != NULL; aip = aip->ai_next) {
          if ((sockfd = socket(aip->ai_family, SOCK_DGRAM, 0)) < 0) {
              err = errno;
@@ -3371,18 +3371,18 @@ http://blog.csdn.net/andyxie407/article/details/1672325
              exit(0);
          }
      }
- 
+
      fprintf(stderr, "can't contact %s: %s\n", argv[1], strerror(err));
      exit(1);
  }
 ```
 
-以上例子除了增加安装一个 *SIGALRM* 的信号处理程序以外，基于数据报的客户端中的 
+以上例子除了增加安装一个 *SIGALRM* 的信号处理程序以外，基于数据报的客户端中的
 main 函数和面向连接的客户端中的类似。
 
 如果服务器不在运行状态，客户端调用 `recvfrom` 便会无限期阻塞。对于这个面向连接的
-实例，如果服务器不运行，connect调用会失败。为了避免无限期阻塞，可以在调用 
-`recvfrom` 之前设置警告时钟。关于 `alarm` 的使用可参考 [这个](http://liuzhigong.blog.163.com/blog/static/178272375201172021328123/) 
+实例，如果服务器不运行，connect调用会失败。为了避免无限期阻塞，可以在调用
+`recvfrom` 之前设置警告时钟。关于 `alarm` 的使用可参考 [这个](http://liuzhigong.blog.163.com/blog/static/178272375201172021328123/)
 博客的介绍，或者至 [10.5](#xx)、[10.6](#xx) 了解 **重启动** 概念。
 
 执行结果：
@@ -3391,7 +3391,7 @@ main 函数和面向连接的客户端中的类似。
 
  [fanbin@localhost apue]$ ./ruptime localhost
  recv error: Interrupted system call
- [fanbin@localhost apue]$ 
+ [fanbin@localhost apue]$
 ```
 
 ### Figure-16.20.c（无连接的服务器）
@@ -3419,17 +3419,17 @@ main 函数和面向连接的客户端中的类似。
  #include <errno.h>
  #include <syslog.h>
  #include <sys/socket.h>
- 
+
  #define BUFLEN      128
  #define MAXADDRLEN  256
- 
+
  #ifndef HOST_NAME_MAX
  #define HOST_NAME_MAX   256
  #endif
- 
+
  /* figure-16.12.c => figure-16.22.c */
  extern int initserver(int, const struct sockaddr *, socklen_t, int);
- 
+
  void
  serve(int sockfd)
  {
@@ -3439,7 +3439,7 @@ main 函数和面向连接的客户端中的类似。
      char             buf[BUFLEN];
      char             abuf[MAXADDRLEN];
      struct sockaddr *addr = (struct sockaddr *)abuf;
- 
+
      set_cloexec(sockfd);    /* figure-13.9.c */
      for (;;) {
          alen = MAXADDRLEN;
@@ -3457,7 +3457,7 @@ main 函数和面向连接的客户端中的类似。
          }
      }
  }
- 
+
  /* apue.h apue_err.c figure-13.1.c figure-13.9.c figure-16.22.c figure-16.20.c -o ruptimed */
  int
  main(int argc, char *argv[])
@@ -3466,7 +3466,7 @@ main 函数和面向连接的客户端中的类似。
      struct addrinfo      hint;
      int                  sockfd, err, n;
      char                *host;
- 
+
      if (argc != 1)
          err_quit("usage: ruptimed");
      if ((n = sysconf(_SC_HOST_NAME_MAX)) < 0)
@@ -3529,13 +3529,13 @@ http://liuzhigong.blog.163.com/blog/static/178272375201172021328123/
  #include "apue.h"
  #include <errno.h>
  #include <sys/socket.h>
- 
+
  int
  initserver(int type, const struct sockaddr *addr, socklen_t alen, int qlen)
  {
      int     fd, err;
      int     reuse = 1;
- 
+
      if ((fd = socket(addr->sa_family, type, 0)) < 0)
          return(-1);
      if (setsockopt(fd, SOL_SOCKET, SO_REUSERADDR, &reuse, sizeof(int)) < 0)
@@ -3546,7 +3546,7 @@ http://liuzhigong.blog.163.com/blog/static/178272375201172021328123/
          if (listen(fd, qlen) < 0)
              goto errout;
      return(fd);
- 
+
  errout:
      err = errno;
      close(fd);
@@ -3559,7 +3559,7 @@ http://liuzhigong.blog.163.com/blog/static/178272375201172021328123/
 工作。**通常情况下，除非超时（超时时间一般是几分钟），否则 TCP 的实现不允许绑定
 同一个地址。幸运的是，套接字选项 *SO_REUSEADDR* 可以绕过这个限制。
 
-关于 `setsockopt` 能解决的问题及各个参数的含义可参考 
+关于 `setsockopt` 能解决的问题及各个参数的含义可参考
 [未语愁眸](http://blog.csdn.net/chary8088/article/details/2486377) 的博客，写的
 非常详细。
 
@@ -3580,13 +3580,13 @@ http://blog.csdn.net/chary8088/article/details/2486377
  #include <stdio.h>
  #include <stdlib.h>
  #include <inttypes.h>
- 
+
  int
  main(int argc, char *argv[])
  {
      uint32_t        i = 0x04030201;
      unsigned char  *cp = (unsigned char *)&i;
- 
+
      if (*cp == 1) {
          printf("litte-endian\n");
      } else if (*cp == 4) {
@@ -3602,9 +3602,9 @@ http://blog.csdn.net/chary8088/article/details/2486377
 
 ```sh
 
- [fanbin@localhost apue]$ ./a.out 
+ [fanbin@localhost apue]$ ./a.out
  litte-endian
- [fanbin@localhost apue]$ 
+ [fanbin@localhost apue]$
 ```
 
 --------------------------------------------------------------------------------
@@ -3615,8 +3615,8 @@ http://blog.csdn.net/chary8088/article/details/2486377
 
 一种高级IPC - UNIX域套接字机制。
 
-**这种形式的 
-[IPC](https://en.wikipedia.org/wiki/Inter-process_communication 'inter-process communication') 
+**这种形式的
+[IPC](https://en.wikipedia.org/wiki/Inter-process_communication 'inter-process communication')
 可以在同一计算机系统上运行的两个进程之间转送打开文件描述符。服务进程可以使用它们
 的打开文件描述符与指定的名字相关联，同一系统上运行的客户进程可以使用这些名字与服
 务器进程汇聚。**
@@ -3625,8 +3625,8 @@ http://blog.csdn.net/chary8088/article/details/2486377
 
 ## 17.2 UNIX域套接字
 
-**[UNIX 域套接字](https://en.wikipedia.org/wiki/Unix_domain_socket 'unix domain socket - wikipedia') 
-用于在同一台计算机上运行的进程之间的通信。虽然因特网域套接字可用于同一目的，但 
+**[UNIX 域套接字](https://en.wikipedia.org/wiki/Unix_domain_socket 'unix domain socket - wikipedia')
+用于在同一台计算机上运行的进程之间的通信。虽然因特网域套接字可用于同一目的，但
 UNIX 域套接字的效率更高。UNIX 域套接字仅仅复制数据，它们并不执行协议处理，不需要
 添加或删除网络报头，无需计算校验和，不要产生顺序号，无需发送确认报文。**
 
@@ -3651,7 +3651,7 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
 
  #include "apue.h"
  #include <sys/socket.h>
- 
+
  /*
   * Returns a full-duplex pipe (a UNIX domain socket) with
   * the two file descriptors returned in fd[0] and fd[1].
@@ -3663,8 +3663,8 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  }
 ```
 
-[15.6.4](#xx) 节曾经提到 
-[XSI](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_444 'XSI - opengroup') 
+[15.6.4](#xx) 节曾经提到
+[XSI](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_444 'XSI - opengroup')
 消息队列的使用存在一个问题，即不能将它们和 `poll` 或者 `select` 一起使用，这是因
 为它们不能关联到文件描述符。然而，套接字是和文件描述符相关联的，消息到达时，可以
 用套接字来通知。对每个消息队列使用一个线程。每个线程都会在 `msgrcv` 调用中阻塞。
@@ -3696,28 +3696,28 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  #include <pthread.h>
  #include <sys/msg.h>
  #include <sys/socket.h>
- 
+
  #define NQ      3       /* number of queues */
  #define MAXMSZ  512     /* maximum message size */
  #define KEY     0x123   /* key for first message queue */
- 
+
  struct threadinfo {
      int     qid;
      int     fd;
  };
- 
+
  struct mymesg {
      long    mtype;
      char    mtext[MAXMSZ];
  };
- 
+
  void *
  helper(void *arg)
  {
      int                  n;
      struct mymesg        m;
      struct threadinfo   *tip = arg;
- 
+
      for (;;) {
          memset(&m, 0, sizeof(m));
          if ((n = msgrcv(tip->qid, &m, MAXMSZ, 0, MSG_NOERROR)) < 0)
@@ -3726,7 +3726,7 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
              err_sys("write error");
      }
  }
- 
+
  /* gcc apue.h apue_err.c figure-17.3.c -lpthread -o pollmsg */
  int
  main()
@@ -3738,13 +3738,13 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
      struct threadinfo   ti[NQ];
      pthread_t           tid[NQ];
      char                buf[MAXMSZ];
- 
+
      for (i = 0; i < NQ; ++i) {
          if ((qid[i] = msgget((KEY + i), IPC_CREAT | 0666)) < 0)
              err_sys("msgget error");
- 
+
          printf("queue ID %d is %d\n", i, qid[i]);
- 
+
          if (socketpair(AF_UNIX, SOCK_DGRAM, 0, fd) < 0)
              err_sys("socketpair error");
          pfd[i].fd = fd[0];
@@ -3754,7 +3754,7 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
          if ((err = pthread_create(&tid[i], NULL, helper, &ti[i])) != 0)
              err_exit(err, "pthread_create error");
      }
- 
+
      for (;;) {
          if (poll(pfd, NQ, -1) < 0)
              err_sys("poll error");
@@ -3767,7 +3767,7 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
              }
          }
      }
-     
+
      exit(0);
  }
 ```
@@ -3804,14 +3804,14 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
 
  #include "apue.h"
  #include <sys/msg.h>
- 
+
  #define MAXMSZ  512
- 
+
  struct mymesg {
      long    mtype;
      char    mtext[MAXMSZ];
  };
- 
+
  /* gcc apue.h apue_err.c figure-17.4.c -o sendmsg */
  int
  main(int argc, char *argv[])
@@ -3820,7 +3820,7 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
      long            qid;
      size_t          nbytes;
      struct mymesg   m;
- 
+
      if (argc != 3) {
          fprintf(stderr, "usage: sendmsg KEY message\n");
          exit(1);
@@ -3854,13 +3854,13 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  queue id 0, message hello, world
  queue id 32769, message just a test
  queue id 65538, message bye
- 
+
  # Figure-17.3.c
  [fanbin@localhost apue]$ gcc apue.h apue_err.c figure-17.4.c -o sendmsg
  [fanbin@localhost apue]$ ./sendmsg 0x123 "hello, world"
  [fanbin@localhost apue]$ ./sendmsg 0x124 "just a test"
  [fanbin@localhost apue]$ ./sendmsg 0x125 "bye"
- [fanbin@localhost apue]$ 
+ [fanbin@localhost apue]$
 ```
 
 ## 命令UNIX域套接字
@@ -3889,14 +3889,14 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  #include "apue.h"
  #include <sys/socket.h>
  #include <sys/un.h>
- 
+
  /* gcc apue.h apue_err.c figure-17.5.c */
  int
  main(void)
  {
      int                 fd, size;
      struct sockaddr_un  un;
- 
+
      un.sun_family = AF_UNIX;
      strcpy(un.sun_path, "foo.socket");
      if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
@@ -3922,7 +3922,7 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  [fanbin@localhost apue]$ rm foo.socket                  # 删除该套接字文件
  [fanbin@localhost apue]$ ./a.out                        # 第三次运行该程序
  UNIX domain socket bound
- [fanbin@localhost apue]$ 
+ [fanbin@localhost apue]$
 ```
 
 获取结构中某一字段的偏移量使用 `offsetof`，定义如下：
@@ -3949,73 +3949,73 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
   */
  #ifndef _APUE_H
  #define _APUE_H
- 
+
  #define _POSIX_C_SOURCE 200809L
- 
+
  #if defined(SOLARIS)        /* Solaris 10 */
  #define _XOPEN_SOURCE 600
  #else
  #define _XOPEN_SOURCE 700
  #endif
- 
+
  #include <sys/types.h>      /* some system still require this */
  #include <sys/stat.h>
  #include <sys/termios.h>    /* for winsize */
- 
+
  #if defined(MACOS) || !defined(TIOCGWINSZ)
  #include <sys/ioctl.h>
  #endif
- 
+
  #include <stdio.h>          /* for convenience */
  #include <stdlib.h>         /* for convenience */
  #include <stddef.h>         /* for offsetof */
  #include <string.h>         /* for convenience */
  #include <unistd.h>
  #include <signal.h>
- 
+
  #define MAXLINE 4096 /* max line length */
- 
+
  /*
   * Default file access permission for new files.
   */
  #define FILE_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
- 
+
  /*
   * Default permissions for new directories.
   */
  #define DIR_MODE (FILE_MODE | S_IXUSR | S_IXGRP | S_IXOTH)
- 
+
  typedef void Sigfunc(int); /* for singnal handlers */
- 
+
  #if defined(SIG_IGN) && !defined(SIG_ERR)
  #define SIG_ERR ((Sigfunc *)-1)
  #endif
- 
+
  #define min(a, b)  ((a) < (b) ? (a) : (b))
  #define max(a, b)  ((a) > (b) ? (a) : (b))
- 
+
  /*
   * Prototypes for our own functions.
   */
  //char    *path_alloc(int *);                                 /* Figure 2.16 */
  char    *path_alloc(size_t *);                                /* Figure 2.16 */
  long     open_max(void);                                      /* Figure 2.17 */
- 
+
  int      set_cloexec(int);                                    /* Figure 13.9 */
  void     clr_fl(int, int);
  void     set_fl(int, int);
- 
+
  void     pr_exit(int);                                        /* Figure 3.12 */
- 
+
  void     pr_mask(const char *);                               /* Figure 10.14 */
  Sigfunc *signal_intr(int, Sigfunc *);                         /* Figure 10.19 */
- 
+
  void     daemonize(const char *);                             /* Figure 13.1 */
- 
+
  void     sleep_us(unsigned int);                              /* Exercise 14.5 */
  ssize_t  readn(int, void*, size_t);                           /* Figure 14.24 */
  ssize_t  writen(int, const void*, size_t);                    /* Figure 14.24 */
- 
+
  int      fd_pipe(int *);                                      /* Figure 17.2 */
  int      recv_fd(int, ssize_t (*func)(int,
              const void *, size_t));                           /* Figure 17.14 */
@@ -4026,22 +4026,22 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  int      cli_conn(const char *);                              /* Figure 17.10 */
  int      buf_args(char *, int (*func)(int,
                    char **));                                  /* Figure 17.23 */
- 
+
  int      tty_cbread(int);                                     /* Figure 17.20 */
  int      tty_raw(int);                                        /* Figure 17.20 */
  int      tty_reset(int);                                      /* Figure 17.20 */
  void     tty_atexit(void);                                    /* Figure 17.20 */
  struct termios *tty_termios(void);                            /* Figure 17.20 */
- 
+
  int      ptym_open(char *, int);                              /* Figure 19.9 */
  int      ptys_open(char *);                                   /* Figure 19.9 */
  #ifdef TIOCGWINSZ
  pid_t    pty_fork(int *, char *, int, const struct termios *,
                    const struct winsize *);                    /* Figure 19.10 */
  #endif
- 
+
  int      lock_reg(int, int, int, off_t, int, off_t);          /* Figure 14.5 */
- 
+
  #define  read_lock(fd, offset, whence, len) \
               lock_reg((fd), F_SETLK, F_RDLCK, (offset), (whence), (len))
  #define  readw_lock(fd, offset, whence, len) \
@@ -4049,17 +4049,17 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  #define  write_lock(fd, offset, whence, len) \
               lock_reg((fd), F_SETLK, F_WRLCK, (offset), (whence), (len))
  #define  writew_lock(fd, offset, whence, len) \
-              lock_reg((fd), F_SETLKW, F_WRLCK, (offset), (whence), (len)) 
+              lock_reg((fd), F_SETLKW, F_WRLCK, (offset), (whence), (len))
  #define  un_lock(fd, offset, whence, len) \
               lock_reg((fd), F_SETLK, F_UNLCK, (offset), (whence), (len))
- 
+
  pid_t lock_test(int, int, off_t, int, off_t);                 /* Figure 14.6 */
- 
+
  #define  is_read_lockable(fd, offset, whence, len) \
               (lock_test((fd), F_RDLCK, (offset), (whence), (len)) == 0)
  #define  is_write_lockable(fd, offset, whence, len) \
               (lock_test((fd), F_WRLCK, (offset), (whence), (len)) == 0)
- 
+
  void     err_msg(const char *, ...); /* Appendix B */
  void     err_dump(const char *, ...) __attribute__((noreturn));
  void     err_quit(const char *, ...) __attribute__((noreturn));
@@ -4067,20 +4067,20 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  void     err_exit(int, const char *, ...) __attribute__((noreturn));
  void     err_ret(const char *, ...);
  void     err_sys(const char *, ...) __attribute__((noreturn));
- 
+
  void     log_msg(const char *, ...); /* Appendix B */
  void     log_open(const char *, int, int);
  void     log_quit(const char *, ...) __attribute__((noreturn));
  void     log_ret(const char *, ...);
  void     log_sys(const char *, ...) __attribute__((noreturn));
  void     log_exit(int, const char *, ...) __attribute__((noreturn));
- 
+
  void     TELL_WAIT(void); /* parent/child from Section 8.9 */
  void     TELL_PARENT(pid_t);
  void     TELL_CHILD(pid_t);
  void     WAIT_PARENT(void);
  void     WAIT_CHILD(void);
- 
+
  #endif /* _APUE_H */
 ```
 
@@ -4093,24 +4093,24 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  #include "apue.h"
  #include <errno.h> /* for definition of errno */
  #include <stdarg.h> /* ISO C variable aruments */
- 
+
  static void err_doit(int, int, const char *, va_list);
- 
+
  /*
   * Nonfatal error related to a system call.
   * Print a message and return.
   */
- 
+
  void
  err_ret(const char *fmt, ...)
  {
      va_list ap;
- 
+
      va_start(ap, fmt);
      err_doit(1, errno, fmt, ap);
      va_end(ap);
  }
- 
+
  /*
   * Fatal error related to a system call.
   * Print a message and terminate.
@@ -4119,13 +4119,13 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  err_sys(const char *fmt, ...)
  {
      va_list ap;
- 
+
      va_start(ap, fmt);
      err_doit(1, errno, fmt, ap);
      va_end(ap);
      exit(1);
  }
- 
+
  /*
   * Nonfatal error unrelated to a system call.
   * Error code passed as explict parameter.
@@ -4135,12 +4135,12 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  err_cont(int error, const char *fmt, ...)
  {
      va_list ap;
- 
+
      va_start(ap, fmt);
      err_doit(1, error, fmt, ap);
      va_end(ap);
  }
- 
+
  /*
   * Fatal error unrelated to a system call.
   * Error code passed as explict parameter.
@@ -4150,13 +4150,13 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  err_exit(int error, const char *fmt, ...)
  {
      va_list ap;
- 
+
      va_start(ap, fmt);
      err_doit(1, error, fmt, ap);
      va_end(ap);
      exit(1);
  }
- 
+
  /*
   * Fatal error related to a system call.
   * Print a message, dump core, and terminate.
@@ -4165,14 +4165,14 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  err_dump(const char *fmt, ...)
  {
      va_list ap;
- 
+
      va_start(ap, fmt);
      err_doit(1, errno, fmt, ap);
      va_end(ap);
      abort(); /* dump core and terminate */
      exit(1); /* shouldn't get here */
  }
- 
+
  /*
   * Nonfatal error unrelated to a system call.
   * Print a message and return.
@@ -4181,12 +4181,12 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  err_msg(const char *fmt, ...)
  {
      va_list ap;
-     
+
      va_start(ap, fmt);
      err_doit(0, 0, fmt, ap);
      va_end(ap);
  }
- 
+
  /*
   * Fatal error unrelated to a system call.
   * Print a message and terminate.
@@ -4195,13 +4195,13 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  err_quit(const char *fmt, ...)
  {
      va_list ap;
- 
+
      va_start(ap, fmt);
      err_doit(0, 0, fmt, ap);
      va_end(ap);
      exit(1);
  }
- 
+
  /*
   * Print a message and return to caller.
   * Caller specifies "errnoflag".
@@ -4221,27 +4221,28 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
      fflush(NULL); /* flushes all stdio output streams */
  }
  ```
- 
+
  ### apue_log.c
- 
+
  ```c
+
  /*
   * Error routines for programs that can run as a daemon.
   */
- 
+
  #include "apue.h"
  #include <errno.h> /* for definition of errno */
  #include <stdarg.h> /* ISO C variable arguments */
  #include <syslog.h>
- 
+
  static void log_doit(int, int, int, const char *, va_list ap);
- 
+
  /*
-  * Caller must define and set this: nonzero if 
+  * Caller must define and set this: nonzero if
   * interactive, zero if daemon
   */
  extern int log_to_stderr;
- 
+
  /*
   * Initialize syslog(), if running as daemon.
   */
@@ -4252,7 +4253,7 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
          openlog(ident, option, facility);
      }
  }
- 
+
  /*
   * Nonfatal error related to a system call.
   * Print a message with the system's errno value and return.
@@ -4261,12 +4262,12 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  log_ret(const char *fmt, ...)
  {
      va_list ap;
-     
+
      va_start(ap, fmt);
      log_doit(1, errno, LOG_ERR, fmt, ap);
      va_end(ap);
  }
- 
+
  /*
   * Fatal error related to a system call.
   * Print a message and terminate.
@@ -4275,27 +4276,27 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  log_sys(const char *fmt, ...)
  {
      va_list ap;
- 
+
      va_start(ap, fmt);
      log_doit(1, errno, LOG_ERR, fmt, ap);
      va_end(ap);
      exit(2);
  }
- 
+
  /*
   * Nonfatal error unrelated to a system call.
   * Print a message and return.
   */
- void 
+ void
  log_msg(const char *fmt, ...)
  {
      va_list ap;
-     
+
      va_start(ap, fmt);
      log_doit(0, 0, LOG_ERR, fmt, ap);
      va_end(ap);
  }
- 
+
  /*
   * Fatal error unrelated to a system call.
   * Print a message and terminate.
@@ -4304,13 +4305,13 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  log_quit(const char *fmt, ...)
  {
      va_list ap;
- 
+
      va_start(ap, fmt);
      log_doit(0, 0, LOG_ERR, fmt, ap);
      va_end(ap);
      exit(2);
  }
- 
+
  /*
   * Fatal error related to a systemcall.
   * Error number passed as an explicit parameter.
@@ -4320,13 +4321,13 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  log_exit(int error, const char *fmt, ...)
  {
      va_list ap;
- 
+
      va_start(ap, fmt);
      log_doit(1, error, LOG_ERR, fmt, ap);
      va_end(ap);
      exit(2);
  }
- 
+
  /*
   * Print a message and return to caller.
   * Caller specifies "errnoflag" and "priority".
@@ -4336,7 +4337,7 @@ UNIX 域套接字提供 **流和数据报** 两种接口。UNIX 域数据报服�
  {
      int  errno_save;
      char buf[MAXLINE];
- 
+
      errno_save = errno; /* value caller might want printed */
      vsnprintf(buf, MAXLINE, fmt, ap);
      if (errnoflag) {
