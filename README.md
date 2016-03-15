@@ -1,4 +1,4 @@
 ```c
 
- printf("hello github");
+printf("hello github");
 ```
