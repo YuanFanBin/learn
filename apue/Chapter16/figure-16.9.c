@@ -6,7 +6,7 @@
 #include <arpa/inet.h>
 #if defined(BSD)
 #include <sys/socket.h>
-#include <netinet.in.h>
+#include <netinet/in.h>
 #endif
 
 void
@@ -97,7 +97,7 @@ print_flags(struct addrinfo *aip)
     }
 }
 
-/* gcc 16.3.3.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-16.9.c */
 int
 main(int argc, char *argv[])
 {
