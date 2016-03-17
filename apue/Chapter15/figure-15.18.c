@@ -2,7 +2,7 @@
 
 static void sig_pipe(int);  /* our signal handler */
 
-/* gcc 15.4.2.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-15.18.c */
 int
 main(void)
 {

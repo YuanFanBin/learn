@@ -3,7 +3,7 @@
 
 #define DEF_PAGER   "/bin/more"     /* default pager program */
 
-/* gcc 15.2-2.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-15.6.c */
 int
 main(int argc, char *argv[])
 {
@@ -38,7 +38,7 @@ main(int argc, char *argv[])
 
         close(fd[1]);   /* clsoe writed end of pipe for reader */
 
-        if (waitpid(pid, NULL, 0) < 0) /* 阻塞等待子进程结束?? */
+        if (waitpid(pid, NULL, 0) < 0) /* 阻塞等待子进程结束，避免僵尸进程 */
             err_sys("waitpid error");
         exit(0);
     } else {    /* child */

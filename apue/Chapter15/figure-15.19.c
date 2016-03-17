@@ -1,7 +1,7 @@
 #include "apue.h"
 
-/* 结合15.4-2.c使用 */
-/* gcc 15.4-3.c apue.h apue_err.c -o add2 */
+/* 结合figure-15.18.c使用 */
+/* gcc apue.h apue_err.c figure-15.19.c -o add2 */
 int
 main(void)
 {
@@ -11,10 +11,12 @@ main(void)
     /* 若不增加如下内容，标准I/O使用缓冲机制，因为标准输入是一个管道，
      * 标准I/O库默认是全缓冲的，标准输出也是如此 */
     /* 强行更改成行缓冲模式 */
-    if (setvbuf(stdin, NULL, _IOLBF, 0) != 0)
-        err_sys("setvbuf error");
-    if (setvbuf(stdout, NULL, _IOLBF, 0) != 0)
-        err_sys("setvbuf error");
+    /*
+    if (setvbuf(stdin, NULL, _IOLBF, 0) != 0)       // #1
+        err_sys("setvbuf error");                   // #2
+    if (setvbuf(stdout, NULL, _IOLBF, 0) != 0)      // #3
+        err_sys("setvbuf error");                   // #4
+    */
     while(fgets(line, MAXLINE, stdin) != NULL) {
         if (sscanf(line, "%d%d", &int1, &int2) == 2) {
             if (printf("%d\n", int1 + int2) == EOF)

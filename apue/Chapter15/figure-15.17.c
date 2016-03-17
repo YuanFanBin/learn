@@ -1,7 +1,7 @@
 #include "apue.h"
 
 /* 协同进程 */
-/* gcc 15.4-1.c apue.h apue_err.c -o add2 */
+/* gcc apue.h apue_err.c figure-15.17.c -o add2 */
 int
 main(void)
 {

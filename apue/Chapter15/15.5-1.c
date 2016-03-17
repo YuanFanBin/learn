@@ -53,6 +53,13 @@ main(int argc, char *argv[])
     if (read_wnum == -1 && errno == EAGAIN)
         fprintf(stdout, "try later\n");
 }
+/* 总结：参考资料
+ * 管道&命名管道（FIFO）
+ * https://www.ibm.com/developerworks/cn/linux/l-ipc/part1/
+ * 命名管道：
+ *     当要写入的数据量不大于PIPE_BUF时，linux将保证写入的原子性。
+ */
+
 /*
  * https://www.ibm.com/developerworks/cn/linux/l-ipc/part1/
  */

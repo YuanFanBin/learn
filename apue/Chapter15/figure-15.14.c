@@ -1,7 +1,7 @@
 #include "apue.h"
 #include <ctype.h>
 
-/* gcc 15.3-3.c apue.h apue_err.c -o myuclc */
+/* gcc apue.h apue_err.c figure-15.14.c -o myuclc */
 /* 转义大写 */
 int
 main(void)

@@ -78,6 +78,14 @@
         * [Figure-5.13.c](#figure-513c)
     * [5.14 内存流](#514-内存流)
         * [Figure-5.15.c](#figure-515c)
+* [第十五章 进程间通信](#第十五章-进程间通信)
+    * [进程间通信方式](#进程间通信方式)
+    * [15.2 管道](#152-管道)
+        * [Figure-15.5.c](#figure-155c)
+        * [Section-15.2.c](#section-152c)
+        * [Figure-15.6.c](#figure-156c)
+        * [Figure-15.7.c](#figure-157c)
+    * [15.3 函数popen和pclose](#153-函数popen和pclose)
 * [第十六章 网络IPC：套接字](#第十六章-网络ipc套接字)
     * [16.2 套接字描述符](#162-套接字描述符)
     * [16.3 寻址](#163-寻址)
@@ -536,9 +544,9 @@ C标准库定义了两个函数用于打印出错信息：
 
 [BACK TO TOP](#目录)
 
----------------------
+--------------------------------------------------------------------------------
 第二章 UNIX标准及实现
-=====================
+================================================================================
 
 **关于各类常量、常用类型、头文件的描述。**
 
@@ -946,6 +954,22 @@ C标准库定义了两个函数用于打印出错信息：
 UNIX系统提供一种原子操作方法，即在打开文件时设置 [O_APPEND](http://man7.org/linux/man-pages/man2/open.2.html) 标志，使得内核在每次写操作之前，都将进程的当前偏移量设置到该文件的尾端处，于是在每次写之前就不再需要调用 `lseek`。
 
 扩展知识参见 [4.15](#xx)，[14.3](#xx)
+
+[BACK TO TOP](#目录)
+
+## 3.12 函数dup和dup2
+
+`dup` 和 `dup2` 都可用来复制描述符，**复制前和复制后的描述符指向同一文件表项**，所以他们共享同一文件状态标识（读、写、追加等）以及同一当前文件偏移量。（这一点与 [16.2 套接字描述](#162-套接字描述) 介绍的 `shutdown` 相呼应）
+
+实际上调用 `dup(fd);` 等效于 `fcntl(fd, F_DUPFD, 0);`；
+
+调用 `dup2(fd, fd2);` 等效于 `close(fd2); fcntl(fd, F_DUPFD, fd2);`；
+
+但 `dup2` 并不完全等同于 `close` 加上 `fcntl`。它们之间有如下区别：
+
+（1）`dup2` 是一个原子操作，而 `close` 和 `fcntl` 包括两个函数调用。有可能在它们之间调用了信号捕获函数，而该函数可能修改文件描述符。
+
+（2）`dup2` 和 `fcntl` 有一些不同的 errno
 
 [BACK TO TOP](#目录)
 
@@ -2854,6 +2878,782 @@ ISO C 标准I/O提供了创建临时文件方式，**但用 `tmpnam` 和 `tempna
 [BACK TO TOP](#目录)
 
 --------------------------------------------------------------------------------
+第十五章 进程间通信
+================================================================================
+
+## 进程间通信方式
+
+[IPC](https://en.wikipedia.org/wiki/Inter-process_communication) 类型：半双工管道，FIFO，全双工管道，命名全双工管道，XSI消息队列，XSI信号量，XSI共享存储，消息队列（实时），信号量，共享存储（实时），套接字，STREAMS
+
+## 15.2 管道
+
+管道：[`man 7 pipe`](http://man7.org/linux/man-pages/man7/pipe.7.html)，[匿名管道(Anonymous pipe) - Wikipedia](https://en.wikipedia.org/wiki/Anonymous_pipe)
+
+历史上，它们是半双工的。现在，某些系统提供全双工的管道，为了可移植性，我们不应假定系统支持全双工管道。**管道只能在具有公共祖先的两个进程之间使用。**
+
+当管道的一端被关闭后，下面的两条规则起作用。
+
+（1）当读（read）一个写端已被关闭的管道时，在所有数据都被读取后，read 返回0，表示文件结束。
+
+（2）如果写（write）一个读端已被关闭的管道时，则产生信号 SIGPIPE。（参见 [Figure-15.18.c](#figure-1518c)）
+
+**在写管道（或 FIFO）时，常量 PIPE_BUF 规定了内核的管道缓冲区大小。**若写的数据大于 PIPE_BUF 那么我们写的数据可能会与其他进程所写的数据相互交叉。使用 `pathconf` 或 `fpathconf` 函数（[Figure-2.12](#xx) 可以确定 PIPE_BUF 的值。
+
+### Figure-15.5.c
+
+功能：利用管道在父子进程间传送数据
+
+涉及头文件：
+[unistd.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/unistd.h.html)
+
+涉及函数：
+[pipe(2)](http://man7.org/linux/man-pages/man2/pipe.2.html)
+
+沉淀内容：学会管道的基本用法，及管道的读写端。
+
+```c
+
+ #include "apue.h"
+ 
+ /* gcc apue.h apue_err.c figure-15.5.c */
+ int
+ main(void)
+ {
+     int     n;
+     int     fd[2];
+     pid_t   pid;
+     char    line[MAXLINE];
+ 
+     if (pipe(fd) < 0)
+         err_sys("pipe error");
+     if ((pid = fork()) < 0) {
+         err_sys("fork error");
+     } else if (pid > 0) {   /* parent */
+         close(fd[0]);
+         write(fd[1], "hello world\n", 12);
+     } else {    /* child */
+         close(fd[1]);
+         n = read(fd[0], line, MAXLINE);
+         write(STDOUT_FILENO, line, n);
+     }
+     exit(0);
+ 
+ }
+```
+
+关于前面说的 PIPE_BUF 问题，我们可以写一个简单的程序来获取 PIPE_BUF，或参考 `man 7 pipe` [pipe(7)](http://man7.org/linux/man-pages/man7/pipe.7.html)
+
+### Section-15.2.c
+
+功能：获取 PIPE_BUF
+
+```c
+
+ #include "apue.h"
+ #include <errno.h>
+ 
+ static int 
+ pipe_buf_max(int fd)
+ {
+ #ifdef _PC_PIPE_BUF
+     long val;
+     errno = 0;
+     if ((val = fpathconf(fd, _PC_PIPE_BUF)) < 0) {
+         if (errno != 0) {
+             if (errno == EINVAL) {
+                 fprintf(stdout, " (not supported _SC_PIPE_BUF)\n");
+             } else {
+                 fprintf(stderr, " fpathconf error, fd = %d", fd);
+                 return(0);
+             }
+         } else {
+             fprintf(stdout, " (no limit)\n");
+         }
+     } else {
+         return(val);
+     }
+     return(0);
+ #else
+     fprintf(stdout, " (not supported _SC_PIPE_BUF)\n");
+     return(0);
+ #endif
+ 
+ }
+ 
+ int
+ main(int argc, char *argv[])
+ {
+     int     fd[2];
+     pid_t   pid;
+     if (pipe(fd) < 0) {
+         err_sys("pipe error");
+     }
+     printf("%d\n", pipe_buf_max(fd[1]));
+     exit(0);
+ }
+```
+
+执行结果：
+
+```sh
+
+[fanbin@localhost apue]$ ./a.out 
+4096
+[fanbin@localhost apue]$ 
+```
+
+### Figure-15.6.c
+
+功能：利用管道读取文件，并分页展示
+
+涉及头文件：
+[sys/wait.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/sys_wait.h.html)
+
+涉及函数：
+[fopen(3)](http://man7.org/linux/man-pages/man3/fopen.3.html),
+[pipe(2)](http://man7.org/linux/man-pages/man2/pipe.2.html),
+[fork(2)](http://man7.org/linux/man-pages/man2/fork.2.html),
+[waitpid(2)](http://man7.org/linux/man-pages/man2/waitpid.2.html),
+[dup2(2)](http://man7.org/linux/man-pages/man2/dup2.2.html),
+[getenv(3)](http://man7.org/linux/man-pages/man3/getenv.3.html),
+[strrchr(3)](http://man7.org/linux/man-pages/man3/strrchr.3.html)
+[execl(3)](http://man7.org/linux/man-pages/man3/execl.3.html)
+
+沉淀内容：学会在父子进程间通过管道传递数据，避免僵尸进程，获取环境变量，加深对dup2用法的理解
+
+```c
+
+ #include "apue.h"
+ #include <sys/wait.h>
+ 
+ #define DEF_PAGER   "/bin/more"     /* default pager program */
+ 
+ /* gcc apue.h apue_err.c figure-15.6.c */
+ int
+ main(int argc, char *argv[])
+ {
+     int     n;
+     int     fd[2];
+     pid_t   pid;
+     char   *pager, *argv0;
+     char    line[MAXLINE];
+     FILE   *fp;
+ 
+     if (argc != 2)
+         err_quit("usage: a.out <pathname>");
+     if ((fp = fopen(argv[1], "r")) == NULL)
+         err_sys("can't open %s", argv[1]);
+     if (pipe(fd) < 0)
+         err_sys("pipe error");
+     if ((pid = fork()) < 0) {
+         err_sys("pipe error");
+     } else if (pid > 0) {   /* parent */
+         close(fd[0]);       /* close read end */
+         /* parent copies argv[1] to pipe */
+         while (fgets(line, MAXLINE, fp) != NULL) {
+             n = strlen(line);
+             if (write(fd[1], line, n) != n)
+                 err_sys("write error to pipe");
+         }
+         if (ferror(fp))
+             err_sys("fgets error");
+         close(fd[1]);   /* clsoe writed end of pipe for reader */
+         if (waitpid(pid, NULL, 0) < 0) /* 阻塞等待子进程结束，避免僵尸进程 */
+             err_sys("waitpid error");
+         exit(0);
+     } else {    /* child */
+         close(fd[1]);   /* close write end */
+         if (fd[0] != STDIN_FILENO) { /* 作为一个保护措施，将两个描述符进行比较 */
+             if (dup2(fd[0], STDIN_FILENO) != STDIN_FILENO)
+                 err_sys("dup2 error to stdin");
+             close(fd[0]);   /* don't need this after dup2 */
+         }
+         /* get arguments for execl() */
+         if ((pager = getenv("PAGER")) == NULL)
+             pager = DEF_PAGER;
+         /* pager == /bin/more */
+         if ((argv0 = strrchr(pager, '/')) != NULL) /* 一直搞不懂这个干嘛用 */
+             argv0++;    /* step past rightmost slash, 定位到/more */ 
+         else
+             argv0 = pager;  /* no slash in pager */
+         /* argv0 = more */
+         if (execl(pager, argv0, (char *)0) < 0)
+             err_sys("execl error for %s", pager);
+     }
+     exit(0);
+ 
+ }
+```
+
+### Figure-15.7.c
+
+功能：使用管道实现父子进程之间的同步通信
+
+涉及头文件：
+[unistd.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/unistd.h.html)
+
+涉及函数：
+[pipe(2)](http://man7.org/linux/man-pages/man2/pipe.2.html)
+
+沉淀内容：学会利用管道实现同步机制
+
+```c
+
+ #include "apue.h"
+ 
+ static int pfd1[2], pfd2[2];
+ 
+ /*  
+  *  figure-10.24.c -- 信号实现
+  *  figure-15.7.c  -- 管道实现
+  */
+ /* 参考资料：http://www.cnblogs.com/mickole/p/3192461.html */
+ /* 管道创建时默认打开了文件描述符，且默认是阻塞（block）模式打开 */
+ void
+ TELL_WAIT(void)
+ {
+     if (pipe(pfd1) < 0 || pipe(pfd2) < 0)
+         err_sys("pipe error");
+ }
+ 
+ void
+ TELL_PARENT(pid_t pid)
+ {
+     if (write(pfd2[1], "c", 1) != 1)
+         err_sys("write error");
+ }
+ 
+ void
+ WAIT_PARENT(void)
+ {
+     char c;
+ 
+     if (read(pfd1[0], &c, 1) != 1)
+         err_sys("read error");
+ 
+     if (c != 'p')
+         err_quit("WAIT_PARENT: incorrect data");
+ }
+ 
+ void
+ TELL_CHILD(pid_t pid)
+ {
+     if (write(pfd1[1], "p", 1) != 1)
+         err_sys("write error");
+ }
+ 
+ void
+ WAIT_CHILD(void)
+ {
+     char c;
+ 
+     if (read(pfd2[0], &c, 1) != 1)
+         err_sys("read error");
+ 
+     if (c != 'c')
+         err_quit("WAIT_CHILD: incorrect data");
+ }
+```
+
+由于管道是半双工的，因此为了实现进程间的同步操作，需要创建两个管道用于在父子进程之间交互数据。
+
+管道的最常见用途是在 `shell` 命令中，关于具体的介绍可参考 [Pipeline(Unix) - Wikipedia](https://en.wikipedia.org/wiki/Pipeline_(Unix))
+
+疑问：如何创建多个同级子进程，父进程向管道发送数据后，是否每一个子进程都会接收到数据？
+
+其他参考资料：
+
+http://www.cnblogs.com/mickole/p/3192461.html
+
+[BACK TO TOP](#目录)
+
+## 15.3 函数popen和pclose
+
+常见的操作是创建一个连接到另一个进程的管道，然后读其输出或向其输入端发送数据。
+
+popen 和 pclose 实现的操作是：创建一个管道，fork 一个子进程，关闭未使用的管道端，执行一个shell运行命令，然后等待命令终止。
+
+### Figure-15.11.c
+
+功能：重写 [Figure-15.6.c](#figure-156c)
+
+涉及头文件：
+[stdio.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/stdio.h.html)
+
+涉及函数：
+[popen(3)](http://man7.org/linux/man-pages/man3/popen.3.html),
+[pclose(3)](http://man7.org/linux/man-pages/man3/pclose.3.html),
+[ferror(3)](http://man7.org/linux/man-pages/man3/ferror.3.html)
+
+沉淀内容：了解 popen, pclose 的基本用法及功能。
+
+```c
+
+ #include "apue.h"
+ #include <sys/wait.h>
+ 
+ /* 如果shell变量PAGER已经定义，且其值非空，则使用其值，否则使用字符串more */
+ #define PAGER   "${PAGER:-more}"    /* environmen variable, or default */
+     /* gcc apue.h apue_err.c figure-15.11.c */int
+ main(int argc, char *argv[])
+ {
+     char line[MAXLINE];
+     FILE *fpin, *fpout;
+ 
+     if (argc != 2)
+         err_quit("usage: a.out <pathname>");
+     if ((fpin = fopen(argv[1], "r")) == NULL)
+         err_sys("can't open %s", argv[1]);
+ 
+     if ((fpout = popen(PAGER, "w")) == NULL)
+         err_sys("popen error");
+ 
+     /* copy argv[1] to pager */
+     while (fgets(line, MAXLINE, fpin) != NULL) {
+         if (fputs(line, fpout) == EOF)
+             err_sys("fputs error to pipe");
+ 
+     }
+     if (ferror(fpin))
+         err_sys("fgets error");
+     if (pclose(fpout) == -1)
+         err_sys("pclose error");
+ 
+     exit(0);
+ 
+ }
+```
+
+### Figure-15.12.c
+
+功能：学会设计一个完整的API
+
+```c
+ #include "apue.h"
+ #include <error.h>
+ #include <fcntl.h>
+ #include <sys/wait.h>
+ 
+ /*
+  * Pointer to array allocated at run-time
+  */
+ static pid_t *childpid = NULL;
+ 
+ /*
+  * From our open_max(), {Figure 2.17}
+  */
+ static int   maxfd;
+ 
+ FILE *
+ popen(const char *cmdstring, const char *type)
+ {
+     int     i;
+     int     pfd[2];
+     pid_t   pid;
+     FILE   *fp;
+ 
+     /* only allow "r" or "w" */
+     if ((type[0] != 'r' && type[0] != 'w') || type[1] != 0) {
+         errno = EINVAL;
+         return(NULL);
+     }
+ 
+     if (childpid == NULL) { /* first time throught */
+         /* allocate zeroed out array for child pids */
+         maxfd = open_max();
+         if ((childpid = calloc(maxfd, sizeof(pid_t))) == NULL)
+             return(NULL);
+     }
+ 
+     if (pipe(pfd) < 0)
+         return(NULL); /* errno set by pipe() */
+     if (pfd[0] >= maxfd || pfd[1] >= maxfd) {
+         close(pfd[0]);
+         close(pfd[1]);
+         errno = EMFILE;
+         return(NULL);
+     }
+ 
+     if ((pid = fork()) < 0) {
+         return(NULL);   /* errno set by fork() */
+     } else if (pid == 0) {  /* child */
+         if (*type == 'r') {
+             close(pfd[0]);
+             if (pfd[1] != STDOUT_FILENO) {
+                 dup2(pfd[1], STDOUT_FILENO);
+                 close(pfd[1]);
+             }
+         } else if (*type == 'w') {
+             close(pfd[1]);
+             if (pfd[0] != STDIN_FILENO) {
+                 dup2(pfd[0], STDIN_FILENO);
+                 close(pfd[0]);
+             }
+         }
+ 
+         /* close all descriptors in childpid[] */
+         for (i = 0; i < maxfd; i++)
+             if (childpid[i] > 0)
+                 close(i);
+         execl("/bin/sh", "sh", "-c", cmdstring, (char*)0);
+         _exit(127);
+     }
+ 
+     /* parent continues... */
+     if (*type == 'r') {
+         close(pfd[1]);
+         if ((fp = fdopen(pfd[0], type)) == NULL)
+             return(NULL);
+     } else {
+         close(pfds[0]);
+         if ((fp = fdopen(pfd[1], type)) == NULL)
+             return(NULL);
+     }
+ 
+     childpid[fileno(fp)] = pid;     /* remeber child pid for this fd */
+     return(fp);
+ }
+ 
+ int
+ pclose(FILE *fp)
+ {
+     int     fd, stat;
+     pid_t   pid;
+ 
+     if (childpid == NULL) {
+         errno = EINVAL;
+         return(-1);     /* popen() has never been called */
+     }
+ 
+     fd = fileno(fp);
+     if (fd >= maxfd) {
+         errno = EINVAL;
+         return(-1);     /* invalid file descriptor */
+     }
+     if ((pid = childpid[fd]) == 0) {
+         errno = EINVAL;
+         return(-1);     /* fp wasn't opened by popen() */
+     }
+ 
+     childpid[fd] = 0;
+     if (fclose(fp) == EOF)
+         return(-1);
+ 
+     while (waitpid(pid, &stat, 0) < 0)
+         if (errno != EINTR)
+             return(-1); /* error other than EINTR from waitpid() */
+ 
+     return(stat);   /* return child's termination status */
+ }
+```
+
+关于如何应用 popen, pclose，我们来看一个例子
+
+### Figure-15.14.c
+
+功能：过滤程序，将大写字符转义为小写字符
+
+```c
+
+ #include "apue.h"
+ #include <ctype.h>
+ 
+ /* gcc apue.h apue_err.c figure-15.14.c -o myuclc */
+ /* 转义大写 */
+ int
+ main(void)
+ {
+     int     c;
+ 
+     while ((c = getchar()) != EOF) {
+         if (isupper(c))
+             c = tolower(c);
+         if (putchar(c) == EOF)
+             err_sys("output error");
+         if (c == '\n')
+             fflush(stdout);
+     }
+     exit(0);
+ }
+```
+
+### Figure-15.15.c
+
+功能：利用过滤程序，过滤输入字符，实现一个简单的命令提示符
+
+```c
+
+ #include "apue.h"
+ #include <sys/wait.h>
+ 
+ /* gcc apue.h apue_err.c figure-15.15.c */
+ int
+ main(void)
+ {
+     char    line[MAXLINE];
+     FILE   *fpin;
+ 
+     if ((fpin = popen("./myuclc", "r")) == NULL)    /* 从过滤程序中获取输入 */
+         err_sys("popen error");
+     for ( ; ;  ) {
+         fputs("prompt> ", stdout);
+         fflush(stdout);
+         if (fgets(line, MAXLINE, fpin) == NULL)     /* read from pipe */
+             break;
+         if (fputs(line, stdout) == EOF)
+             err_sys("fputs error to pipe");
+     }
+     if (pclose(fpin) == -1)
+         err_sys("pclose error");
+     putchar('\n');
+     exit(0);
+ }
+```
+
+执行结果：
+
+```sh
+
+[fanbin@localhost apue]$ ./a.out 
+prompt> HellO, WorlD!
+hello, world!
+prompt> PiPE
+pipe
+prompt> ^C
+[fanbin@localhost apue]$ 
+```
+
+因为标准输出通常是行缓冲的，而提示并不包含换行符，所以在写了提示之后，需要调用 `fflush` 来执行IO操作。关于行缓冲概念可参考 [5.4 缓冲](#54-缓冲) 小结。
+
+关于 popen, pclose 的更多内容参考 man 手册。
+
+[BACK TO TOP](#目录)
+
+## 15.4 协同进程
+
+### Figure-15.17.c
+
+功能：协同进程，用于计算和
+
+沉淀内容：了解协同进程，区分协同进程与过滤程序之间的区别。
+
+```c
+
+ #include "apue.h"
+ 
+ /* 协同进程 */
+ /* gcc apue.h apue_err.c figure-15.17.c -o add2 */
+ int
+ main(void)
+ {
+     int     n, int1, int2;
+     char    line[MAXLINE];
+ 
+     while ((n = read(STDIN_FILENO, line, MAXLINE)) > 0) {
+         line[n] = 0;    /* null terminate */
+         if (sscanf(line, "%d%d", &int1, &int2) == 2) {
+             sprintf(line, "%d\n", int1 + int2);
+             n = strlen(line);
+             if (write(STDOUT_FILENO, line, n) != n)
+                 err_sys("write error");
+         } else {
+             if (write(STDOUT_FILENO, "invalid args\n", 13) != 13)
+                 err_sys("write error");
+         }
+     }
+     exit(0);
+ }
+ 
+ /* 标准输入输入数据，输出结果至标准输出 */
+```
+
+### Figure-15.18.c
+
+功能：实现一个协同进程
+
+沉淀内容：如何编写协同进程，以及如何区分过滤程序，异常处理。
+
+```c
+
+ #include "apue.h"
+ 
+ static void sig_pipe(int);  /* our signal handler */
+ 
+ /* gcc apue.h apue_err.c figure-15.18.c */
+ int
+ main(void)
+ {
+     int     n, fd1[2], fd2[2];
+     pid_t   pid;
+     char    line[MAXLINE];
+ 
+     if (signal(SIGPIPE, sig_pipe) == SIG_ERR)
+         err_sys("signal error");
+ 
+     if (pipe(fd1) < 0 || pipe(fd2) < 0)
+         err_sys("pipe error");
+ 
+     if ((pid = fork()) < 0) {
+         err_sys("fork error");
+     } else if (pid > 0) {   /* parent */
+         close(fd1[0]);  /* 关闭输入 */
+         close(fd2[1]);  /* 关闭输出 */
+ 
+         while (fgets(line, MAXLINE, stdin) != NULL) {
+             n = strlen(line);
+             if (write(fd1[1], line, n) != n)
+                 err_sys("write error to pipe");
+             if ((n = read(fd2[0], line, MAXLINE)) < 0)
+                 err_sys("read error from pipe");
+             if (n == 0) {
+                 err_msg("child closed pipe");
+                 break;
+             }
+             line[n] = 0;    /* null terminate */
+             if (fputs(line, stdout) == EOF)
+                 err_sys("fputs error");
+         }
+ 
+         if (ferror(stdin))
+             err_sys("fgets error on stdin");
+         exit(0);
+     } else {        /* child */
+         /* 重定向子进程的标准输入&标准输出至管道 */
+         close(fd1[1]);  /* 关闭输出 */
+         close(fd2[0]);  /* 关闭输入 */
+         if (fd1[0] != STDIN_FILENO) {   /* fd1[0]作为标准输入 */
+             if (dup2(fd1[0], STDIN_FILENO) != STDIN_FILENO)
+                 err_sys("dup2 error to stdin");
+             close(fd1[0]);
+         }
+ 
+         if (fd2[1] != STDOUT_FILENO) {  /* fd2[1]作为标砖输出 */
+             if (dup2(fd2[1], STDOUT_FILENO) != STDOUT_FILENO)
+                 err_sys("dup2 error to stdout");
+             close(fd2[1]);
+         }
+         if (execl("./add2", "add2", (char*)0) < 0)
+             err_sys("execl error");
+     }
+     exit(0);
+ }
+ 
+ static void
+ sig_pipe(int signo)
+ {
+     printf("SIGPIPE caught\n");
+     exit(1);
+ }
+```
+
+执行结果：
+
+```sh
+[fanbin@localhost apue]$ gcc apue.h apue_err.c figure-15.17.c -o add2
+[fanbin@localhost apue]$ gcc apue.h apue_err.c figure-15.18.c
+[fanbin@localhost apue]$ ./a.out 
+1 3
+4
+2 4
+6
+^C
+[fanbin@localhost apue]$ 
+```
+
+**以上例子中，若 [figure-15.18.c](#figure-1518c) 在等待输入时，kill 掉协同进程add2（子进程打开的所有描述符被关闭），然后又输入数据，那么程序会对没有读进程的管道进行写操作时，会调用信号处理程序。（参见 [15.2 管道](#152-管道)）** 关于 `execl` 我们可以参考 [8.10 函数exec](#810-函数exec)，**在执行 exec 后，进程ID没有改变。**
+
+我们可以通过 `pstree` 来查看一下当前进程间的关系
+
+```sh
+
+[fanbin@localhost apue]$ pstree -puh fanbin
+...
+tmux(21746)─┬─bash(2951)
+            ├─bash(4288)───sudo(9318,root)───cgdb(9324)───gdb(9325)───nginx(9327)
+            ├─bash(4692)
+            ├─bash(6547)───a.out(13952)───add2(13953)       # 此处
+            ├─bash(13954)───pstree(13971)
+            ├─bash(15994)───vim(12972)
+            ├─bash(21747)───vim(11255)
+            ├─bash(21861)
+            ├─bash(21905)
+            ├─bash(21923)
+            ├─bash(23910)───tail(26260)
+            ├─bash(29020)───vim(12602)
+            ├─bash(29099)───vim(25748)
+            ├─bash(30185)───vim(10168)
+            └─bash(30502)───vim(12444)───cscope(12445)
+...
+```
+
+在以上协同进程 add2 中我们使用了底层I/O（UNIX系统调用）：read 和 write。如果我们使用标准I/O改写程序会怎样？
+
+### Figure-15.19.c
+
+功能：利用标准I/O实现协同进程 add2
+
+沉淀内容：加深对标准I/O及底层I/O的理解，setvbuf的使用
+
+```c
+
+#include "apue.h"
+
+ /* 结合figure-15.18.c使用 */
+ /* gcc apue.h apue_err.c figure-15.19.c -o add2 */
+ int
+ main(void)
+ {
+     int     int1, int2;
+     char    line[MAXLINE];
+ 
+     /* 若不增加如下内容，标准I/O使用缓冲机制，因为标准输入是一个管道，
+      * 标准I/O库默认是全缓冲的，标准输出也是如此 */
+     /* 强行更改成行缓冲模式 */
+     /*
+        if (setvbuf(stdin, NULL, _IOLBF, 0) != 0)        // #1
+        err_sys("setvbuf error");                        // #2
+        if (setvbuf(stdout, NULL, _IOLBF, 0) != 0)       // #3
+        err_sys("setvbuf error");                        // #4
+      */
+     while(fgets(line, MAXLINE, stdin) != NULL) {
+         if (sscanf(line, "%d%d", &int1, &int2) == 2) {
+             if (printf("%d\n", int1 + int2) == EOF)
+                 err_sys("printf error");
+         } else {
+             if (printf("invalid args\n") == EOF)
+                 err_sys("printf error");
+         }
+     }
+     exit(0);
+ }
+```
+
+这个新的协同进程不再工作。问题出在默认的标准I/O缓冲机制上。标准输入、标准输出由于是管道，因此默认的缓冲类型是全缓冲的。当add2从其标准输入读取而发生阻塞时，[Figure-15.18.c](#figure-1518c) 中的程序从管道读取时也发生阻塞，于是产生死锁。
+
+缓冲模式的确认我们可以通过 [Figure-5.11.c](#figure-5.11.c) 来判断，不修改任何程序的情况下我们可以这样操作：
+
+```sh
+
+ [fanbin@localhost apue]$ gcc apue.h apue_err.c figure-5.11.c -o add2
+ [fanbin@localhost apue]$ ./a.out 
+ 1 2
+ one line to standared error
+ enter any character
+ stream = stdin       , fileno = 0, fully buffered , buffer size = 4096
+ stream = stdout      , fileno = 1, fully buffered , buffer size = 4096
+ stream = stderr      , fileno = 2, unbuffered     , buffer size = 1
+ stream = /etc/passwd , fileno = 3, fully buffered , buffer size = 4096
+ ^C
+ [fanbin@localhost apue]$ 
+```
+
+只是利用了一下协同进程的概念来达到我们的目的。
+
+若要让 [Figure-15.19.c](#figure-1519c) 可运行协同进程，我们可以将 `#1#2#3#4` 对应的代码注释开启，强制更改缓冲模式即可。
+
+[BACK TO TOP](#目录)
+
+--------------------------------------------------------------------------------
 第十六章 网络IPC：套接字
 ================================================================================
 
@@ -2884,7 +3684,7 @@ ISO C 标准I/O提供了创建临时文件方式，**但用 `tmpnam` 和 `tempna
 |SHUT_WR|关闭写端，无法使用套接字发送数据|
 |SHUT_RDWR|关闭读写，既无法读取数据，也无法发送数据|
 
-能够关闭（`close`）一个套接字，为何还使用 `shutdown` 呢？这里有若干理由。 首先，只有最后一个活动引用关闭时，`close` 才释放网络端点。这意味着如果复制一个 套接字（如采用 `dup`），要直到关闭了最后一个引用它的文件描述符才会释放这个套接 字。**而 `shutdown` 允许使一个套接字处于不活动状态，和引用它的文件描述符数目无 关。** 其次，有时可以很方便地关闭套接字双向传输中的一个方向。例如，如果想让所通信的进程能够确定数据传输何时结束，可以关闭该套接字的写端，然而通过该套接字读端仍可以继续接收数据。
+能够关闭（`close`）一个套接字，为何还使用 `shutdown` 呢？这里有若干理由。 首先，只有最后一个活动引用关闭时，`close` 才释放网络端点。这意味着如果复制一个 套接字（如采用 `dup`，参见 [3.12 函数dup和dup2](#312-函数dup和dup2)），要直到关闭了最后一个引用它的文件描述符才会释放这个套接 字。**而 `shutdown` 允许使一个套接字处于不活动状态，和引用它的文件描述符数目无 关。** 其次，有时可以很方便地关闭套接字双向传输中的一个方向。例如，如果想让所通信的进程能够确定数据传输何时结束，可以关闭该套接字的写端，然而通过该套接字读端仍可以继续接收数据。
 
 其他参考资料：
 

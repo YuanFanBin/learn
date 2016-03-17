@@ -1,6 +1,6 @@
 #include "apue.h"
 
-/* gcc 15.2-1.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-15.5.c */
 int
 main(void)
 {

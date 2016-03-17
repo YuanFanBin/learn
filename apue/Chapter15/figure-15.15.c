@@ -1,14 +1,14 @@
 #include "apue.h"
 #include <sys/wait.h>
 
-/* gcc 15.3-4.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-15.15.c */
 int
 main(void)
 {
     char    line[MAXLINE];
     FILE   *fpin;
 
-    if ((fpin = popen("./myuclc", "r")) == NULL)
+    if ((fpin = popen("./myuclc", "r")) == NULL)    /* 从过滤程序中获取输入 */
         err_sys("popen error");
     for ( ; ; ) {
         fputs("prompt> ", stdout);
@@ -23,10 +23,3 @@ main(void)
     putchar('\n');
     exit(0);
 }
-
-/* 总结：参考资料
- * 管道&命名管道（FIFO）
- * https://www.ibm.com/developerworks/cn/linux/l-ipc/part1/
- * 命名管道：
- *     当要写入的数据量不大于PIPE_BUF时，linux将保证写入的原子性。
- */

@@ -4,7 +4,7 @@
 /* 如果shell变量PAGER已经定义，且其值非空，则使用其值，否则使用字符串more */
 #define PAGER   "${PAGER:-more}"    /* environmen variable, or default */
 
-/* gcc 15.3-1.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-15.11.c */
 int
 main(int argc, char *argv[])
 {
