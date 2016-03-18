@@ -7,8 +7,8 @@ static void f2(void);
 static jmp_buf jmpbuffer;
 static int     globval;
 
-/* gcc 7.10-2.c apue.h apue_err.c */
-/* 编译优化：gcc -O 7.10-2.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-7.13.c */
+/* 编译优化：gcc -O apue.h apue_err.c figure-7.13.c */
 /* 通过此例，若要编写一个使用非局部变量跳转的可移植程序，则必须使用
  * volatile属性 */
 int

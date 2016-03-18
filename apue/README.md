@@ -78,6 +78,20 @@
         * [Figure-5.13.c](#figure-513c)
     * [5.14 内存流](#514-内存流)
         * [Figure-5.15.c](#figure-515c)
+* [第七章 进程环境](#第七章-进程环境)
+    * [7.3 进程终止](#73-进程终止)
+        * [1. 退出函数](#1-退出函数)
+            * [Figure-7.1.c](#figure-71c)
+        * [2. 函数atexit](#2-函数atexit)
+            * [Figure-7.3.c](#figure-73c)
+    * [7.4 命令行参数 & 7.5 环境表](#74-命令行参数-&-75-环境表)
+    * [7.10 函数setjmp和longjmp](#710-函数setjmp和longjmp)
+        * [Figure-7.9.c](#figure-79c)
+        * [1. 自动变量、寄存器变量和易失变量](#1-自动变量寄存器变量和易失变量)
+        * [2. 自动变量的潜在问题]
+            * [Figure-7.14.c](#figure-714c)
+    * [7.11 函数getrlimit和setrlimit](#711-函数getrlimit和setrlimit)
+        * [Figure-7.16.c](#figure-716c)
 * [第十五章 进程间通信](#第十五章-进程间通信)
     * [进程间通信方式](#进程间通信方式)
     * [15.2 管道](#152-管道)
@@ -86,6 +100,12 @@
         * [Figure-15.6.c](#figure-156c)
         * [Figure-15.7.c](#figure-157c)
     * [15.3 函数popen和pclose](#153-函数popen和pclose)
+        * [Figure-15.11.c](#figure-1511c)
+        * [Figure-15.12.c](#figure-1512c)
+        * [Figure-15.14.c](#figure-1514c)
+    * [15.4 协同进程](#154-协同进程)
+        * [Figure-15.18.c](#figure-1518c)
+        * [Figure-15.19.c](#figure-1519c)
 * [第十六章 网络IPC：套接字](#第十六章-网络ipc套接字)
     * [16.2 套接字描述符](#162-套接字描述符)
     * [16.3 寻址](#163-寻址)
@@ -2874,6 +2894,440 @@ ISO C 标准I/O提供了创建临时文件方式，**但用 `tmpnam` 和 `tempna
 
 ## 13.3
 守护进程 => [16.5](#xx)
+
+[BACK TO TOP](#目录)
+
+--------------------------------------------------------------------------------
+第七章 进程环境
+================================================================================
+
+## 7.3 进程终止
+
+### 1. 退出函数
+
+**3个函数用于正常终止一个程序：`_exit` 和 `_Exit` 立即进入内核，`exit` 则先执行一些清理处理，然后返回内核。由于历史原因，`exit` 函数总是执行一个标准I/O库的清理关闭操作：对于所有打开流调用 `fclose` 函数。**
+
+3个退出函数都带一个整型参数，称为终止状态。
+
+**我们查看一下 [`man 3 exit`](http://man7.org/linux/man-pages/man3/exit.3.html) 的描述，通过描述我们可知若父进程： 1. 设置了 SA_NOCLDWAIT 或 2. 设置 SIGCHLD 的 handler 为 SIG_IGN，那么退出状态会被丢弃。**
+
+**若父进程 wait 子进程，那么子进程的终止状态会被告知父进程，子进程彻底销毁。**
+
+**若父进程对子进程的退出状态不感兴趣，但也没有 wait 子进程结束，那么子进程退出后会形成 "僵尸(zombie)" 进程。之后的学习会经常看到如下类似代码：**
+
+```c
+
+ int status;
+ waitpid(pid, &status, 0);
+```
+
+**如上代码是为了避免形成 "僵尸进程"。**
+
+
+**若父进程在子进程之前 exit，那么子进程会继承到 init(1) 上，成为孤儿进程(orphaned)。** 参考 [exit(3)](http://man7.org/linux/man-pages/man3/exit.3.html),[_exit(2)](http://man7.org/linux/man-pages/man2/_exit.2.html)
+
+更多关于 [僵尸进程(zombie process)](https://en.wikipedia.org/wiki/Zombie_process), [孤儿进程(orphan process)](https://en.wikipedia.org/wiki/Orphan_process) 的介绍请自行参考 Wikipedia。
+
+main 函数返回一个整形值与用该值调用 exit 是等价的。于是在 main 函数中
+
+`exit(0);`
+
+等价于
+
+`return(0);`
+
+#### Figure-7.1.c
+
+功能：经典的"hello,world"实例
+
+```c
+
+ #include <stdio.h>
+ main()
+ {
+         printf("hello, world\n");
+ 
+ }
+```
+
+执行结果：
+
+```sh
+
+ [fanbin@localhost apue]$ ./a.out 
+ hello, world
+ [fanbin@localhost apue]$ echo $?
+ 13
+ [fanbin@localhost apue]$ 
+```
+
+编译运行后，我们可以看出它的终止码是随机的。若在不同的系统上编译该程序，我们很可能得到不同的终止码，这取决于 main 函数返回时栈和寄存器的内容。
+
+### 2. 函数atexit
+
+#### Figure-7.3.c
+
+功能：展示如何使用 atexit 函数
+
+涉及头文件：
+[stdlib.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/stdlib.h.html)
+
+涉及函数：
+[atexit(3)](http://man7.org/linux/man-pages/man3/atexit.3.html)
+
+沉淀内容：学会注册退出函数
+
+```c
+
+ #include "apue.h"
+ #include <stdlib.h> /* atexit */
+ 
+ static void my_exit1(void);
+ static void my_exit2(void);
+ 
+ /* gcc apue.h apue_err.h figure-7.3.c */
+ /* atexit用于登记退出函数事件，一个进程可以登记多至32个函数 */
+ /* 调用函数与登记函数顺序相反，可重复登记，重复调用 */
+ /* C程序如何启动，APUE 7.3 图 */
+ /* $ echo $? 查看本进程调用结果，结果由 return/exit指定 */
+ int 
+ main(void)
+ {
+     if (atexit(my_exit2) != 0)
+         err_sys("can't register my_exit2");
+     if (atexit(my_exit1) != 0)
+         err_sys("can't register my_exit1");
+     if (atexit(my_exit1) != 0)
+         err_sys("can't register my_exit1");
+     printf("main is done\n");
+ 
+     return(0);
+ 
+ }
+ 
+ static void
+ my_exit1(void)
+ {
+     printf("first exit handler\n");
+ 
+ }
+ 
+ static void
+ my_exit2(void)
+ {
+     printf("second exit handler\n");
+ 
+ }
+```
+
+执行结果：
+
+```sh
+
+ [fanbin@localhost apue]$ ./a.out 
+ main is done
+ first exit handler
+ first exit handler
+ second exit handler
+ [fanbin@localhost apue]$
+```
+
+## 7.4 命令行参数 & 7.5 环境表
+
+### Figure-7.4.c
+
+```c
+
+ #include "apue.h"
+ #include <stdlib.h> /* getenv, putenv */
+ #include <unistd.h> /* environ */
+ 
+ /* gcc apue.h apue_err.c figure-7.4.c */
+ /* 7.4 & 7.5 */
+ extern char **environ;
+ /* 1 基本解释：extern可以置于变量或者函数前，以标示变量或者函数的定义
+  * 在别的文件中，提示编译器遇到此变量和函数时在其他模块中寻找其定义。
+  * 此外extern也可用来进行链接指定 */
+ /* http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html */
+ int
+ main(int argc, char *argv[])
+ {
+     int i;
+     //for (i = 0; i < argc; i++) {
+     /* ISO C, POSIX.1都要求argv[argc]是一个空指针，因此可以这么写 */
+     for (i = 0; argv[i] != NULL; i++) {
+         printf("argv[%d]: %s\n", i, argv[i]);
+ 
+     }
+     for (i = 0; environ[i] != NULL; i++) {
+         //printf("environ[%d]: %s\n", i, environ[i]);
+ 
+     }
+     /* 通常使用getenv, putenv访问特定的环境变量 */
+     printf("HOSTNAME = %s\n", getenv("HOSTNAME"));
+     exit(0);
+ }
+```
+
+执行结果：
+
+```sh
+
+[fanbin@localhost apue]$ ./a.out arg1 TEST foo
+argv[0]: ./a.out
+argv[1]: arg1
+argv[2]: TEST
+argv[3]: foo
+HOSTNAME = localhost.localdomain
+[fanbin@localhost apue]$ 
+```
+
+关于对 `environ` 及 `extern` 的理解，可参考 [chao_yu](http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html) 的博客
+
+其他参考资料：
+
+http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
+
+[BACK TO TOP](#目录)
+
+## 7.10 函数setjmp和longjmp
+
+### Figure-7.9.c
+
+功能：骨架模板
+
+```c
+
+ #include "apue.h"
+ #include <setjmp.h> /* setjmp, longjmp */
+ 
+ #define TOK_ADD 5
+ 
+ void do_line(char *);
+ void cmd_add(void);
+ int  get_token(void);
+ 
+ /* gcc apue.h apue_err.c figure-7.9.c */
+ int
+ main(void)
+ {
+     char line[MAXLINE];
+
+     while(fgets(line, MAXLINE, stdin) != NULL) {
+         do_line(line);
+     }
+     exit(0);
+ }
+
+ char *tok_ptr; /* global pointer for get_token() */
+
+ void
+ do_line(char *ptr)
+ {
+     int cmd;
+
+     tok_ptr = ptr;
+     while((cmd = get_token()) > 0) {
+         switch(cmd) { /* one case for each command */
+             case TOK_ADD:
+                 cmd_add();
+                 break;
+         }
+     }
+ }
+
+ void
+ cmd_add(void)
+ {
+     int token;
+
+     token = get_token();
+     /* reset of processing for this command */
+ }
+
+ int 
+ get_token(void)
+ {
+     /* fetch next token from line pointed to by tok_ptr */
+     return -1;
+ }
+```
+
+在编写如 [Figure-7.9.c] 的程序时经常会遇到的一个问题是，如何处理非致命性的错误。
+
+例如，若 cmd_add 函数发现一个错误（如一个无效的数），那么它可能先打印一个出错消息，然后忽略输入行的余下部分，返回 main 函数并读入下一输入行。但是如果这种情况出现在 main 函数中的深层次嵌套层中时，用 C 语言难以做到这一点。如果我们不得不以检查返回值的方法逐层返回，那就会变得很麻烦。
+
+解决这种问题的方式是使用非局部 goto - setjmp 和 longjmp 函数。
+
+非局部指的是，这不是由普通的 C 语言 goto 语句在一个函数内实施的跳转，而是在栈上跳过若干调用帧，返回到当前函数调用路径上的某一个函数中。（**注意，此处提到的是跳过栈，中间函数创建的堆并没有说明情况，我们不可做任何假设**）
+
+### 1. 自动变量、寄存器变量和易失变量
+
+关于此点，阅读原书内容即可。
+
+### 2. 自动变量的潜在问题
+
+#### Figure-7.14.c
+
+沉淀内容：理解堆、栈含义，加深对 [Figure 7-6](#xx) 的理解
+
+```c
+
+ #include <stdio.h>
+ 
+ FILE *
+ open_data(void)
+ {
+     FILE   *fp; /* 栈空间，函数退出时，对应的数据空间会被下一个函数的栈帧使用 */
+     char    databuf[BUFSIZ];    /* setvbuf makes this the stdio buffer */
+ 
+     if ((fp = fopen("datafile", "r")) == NULL)
+         return(NULL);
+     if (setvbuf(fp, databuf, _IOLBF, BUFSIZ) != 0)
+         return(NULL);
+     return(fp); /* error */
+ 
+ }
+```
+
+[BACK TO TOP](#目录)
+
+## 7.11 函数getrlimit和setrlimit
+
+### Figure-7.16.c
+
+功能：获取当前系统环境的各类资源软/硬件限制
+
+涉及头文件：
+[sys/resource.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/sys_resource.h.html)
+
+涉及函数：
+[getrlimit(2)](http://man7.org/linux/man-pages/man2/getrlimit.2.html)
+
+沉淀内容：学会获取各类限制，学会使用宏 `#define doit(name) pr_limmits(#name, name)`
+
+```c
+
+ #include "apue.h"
+ #include <sys/resource.h> /* getrlimit */
+ 
+ #define doit(name)  pr_limits(#name, name)
+ 
+ static void pr_limits(char *, int);
+ 
+ /* gcc apue.h apue_err.c figure-7.16.c */
+ /* 每个进程都有一组资源限制 */
+ /* struct rlimit 对应结构如下
+  * struct rlimit {
+  *     rlimit_t rlimit_cur; // soft limit: current limit
+  *     rlimit_t rlimit_max; // hard limit: maximum value for rlimit_cur
+  * 
+  }
+  */
+ int
+ main(void)
+ {
+ #ifdef RLIMIT_AS
+     doit(RLIMIT_AS);
+ #endif
+ 
+     doit(RLIMIT_CORE);
+     doit(RLIMIT_CPU);
+     doit(RLIMIT_DATA);
+     doit(RLIMIT_FSIZE);
+ 
+ #ifndef RLIMIT_MEMLOCK
+     doit(RLIMIT_MEMLOCK);
+ #endif
+ 
+ #ifdef RLIMIT_MSGQUEUE
+     doit(RLIMIT_MSGQUEUE);
+ #endif
+ 
+ #ifdef RLIMIT_NICE
+     doit(RLIMIT_NICE);
+ #endif
+ 
+     doit(RLIMIT_NOFILE);
+ 
+ #ifdef RLIMIT_NPROC
+     doit(RLIMIT_NPROC);
+ #endif
+ 
+ #ifdef RLIMIT_NPTS
+     doit(RLIMIT_NPTS);
+ #endif
+ 
+ #ifdef RLIMIT_RSS
+     doit(RLIMIT_RSS);
+ #endif
+ 
+ #ifdef RLIMIT_SBSIZE
+     doit(RLIMIT_SBSIZE);
+ #endif
+ 
+ #ifdef RLIMIT_SIGPENDING
+     doit(RLIMIT_SIGPENDING);
+ #endif
+ 
+     doit(RLIMIT_STACK);
+ 
+ #ifdef RLIMIT_SWAP
+     doit(RLIMIT_SWAP);
+ #endif
+ 
+ #ifdef RLIMIT_VMEM
+     doit(RLIMIT_VMEM);
+ #endif
+ 
+     exit(0);
+ }
+
+ static void
+ pr_limits(char *name, int resource)
+ {
+     struct rlimit      limit;
+     unsigned long long lim;
+
+     if (getrlimit(resource, &limit) < 0) {
+         err_sys("getrlimit error for %s", name);
+     }
+     printf("%-20s  ", name);
+     if (limit.rlim_cur == RLIM_INFINITY) {
+         printf("(infinite)  ");
+     } else {
+         lim = limit.rlim_cur;
+         printf("%10lld  ", lim);
+     }
+     if (limit.rlim_max == RLIM_INFINITY) {
+         printf("(infinite)  ");
+     } else {
+         lim = limit.rlim_max;
+         printf("%10lld", lim);
+     }
+     putchar((int)'\n');
+
+ }
+```
+
+执行结果：
+```sh
+
+ [fanbin@localhost apue]$ ./a.out 
+ RLIMIT_AS             (infinite)  (infinite)  
+ RLIMIT_CORE                    0  (infinite)  
+ RLIMIT_CPU            (infinite)  (infinite)  
+ RLIMIT_DATA           (infinite)  (infinite)  
+ RLIMIT_FSIZE          (infinite)  (infinite)  
+ RLIMIT_MSGQUEUE           819200      819200
+ RLIMIT_NICE                    0           0
+ RLIMIT_NOFILE               1024        4096
+ RLIMIT_NPROC                1024        7843
+ RLIMIT_RSS            (infinite)  (infinite)  
+ RLIMIT_SIGPENDING           7843        7843
+ RLIMIT_STACK            10485760  (infinite)  
+ [fanbin@localhost apue]$
+```
 
 [BACK TO TOP](#目录)
 

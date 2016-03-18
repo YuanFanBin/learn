@@ -4,7 +4,7 @@
 static void my_exit1(void);
 static void my_exit2(void);
 
-/* gcc 7.3.c apue.h apue_err.h */
+/* gcc apue.h apue_err.h figure-7.3.c */
 /* atexit用于登记退出函数事件，一个进程可以登记多至32个函数 */
 /* 调用函数与登记函数顺序相反，可重复登记，重复调用 */
 /* C程序如何启动，APUE 7.3 图 */

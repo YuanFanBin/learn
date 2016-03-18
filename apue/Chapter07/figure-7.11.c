@@ -9,15 +9,14 @@ int  get_token(void);
 
 jmp_buf jmpbuffer;
 
+/* gcc apue.h apue_err.c figure-7.11.c */
 int
 main(void)
 {
     char line[MAXLINE];
     
     if (setjmp(jmpbuffer) != 0)
-        printf("error\n");
-    else
-        printf("sucess\n");
+        printf("error");
     while(fgets(line, MAXLINE, stdin) != NULL) {
         do_line(line);
     }
@@ -48,7 +47,7 @@ cmd_add(void)
 
     token = get_token();
     if (token < 0) /* an error has occurred */
-        longjmp(jmpbuffer, 1);
+        longjmp(jmpbuffer, 1);  /* 此处的1会作为 setjmp 的返回值 */
     /* reset of processing for this command */
 }
 

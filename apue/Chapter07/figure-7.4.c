@@ -2,7 +2,7 @@
 #include <stdlib.h> /* getenv, putenv */
 #include <unistd.h> /* environ */
 
-/* gcc 7.4.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-7.4.c */
 /* 7.4 & 7.5 */
 extern char **environ;
 /* 1 基本解释：extern可以置于变量或者函数前，以标示变量或者函数的定义
@@ -19,7 +19,7 @@ main(int argc, char *argv[])
         printf("argv[%d]: %s\n", i, argv[i]);
     }
     for (i = 0; environ[i] != NULL; i++) {
-        //printf("environ[%d]: %s\n", i, environ[i]);
+        printf("environ[%d]: %s\n", i, environ[i]);
     }
     /* 通常使用getenv, putenv访问特定的环境变量 */
     printf("HOSTNAME = %s\n", getenv("HOSTNAME"));

@@ -5,7 +5,7 @@
 
 static void pr_limits(char *, int);
 
-/* gcc 7.11.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-7.16.c */
 /* 每个进程都有一组资源限制 */
 /* struct rlimit 对应结构如下
  * struct rlimit {
