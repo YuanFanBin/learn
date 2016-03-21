@@ -9,7 +9,7 @@
 static void pr_times(clock_t, struct tms *, struct tms *);
 static void do_cmd(char *);
 
-/* gcc 8.17.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-8.5.c figure-8.31.c */
 int
 main(int argc, char *argv[])
 {
@@ -39,7 +39,7 @@ do_cmd(char *cmd) /* execute and time the "cmd" */
         err_sys("times error");
 
     pr_times(end - start, &tmsstart, &tmsend);
-    pr_exit(status);
+    pr_exit(status);    /* figure-8.5.c */
 }
 
 /*
@@ -69,23 +69,4 @@ pr_times(clock_t real, struct tms *tmsstart, struct tms * tmsend)
            (tmsend->tms_cutime - tmsstart->tms_cutime) / (double)clktck);
     printf("  child sys :  %7.2f\n",
            (tmsend->tms_cstime - tmsstart->tms_cstime) / (double)clktck);
-}
-
-/* 8.6-1.c */
-void
-pr_exit(int status)
-{
-    if (WIFEXITED(status)) {
-        printf("normal termination, exit status = %d\n\n", WEXITSTATUS(status));
-    } else if (WIFSIGNALED(status)) {
-        printf("abnormal termiantion, signal number = %d%s\n\n",
-                WTERMSIG(status),
-#ifdef WCOREDUMP
-                WCOREDUMP(status) ? " (core file generated)" : "");
-#else
-                "");
-#endif
-    } else if (WIFSTOPPED(status)) {
-        printf("child stopped, signal number = %d\n\n", WSTOPSIG(status));
-    }
 }

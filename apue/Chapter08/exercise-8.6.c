@@ -7,7 +7,7 @@
 #endif
 
 /* 创建僵死进程 */
-/* gcc e8.6.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c exercise-8.6.c */
 int
 main(void)
 {

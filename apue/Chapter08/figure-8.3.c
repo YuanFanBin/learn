@@ -5,7 +5,7 @@
 
 int globvar = 6; /* external variable in initialized data */
 
-/* gcc 8.4.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-8.3.c */
 int
 main(void)
 {
@@ -26,6 +26,7 @@ main(void)
         //fclose(stdout); /* exercise 8.1 */
         _exit(0);
     }
+    sleep(5);
     /* parent continues here */
     printf("pid = %ld, glob = %d, var = %d\n", (long)getpid(), globvar, var);
 
@@ -45,10 +46,12 @@ main(void)
  * 僵尸进程：一个进程使用fork创建子进程，如果子进程退出，而父进程并没有调用
  * wait或waitpid获取子进程的状态信息，那么子进程的进程描述符仍然保存在系统中。
  * 这种进程称之为僵死进程。
+ * 以上两点均可在 wikipedia 获取更详细的解释。
  */
 /* 子进程并不将父进程的地址空间完全复制到子进程中，因为子进程会立即调用
  * exec(或exit), 于是也就不会引用该地址空间。 子进程中修改会直接更改父进程
- * 数据，若在子进程中return则会造成错误，因共用了父进程堆栈。*/
+ * 数据，若在子进程中return则会造成错误，因共用了父进程堆栈。
+ */
 /* 参考：http://coolshell.cn/articles/12103.html */
 /* 参考：http://www.cnblogs.com/Anker/p/3271773.html */
 /* 参考：http://www.cnblogs.com/Anker/archive/2012/12/16/2820526.html */

@@ -3,7 +3,7 @@
 
 static void charatatime(char *);
 
-/* gcc 8.9.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-8.12.c */
 int
 main(void)
 {

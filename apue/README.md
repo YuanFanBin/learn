@@ -88,10 +88,25 @@
     * [7.10 函数setjmp和longjmp](#710-函数setjmp和longjmp)
         * [Figure-7.9.c](#figure-79c)
         * [1. 自动变量、寄存器变量和易失变量](#1-自动变量寄存器变量和易失变量)
-        * [2. 自动变量的潜在问题]
+        * [2. 自动变量的潜在问题](#2-自动变量的潜在问题)
             * [Figure-7.14.c](#figure-714c)
     * [7.11 函数getrlimit和setrlimit](#711-函数getrlimit和setrlimit)
         * [Figure-7.16.c](#figure-716c)
+* [第八章 进程控制](#第八章-进程控制)
+    * [8.3 函数fork](#83-函数fork)
+        * [Figure-8.1.c](#figure-81c)
+    * [8.4 函数vfork](#84-函数vfork)
+        * [Figure-8.3.c](#figure-83c)
+    * [8.5 函数exit](#85-函数exit)
+    * [8.6 函数wait和waitpid](#86-函数wait和waitpid)
+        * [Figure-8.6.c](#figure-86c)
+    * [8.9 竞争条件](#89-竞争条件)
+        * [Figure-8.9.c](#figure-89c)
+    * [8.10 函数exec](#810-函数exec)
+        * [Figure-8.16.c](#figure-816c)
+        * [Figure-8.17.c](#figure-817c)
+    * [8.13 函数system](#813-函数system)
+    * [8.17 进程时间](#817-进程时间)
 * [第十五章 进程间通信](#第十五章-进程间通信)
     * [进程间通信方式](#进程间通信方式)
     * [15.2 管道](#152-管道)
@@ -1308,6 +1323,8 @@ UNIX系统提供一种原子操作方法，即在打开文件时设置 [O_APPEND
 当我们在权限不足的情况下需要执行特权操作时，需要指定文件设置了有效用户ID；若文件拥有有效用户ID，当我们执行操作时，有效用户ID会临时替换为文件的所有者ID并执行，执行完成后进程切换回实际用户ID，避免长时间拥有特权命令。
 
 在 [Figure-4.7.c](#figure-47c) 的执行结果中 `-rwsrwxr-x. 1 root fanbin 6923 3月   1 10:03 a.out` 字母 `s` 指示出该文件拥有设置用户ID权限。
+
+设置用户ID：当执行此文件时， 将进程的有效用户ID设置成文件的所有者用户ID。
 
 其他参考资料：
 
@@ -2928,6 +2945,8 @@ ISO C 标准I/O提供了创建临时文件方式，**但用 `tmpnam` 和 `tempna
 
 更多关于 [僵尸进程(zombie process)](https://en.wikipedia.org/wiki/Zombie_process), [孤儿进程(orphan process)](https://en.wikipedia.org/wiki/Orphan_process) 的介绍请自行参考 Wikipedia。
 
+僵尸进程及孤儿进程的处理方法我们可参考 [8.3 函数fork](#83-函数fork) [8.5 函数exit](#85-函数exit)
+
 main 函数返回一个整形值与用该值调用 exit 是等价的。于是在 main 函数中
 
 `exit(0);`
@@ -2946,7 +2965,7 @@ main 函数返回一个整形值与用该值调用 exit 是等价的。于是在
  main()
  {
          printf("hello, world\n");
- 
+
  }
 ```
 
@@ -2954,14 +2973,16 @@ main 函数返回一个整形值与用该值调用 exit 是等价的。于是在
 
 ```sh
 
- [fanbin@localhost apue]$ ./a.out 
+ [fanbin@localhost apue]$ ./a.out
  hello, world
  [fanbin@localhost apue]$ echo $?
  13
- [fanbin@localhost apue]$ 
+ [fanbin@localhost apue]$
 ```
 
 编译运行后，我们可以看出它的终止码是随机的。若在不同的系统上编译该程序，我们很可能得到不同的终止码，这取决于 main 函数返回时栈和寄存器的内容。
+
+在我的环境上，此 `13` 这个值，指代的是 `printf` 的返回值，即 `hello, world\n` 的长度。
 
 ### 2. 函数atexit
 
@@ -2981,16 +3002,16 @@ main 函数返回一个整形值与用该值调用 exit 是等价的。于是在
 
  #include "apue.h"
  #include <stdlib.h> /* atexit */
- 
+
  static void my_exit1(void);
  static void my_exit2(void);
- 
+
  /* gcc apue.h apue_err.h figure-7.3.c */
  /* atexit用于登记退出函数事件，一个进程可以登记多至32个函数 */
  /* 调用函数与登记函数顺序相反，可重复登记，重复调用 */
  /* C程序如何启动，APUE 7.3 图 */
  /* $ echo $? 查看本进程调用结果，结果由 return/exit指定 */
- int 
+ int
  main(void)
  {
      if (atexit(my_exit2) != 0)
@@ -3000,23 +3021,23 @@ main 函数返回一个整形值与用该值调用 exit 是等价的。于是在
      if (atexit(my_exit1) != 0)
          err_sys("can't register my_exit1");
      printf("main is done\n");
- 
+
      return(0);
- 
+
  }
- 
+
  static void
  my_exit1(void)
  {
      printf("first exit handler\n");
- 
+
  }
- 
+
  static void
  my_exit2(void)
  {
      printf("second exit handler\n");
- 
+
  }
 ```
 
@@ -3024,7 +3045,7 @@ main 函数返回一个整形值与用该值调用 exit 是等价的。于是在
 
 ```sh
 
- [fanbin@localhost apue]$ ./a.out 
+ [fanbin@localhost apue]$ ./a.out
  main is done
  first exit handler
  first exit handler
@@ -3041,7 +3062,7 @@ main 函数返回一个整形值与用该值调用 exit 是等价的。于是在
  #include "apue.h"
  #include <stdlib.h> /* getenv, putenv */
  #include <unistd.h> /* environ */
- 
+
  /* gcc apue.h apue_err.c figure-7.4.c */
  /* 7.4 & 7.5 */
  extern char **environ;
@@ -3057,11 +3078,11 @@ main 函数返回一个整形值与用该值调用 exit 是等价的。于是在
      /* ISO C, POSIX.1都要求argv[argc]是一个空指针，因此可以这么写 */
      for (i = 0; argv[i] != NULL; i++) {
          printf("argv[%d]: %s\n", i, argv[i]);
- 
+
      }
      for (i = 0; environ[i] != NULL; i++) {
          //printf("environ[%d]: %s\n", i, environ[i]);
- 
+
      }
      /* 通常使用getenv, putenv访问特定的环境变量 */
      printf("HOSTNAME = %s\n", getenv("HOSTNAME"));
@@ -3079,7 +3100,7 @@ argv[1]: arg1
 argv[2]: TEST
 argv[3]: foo
 HOSTNAME = localhost.localdomain
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 关于对 `environ` 及 `extern` 的理解，可参考 [chao_yu](http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html) 的博客
@@ -3100,13 +3121,13 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
 
  #include "apue.h"
  #include <setjmp.h> /* setjmp, longjmp */
- 
+
  #define TOK_ADD 5
- 
+
  void do_line(char *);
  void cmd_add(void);
  int  get_token(void);
- 
+
  /* gcc apue.h apue_err.c figure-7.9.c */
  int
  main(void)
@@ -3145,7 +3166,7 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
      /* reset of processing for this command */
  }
 
- int 
+ int
  get_token(void)
  {
      /* fetch next token from line pointed to by tok_ptr */
@@ -3153,7 +3174,7 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
  }
 ```
 
-在编写如 [Figure-7.9.c] 的程序时经常会遇到的一个问题是，如何处理非致命性的错误。
+在编写如 [Figure-7.9.c](#figure-79c) 的程序时经常会遇到的一个问题是，如何处理非致命性的错误。
 
 例如，若 cmd_add 函数发现一个错误（如一个无效的数），那么它可能先打印一个出错消息，然后忽略输入行的余下部分，返回 main 函数并读入下一输入行。但是如果这种情况出现在 main 函数中的深层次嵌套层中时，用 C 语言难以做到这一点。如果我们不得不以检查返回值的方法逐层返回，那就会变得很麻烦。
 
@@ -3169,24 +3190,24 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
 
 #### Figure-7.14.c
 
-沉淀内容：理解堆、栈含义，加深对 [Figure 7-6](#xx) 的理解
+沉淀内容：理解堆、栈含义，加深对 [Figure 7-6](#xx) 的理解（参考一下：[a.out - wikipedia](https://en.wikipedia.org/wiki/A.out)）
 
 ```c
 
  #include <stdio.h>
- 
+
  FILE *
  open_data(void)
  {
      FILE   *fp; /* 栈空间，函数退出时，对应的数据空间会被下一个函数的栈帧使用 */
      char    databuf[BUFSIZ];    /* setvbuf makes this the stdio buffer */
- 
+
      if ((fp = fopen("datafile", "r")) == NULL)
          return(NULL);
      if (setvbuf(fp, databuf, _IOLBF, BUFSIZ) != 0)
          return(NULL);
      return(fp); /* error */
- 
+
  }
 ```
 
@@ -3210,18 +3231,18 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
 
  #include "apue.h"
  #include <sys/resource.h> /* getrlimit */
- 
+
  #define doit(name)  pr_limits(#name, name)
- 
+
  static void pr_limits(char *, int);
- 
+
  /* gcc apue.h apue_err.c figure-7.16.c */
  /* 每个进程都有一组资源限制 */
  /* struct rlimit 对应结构如下
   * struct rlimit {
   *     rlimit_t rlimit_cur; // soft limit: current limit
   *     rlimit_t rlimit_max; // hard limit: maximum value for rlimit_cur
-  * 
+  *
   }
   */
  int
@@ -3230,56 +3251,56 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
  #ifdef RLIMIT_AS
      doit(RLIMIT_AS);
  #endif
- 
+
      doit(RLIMIT_CORE);
      doit(RLIMIT_CPU);
      doit(RLIMIT_DATA);
      doit(RLIMIT_FSIZE);
- 
+
  #ifndef RLIMIT_MEMLOCK
      doit(RLIMIT_MEMLOCK);
  #endif
- 
+
  #ifdef RLIMIT_MSGQUEUE
      doit(RLIMIT_MSGQUEUE);
  #endif
- 
+
  #ifdef RLIMIT_NICE
      doit(RLIMIT_NICE);
  #endif
- 
+
      doit(RLIMIT_NOFILE);
- 
+
  #ifdef RLIMIT_NPROC
      doit(RLIMIT_NPROC);
  #endif
- 
+
  #ifdef RLIMIT_NPTS
      doit(RLIMIT_NPTS);
  #endif
- 
+
  #ifdef RLIMIT_RSS
      doit(RLIMIT_RSS);
  #endif
- 
+
  #ifdef RLIMIT_SBSIZE
      doit(RLIMIT_SBSIZE);
  #endif
- 
+
  #ifdef RLIMIT_SIGPENDING
      doit(RLIMIT_SIGPENDING);
  #endif
- 
+
      doit(RLIMIT_STACK);
- 
+
  #ifdef RLIMIT_SWAP
      doit(RLIMIT_SWAP);
  #endif
- 
+
  #ifdef RLIMIT_VMEM
      doit(RLIMIT_VMEM);
  #endif
- 
+
      exit(0);
  }
 
@@ -3313,23 +3334,571 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
 执行结果：
 ```sh
 
- [fanbin@localhost apue]$ ./a.out 
- RLIMIT_AS             (infinite)  (infinite)  
- RLIMIT_CORE                    0  (infinite)  
- RLIMIT_CPU            (infinite)  (infinite)  
- RLIMIT_DATA           (infinite)  (infinite)  
- RLIMIT_FSIZE          (infinite)  (infinite)  
+ [fanbin@localhost apue]$ ./a.out
+ RLIMIT_AS             (infinite)  (infinite)
+ RLIMIT_CORE                    0  (infinite)
+ RLIMIT_CPU            (infinite)  (infinite)
+ RLIMIT_DATA           (infinite)  (infinite)
+ RLIMIT_FSIZE          (infinite)  (infinite)
  RLIMIT_MSGQUEUE           819200      819200
  RLIMIT_NICE                    0           0
  RLIMIT_NOFILE               1024        4096
  RLIMIT_NPROC                1024        7843
- RLIMIT_RSS            (infinite)  (infinite)  
+ RLIMIT_RSS            (infinite)  (infinite)
  RLIMIT_SIGPENDING           7843        7843
- RLIMIT_STACK            10485760  (infinite)  
+ RLIMIT_STACK            10485760  (infinite)
  [fanbin@localhost apue]$
 ```
 
 [BACK TO TOP](#目录)
+
+--------------------------------------------------------------------------------
+第八章 进程控制
+================================================================================
+
+## 8.3 函数fork
+
+### Figure-8.1.c
+
+功能：fork函数
+
+涉及头文件：
+[unistd.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/unistd.h.html)
+
+涉及函数：
+[fork(2)](http://man7.org/linux/man-pages/man2/fork.2.html)
+
+沉淀内容：fork 函数的基本理解，温习各种缓冲类型(标准I/O)，了解 COW 技术
+
+```c
+
+ #include "apue.h"
+ #include <unistd.h> /* STDOUT_FILENO, fork, sleep */
+
+ int  globvar = 6; /* external variable in initialized data */
+ char buf[] = "a write to stdout\n";
+
+ /* 一般来说，在fork之后是父进程先执行还是子进程先执行是不确定的。
+  * 这取决于内核所使用的调度算法。如果要求父进程和子进程直线相互同步，
+  * 则要求某种形式的进程间通信（10.16） */
+ /* COW技术(https://en.wikipedia.org/wiki/Copy-on-write) */
+ /* gcc apue.h apue_err.c figure-8.1.c */
+ /* $ ./a.out         # 行缓冲，数据已输出
+  * $ ./a.out > temp  # 全缓冲，数据未输出，缓冲数据被copy
+  */
+ int
+ main(void)
+ {
+     int   var; /* automatic variable on the stack */
+     pid_t pid;
+
+     var = 88;
+     if (write(STDOUT_FILENO, buf, sizeof(buf) - 1) != sizeof(buf) -1 ) {
+         err_sys("write error");
+     }
+     printf("before fork\n");  /* we don't flush stdout */
+
+     if ((pid = fork()) < 0) {
+         err_sys("fork error");
+     } else if (pid == 0) { /* child */
+         printf("child pid = %d\n", getpid());
+         globvar++; /* modify variables */
+         var++;
+     } else {
+         sleep(2); /* parent */
+     }
+
+     printf("pid = %ld, glob = %d, var = %d\n", (long)getpid(), globvar, var);
+
+     exit(0);
+ }
+
+ /* 本例中，当父进程等待子进程时，子进程写到标准输出；而在子进程终止后，父进程
+  * 也写到标准输出上，并且知道其输出会追加在子进程所写数据之后。如果父进程和子
+  * 进程不共享同一个文件偏移量，要实现这种形式的交互就要困难得多，可能需要父进
+  * 程显示地动作。
+  */
+ /* 某些操作系统将fork之后执行exec组合成一个操作，称为swapn */
+ /* 操作系统将这两个操作分开，使得子进程在fork和exec之间可以更改自己的属性，
+  * 如I/O重定向、用户ID、信号安排等。 */
+ /* fork， 多线程存在的问题
+  * 参考资料：http://www.cnblogs.com/liyuan989/p/4279210.html
+  */
+```
+
+执行结果：
+
+```sh
+
+ [fanbin@localhost apue]$ ./a.out
+ a write to stdout
+ before fork
+ child pid = 17456
+ pid = 17456, glob = 7, var = 89
+ pid = 17455, glob = 6, var = 88
+ [fanbin@localhost apue]$ ./a.out > temp
+ [fanbin@localhost apue]$ cat temp
+ a write to stdout
+ before fork
+ child pid = 17458
+ pid = 17458, glob = 7, var = 89
+ before fork
+ pid = 17457, glob = 6, var = 88
+ [fanbin@localhost apue]$
+```
+
+fork 有以下两种用法：
+
+(1) 一个父进程希望复制自己，使父进程和子进程同时执行不同的代码段。这在网络服务进程中是常见的 - 父进程等待客户端的服务请求。当这种请求到达时，父进程调用 `fork`，使子进程处理此请求。父进程则继续等待下一个服务请求。
+
+(2) 一个进程要执行一个不同的程序。这对 shell 是常见的情况。在这种情况下，子进程从 `fork` 返回后立即调用 `exec`。
+
+**在 [fork(2)](http://man7.org/linux/man-pages/man2/fork.2.html) 中有一个很重要的一句话：`The termination signal of the child is always SIGCHLD.` 这句话可以告诉我们若父进程创建了很多子进程，但并不想记录每个子进程的pid，又不希望造成大量 [僵尸进程(zombie process)](https://en.wikipedia.org/wiki/Zombie_process)（或参考 [7.3 退出函数](#73-退出函数)）那么我们可以在父进程中捕获信号 SIGCHLD 然后 `waitpid(-1, &stat, WNOHANG)` 处理进程表中的僵尸进程。**
+
+此用法我们可在 nginx-1.8.0-release 的源码 src/os/unix/ngx_process.c 中找到样例。
+
+可参见 [8.6 函数wait和waitpid](#86-函数wait和waitpid)
+
+## 8.4 函数vfork
+
+`vfork` 函数的调用序列和返回值与 `fork` 相同，但两者的语义不同。
+
+`vfork` 函数用于创建一个新进程，而该新进程的目的是 `exec` 一个新程序。
+
+`vfork` 函数保证子进程先运行，在它调用 `exec` 或 `exit` 之后父进程才可能被调度运行，当子进程调用这两个函数中的任意一个时，父进程会恢复运行。（**如果在调用者两个函数之前子进程依赖于父进程的进一步动作时，则会导致死锁。**）
+
+通过查看 [vfork(2)](http://man7.org/linux/man-pages/man2/vfork.2.html) 的 man page 我们可以发现这么一句话
+
+> It is used to create new processes without copying the page tables of the parent process.
+
+新创建的子进程并没有copy父进程的页表，也就是说他们会共享内存数据(APUE中提及，子进程时在父进程的地址空间中运行。我们还可参考 [vfork - wikipedia](https://en.wikipedia.org/wiki/Fork_(system_call)\#Vfork))。因此若在子进程中修改从父进程继承下来的变量，在父进程中也会被更改(没有使用 [copy-on-write](https://en.wikipedia.org/wiki/Copy-on-write) 技术)，我们可看一个例子。
+
+### Figure-8.3.c
+
+功能：[Figure-8.1.c](#figure-81c) 的修改版，在子进程调用 `exec` 或 `exit` 之前，内核会使父进程处于休眠状态。
+
+涉及头文件：
+[unistd.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/unistd.h.html)
+
+涉及函数：
+[vfork(2)](http://man7.org/linux/man-pages/man2/vfork.2.html)
+
+沉淀内容：了解 `vfork` 与 `fork` 的区别及适用场景，学会使用 `vfork`。
+
+```c
+
+ #include "apue.h"
+ #include <unistd.h> /* vfork, getpid */
+ #include <sys/types.h> /* vfork */
+ #include <stdlib.h> /* exit */
+
+ int globvar = 6; /* external variable in initialized data */
+
+ /* gcc apue.h apue_err.c figure-8.3.c */
+ int
+ main(void)
+ {
+     int   var; /* automatic variable on the stack */
+     pid_t pid;
+     /* exercise 8.1 */
+     int   i;
+     char buf[512];
+
+     var = 88;
+     printf("before vfork\n"); /* we don't flush stdio */
+     if ((pid = vfork()) < 0) { /* vfork保证子进程先执行 */
+         err_sys("vfork error");
+     } else if (pid == 0) { /* child */
+         printf("child pid = %ld\n", (long)getpid());
+         globvar++; /* modify parent's variables */
+         var++;
+         //fclose(stdout); /* exercise 8.1 */
+         _exit(0);
+     }
+     /* parent continues here */
+     printf("pid = %ld, glob = %d, var = %d\n", (long)getpid(), globvar, var);
+
+     /* exercise 8.1 */
+     /*
+        i = printf("pid = %ld, glob = %d, var = %d\n", (long)getpid(), globvar, var);
+        sprintf(buf, "%d\n", i);
+        write(STDOUT_FILENO, buf, strlen(buf));
+      */
+
+     exit(0);
+
+ }
+ /* 孤儿进程：一个父进程退出，而它的一个或多个子进程还在运行，那么那些子进程
+  * 将成为孤儿进程。孤儿进程将被init进程(进程号为1)所收养，并由init进程对它们
+  * 完成状态收集工作。
+  *
+  * 僵尸进程：一个进程使用fork创建子进程，如果子进程退出，而父进程并没有调用
+  * wait或waitpid获取子进程的状态信息，那么子进程的进程描述符仍然保存在系统中。
+  * 这种进程称之为僵死进程。
+  * 以上两点均可在 wikipedia 获取更详细的解释。
+  */
+ /* 子进程并不将父进程的地址空间完全复制到子进程中，因为子进程会立即调用
+  * exec(或exit), 于是也就不会引用该地址空间。 子进程中修改会直接更改父进程
+  * 数据，若在子进程中return则会造成错误，因共用了父进程堆栈。
+  */
+
+ /* 参考：http://coolshell.cn/articles/12103.html */
+ /* 参考：http://www.cnblogs.com/Anker/p/3271773.html */
+ /* 参考：http://www.cnblogs.com/Anker/archive/2012/12/16/2820526.html */
+
+ /* exercise:
+  * 这里假设子进程调用exit时关闭I/O流，但不关闭文件描述符STDOUT_FILENO。
+  * 有些版本的标准I/O库会关闭与标准输出相关联的文件描述符从而引起write
+  * 标准输出失败。在这种情况下，调用dup将标准输出复制到另一个描述符，
+  * write则使用新复制的文件描述符。(都是共享数据的锅)
+  * PS:
+  * 看某些优秀源码时能够看到这种现象。
+  * memcached源码中经常使用dup（原因没深究）
+  */
+```
+
+**由于父子进程共用同一个内存空间，子进程的对某些变量的修改会对父进程造成影响，同时若子进程使用 `exit` 退出，则在处理标准I/O缓冲区的冲洗操作 & 关闭各种文件描述符时会对父进程造成不可预期的效果，因此子进程不可修改父子进程共用的数据，也不可使用 `exit` 退出，应使用 `_exit` 退出子进程。注意：父进程的STDOUT_FILENO仍然有效，子进程得到的是父进程的文件描述符数组的副本，若要在父子进程中关闭标准输出，则需要使用fclose(stdout)来关闭流**
+
+## 8.5 函数exit
+
+此节内容参考原书章节 & [7.3 进程终止](#73-进程终止) & `man 3 exit` & `man 2 _exit` & [Anker](http://www.cnblogs.com/Anker/p/3271773.html) 博客。
+
+注意：原书 [8.5 函数exit](#xx) 中提及：
+
+> 不管进程如何终止，最后都会执行内核中的同一段代码。这段代码为相应进程关闭所有打开描述符，释放它所使用的存储器等。(后提及)
+
+而在5中正常终止方式的第二种有如下描述：
+
+> (2) 调用exit函数。此函数由 ISO C 定义，其操作包括调用各终止处理程序，然后关闭所有标准I/O流等。因为 ISO C 并不处理文件描述符、多进程（父进程和子进程）以及作业控制，所以这一定义对 UNIX 系统而言是不完整的。（先提及）
+
+init进程如何收集孤儿进程？看原书。
+
+僵死(尸)进程，如何处理僵死进程？[10.7](#xx)
+
+
+[BACK TO TOP](#目录)
+
+## 8.6 函数wait和waitpid
+
+当一个进程正常或异常终止时，内核就像其父进程发送 SIGCHLD 信号。因为子进程终止是一个异步事件，所以这种信号也是内核向父进程发送的异步通知。
+
+### Figure-8.8.c
+
+功能：避免生成僵死进程的小技巧
+
+涉及头文件：
+[sys/wait.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/sys_wait.h.html),
+[unistd.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/unistd.h.html)
+
+涉及函数：
+[fork(2)](http://man7.org/linux/man-pages/man2/fork.2.html),
+[waitpid(2)](http://man7.org/linux/man-pages/man2/waitpid.2.html)
+
+
+沉淀内容：掌握一个避免生成僵死进程且无需等待子进程终止的技巧
+
+```c
+
+ #include "apue.h"
+ #include <sys/wait.h> /* waitpid */
+ #include <sys/types.h>  /* waitpid, getppid */
+ #include <unistd.h> /* getppid */
+
+ /* gcc apue.h apue_err.c figure-8.8.c */
+ int
+ main(void)
+ {
+     pid_t   pid;
+
+     if ((pid = fork()) < 0) {
+         err_sys("fork error");
+     } else if (pid == 0) { /* first child */
+         if ((pid = fork()) < 0) {
+             err_sys("fork error");
+         } else if (pid > 0) {
+             exit(0); /* parent from second fork == first child */
+         }
+
+         /*
+          * We're second child; our parent becomes init as soon
+          * as our real parent calls exit() in the statement above.
+          * Here's where we'd continue executing, knowing that when
+          * we're done, init will reap our status.
+          */
+         /*
+          * 打印进程ID为1的进程，即init进程。
+          * 调大参数，使用命令pstree查看更直观
+          */
+         sleep(10); /* 等待父进程（first child）结束 */
+         printf("second child, parent pid = %ld\n", (long)getppid());
+         exit(0);
+     }
+
+     if (waitpid(pid, NULL, 0) != pid) { /* wait for first child */
+         err_sys("waitpid error");
+     }
+
+     /*
+      * We're the parent (the original process); we continue executing,
+      * knowing that we're not the parent of the second child.
+      */
+     exit(0);
+ }
+
+ /*
+  * 对于waitpid函数中的pid参数的作用解释如下
+  * pid == -1  等待任一子进程。此种情况下，与wait等效
+  * pid > 0    等待进程ID与pid相等的进程。
+  * pid == 1   等待组ID等于调用进程组ID的任一子进程。
+  * pid < -1   等待组ID等于pid绝对值的任一子进程。
+  */
+ /*
+  * waitpid 可等待一个特定的进程。
+  * waitpid 提供了一个wait的非阻塞版本。（还不知道是哪种）
+  * waitpid 通过WUNTRACED和WCONTINUED选项支持作业控制。
+  */
+```
+
+如果一个进程fork一个子进程，但不要等待子进程终止，也不希望子进程处于僵死状态直到父进程终止，实现这一要求的诀窍是调用fork两次，让该进程称为孤儿进程，交由init(pid:1)管理。
+
+## 8.9 竞争条件
+
+当多个进程都企图对共享数据进行某种处理，而最后的结果由取决于进程运行的顺序时，我们认为发生了竞争条件。
+
+如果在 `fork` 之后的某种逻辑显式或隐式的依赖于在 `fork` 之后是父进城先运行还是子进程先运行，那么 `fork` 函数就会是竞争条件活跃的滋生地。
+
+### Figure-8.12.c
+
+功能：演示一个隐含的竞争条件
+
+沉淀内容：学会分析竞争条件，了解基本的解决方案，了解 fork 会产生显式或隐式的竞争条件
+
+```c
+
+ #include "apue.h"
+ #include <stdio.h> /* setbuf */
+
+ static void charatatime(char *);
+
+ /* gcc apue.h apue_err.c figure-8.12.c */
+ int
+ main(void)
+ {
+     pid_t  pid;
+
+     //TELL_WAIT(); /* + */
+     if ((pid = fork()) < 0) {
+         err_sys("fork error");
+     } else if (pid == 0) {
+         //WAIT_PARENT(); /* + */
+         charatatime("output from child\n");
+         //TELL_PARENT(getppid()); /* + */
+     } else {
+         //WAIT_CHILD(); /* + */
+         charatatime("output from parent\n");
+         //TELL_CHILD(pid); /* + */
+     }
+     exit(0);
+ }
+
+ static void
+ charatatime(char *str)
+ {
+     char *ptr;
+     int   c;
+
+     /* 将stdout设为非缓冲模式，每个字符均调用write系统函数 */
+     /* 目的：尽可能的多次在两个进程间切换，以便演示竞争条件 */
+     setbuf(stdout, NULL);  /* set unbuffered */
+     for (ptr = str; (c = *ptr++) != 0;) {
+         putc(c, stdout);
+     }
+ }
+```
+
+若打开某些 `//` 注释则可避免竞争条件。
+
+[BACK TO TOP](#目录)
+
+## 8.10 函数exec
+
+**当进程调用一种 `exec` 函数时，该进程执行的程序完全替换为新程序，而新程序则从其 `main` 函数开始执行。因为调用 `exec` 并不创建新进程，所以前后的进程ID并未改变。`exec` 只是用磁盘上的一个新程序替换了当前进程的正文段、数据段、堆段和栈段。**
+
+在执行 `exec` 后，进程ID没有变化。但新程序从调用进程继承了的下列属性：
+
+* 进程ID和父进程ID
+
+* 实际用户ID和实际组ID
+
+* 附属组ID
+
+* 进程组ID
+
+* 会话ID
+
+* 控制终端
+
+* 闹钟尚余留的时间
+
+* 当前工作目录
+
+* 根目录
+
+* 文件默认创建屏蔽字
+
+* 文件锁
+
+* 进程信号屏蔽
+
+* 未处理信号
+
+* 资源限制
+
+* nice值（遵循XSI的系统，见8.16节）
+
+* tms_utime, tms_stime, tms_cutime以及tms_cstime值
+
+### Figure-8.16.c
+
+功能：演示exec函数族的用法，参数，环境变量等继承及影响范围。
+
+涉及头文件：
+[sys/wait.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/sys_wait.h.html),
+[unistd.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/unistd.h.html)
+
+涉及函数：
+[execle(3)](http://man7.org/linux/man-pages/man3/execle.3.html),
+[setenv(3)](http://man7.org/linux/man-pages/man3/setenv.3.html),
+[getenv(3)](http://man7.org/linux/man-pages/man3/getenv.3.html)
+
+
+沉淀内容：温习环境变量相关命令，学会exec函数族的基本用法及继承关系。
+
+```c
+
+ #include "apue.h"
+ #include <sys/wait.h>
+ #include <unistd.h> /* execle, execlp, setenv */
+
+ char *env_init[] = { "USER=unknown", "PATH=/tmp", NULL  };
+
+ /* gcc apue.h apue_err.c figure-8.16.c */
+ /* 依赖 figure-8.17.c -o echoall */
+ int
+ main(void)
+ {
+     int           i;
+     pid_t         pid;
+     extern char **environ;
+
+     if ((pid = fork()) < 0) {
+         err_sys("fork error");
+
+     } else if (pid == 0) { /* specify pathname, specify environment */
+         /* 更改了echoall进程的环境变量 */
+         if (execle("/home/fanbin/yuanfanbin/learn/apue/echoall", "echoall", "myarg1",
+                     "My ARG2", (char*)0, env_init) < 0) {
+             err_sys("execle error");
+         }
+     }
+
+     if (waitpid(pid, NULL, 0) < 0) {
+         err_sys("wait error");
+     }
+
+     if ((pid = fork()) < 0) {
+         err_sys("fork error");
+
+     } else if (pid == 0) { /* specify filename, inherit environment */
+         printf("\n\nchild pid = %ld\n", (long)getpid());
+         /* 更改了子进程&孙子进程中的环境变量 */
+         setenv("PATH", "/home/fanbin/yuanfanbin/learn/apue/", 1); // 重写PATH
+         if (execlp("echoall", "echoall", "only 1 arg", (char*)0) < 0) {
+             err_sys("execlp error");
+         }
+     }
+
+     sleep(2);
+     /* 父进程的环境变量是没有改变的 */
+     printf("\n\nThis is parent environ\n");
+     printf("parent, PATH = %s\n", getenv("PATH"));
+     for (i = 0; environ[i] != NULL; i++) { /* echo all env strings */
+         //printf("environ[%d]: %s\n", i, environ[i]);
+     }
+
+     exit(0);
+ }
+```
+
+### Figure-8.17.c
+
+功能：输出命令参数及环境变量
+
+```c
+
+ #include "apue.h"
+
+ /* gcc apue.h figure-8.17.c -o echoall */
+ int
+ main(int argc, char *argv[])
+ {
+     int             i;
+     char          **ptr;
+     extern char   **environ;
+
+     for (i = 0; i < argc; ++i) {    /* echo all ecommand-line args */
+         printf("argv[%d]: %s\n", i, argv[i]);
+     }
+
+     for (ptr = environ; *ptr != 0; ptr++) { /* and all env strings */
+         printf("%s\n", *ptr);
+     }
+
+     exit(0);
+
+ }
+```
+
+执行结果：
+
+```sh
+
+ [fanbin@localhost apue]$ gcc apue.h figure-8.17.c -o echoall
+ [fanbin@localhost apue]$ gcc apue.h apue_err.c figure-8.16.c
+ [fanbin@localhost apue]$ ./a.out
+ argv[0]: echoall
+ argv[1]: myarg1
+ argv[2]: My ARG2
+ USER=unknown           # 更改的环境变量生效
+ PATH=/tmp
+
+
+ child pid = 19641
+ argv[0]: echoall
+ argv[1]: only 1 arg    # 更改的argv[]参数生效
+ ...
+ USER=fanbin
+ ...
+ PATH=/home/fanbin/yuanfanbin/learn/apue/
+ ...
+
+
+ This is parent environ # 父进程的PATH环境变量为发生改变
+ parent, PATH = /usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/home/fanbin/bin:/home/fanbin/bin:.
+ [fanbin@localhost apue]$
+```
+
+## 8.13 函数system
+
+查看 [Figure-8-23.c](#xx) 代码，system的一个简易实现。
+
+查看 [Figure-8.24.c](#xx) 代码，system的基本用法。
+
+[BACK TO TOP](#目录)
+
+## 8.17 进程时间
+
+查看 [Figure-8.31.c](#xx) 代码，`times` 的基本用法。
 
 --------------------------------------------------------------------------------
 第十五章 进程间通信
@@ -3368,7 +3937,7 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
 ```c
 
  #include "apue.h"
- 
+
  /* gcc apue.h apue_err.c figure-15.5.c */
  int
  main(void)
@@ -3377,7 +3946,7 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
      int     fd[2];
      pid_t   pid;
      char    line[MAXLINE];
- 
+
      if (pipe(fd) < 0)
          err_sys("pipe error");
      if ((pid = fork()) < 0) {
@@ -3391,7 +3960,7 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
          write(STDOUT_FILENO, line, n);
      }
      exit(0);
- 
+
  }
 ```
 
@@ -3405,8 +3974,8 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
 
  #include "apue.h"
  #include <errno.h>
- 
- static int 
+
+ static int
  pipe_buf_max(int fd)
  {
  #ifdef _PC_PIPE_BUF
@@ -3431,9 +4000,9 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
      fprintf(stdout, " (not supported _SC_PIPE_BUF)\n");
      return(0);
  #endif
- 
+
  }
- 
+
  int
  main(int argc, char *argv[])
  {
@@ -3451,9 +4020,9 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
 
 ```sh
 
-[fanbin@localhost apue]$ ./a.out 
+[fanbin@localhost apue]$ ./a.out
 4096
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 ### Figure-15.6.c
@@ -3479,9 +4048,9 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
 
  #include "apue.h"
  #include <sys/wait.h>
- 
+
  #define DEF_PAGER   "/bin/more"     /* default pager program */
- 
+
  /* gcc apue.h apue_err.c figure-15.6.c */
  int
  main(int argc, char *argv[])
@@ -3492,7 +4061,7 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
      char   *pager, *argv0;
      char    line[MAXLINE];
      FILE   *fp;
- 
+
      if (argc != 2)
          err_quit("usage: a.out <pathname>");
      if ((fp = fopen(argv[1], "r")) == NULL)
@@ -3527,7 +4096,7 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
              pager = DEF_PAGER;
          /* pager == /bin/more */
          if ((argv0 = strrchr(pager, '/')) != NULL) /* 一直搞不懂这个干嘛用 */
-             argv0++;    /* step past rightmost slash, 定位到/more */ 
+             argv0++;    /* step past rightmost slash, 定位到/more */
          else
              argv0 = pager;  /* no slash in pager */
          /* argv0 = more */
@@ -3535,7 +4104,7 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
              err_sys("execl error for %s", pager);
      }
      exit(0);
- 
+
  }
 ```
 
@@ -3554,10 +4123,10 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
 ```c
 
  #include "apue.h"
- 
+
  static int pfd1[2], pfd2[2];
- 
- /*  
+
+ /*
   *  figure-10.24.c -- 信号实现
   *  figure-15.7.c  -- 管道实现
   */
@@ -3569,41 +4138,41 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
      if (pipe(pfd1) < 0 || pipe(pfd2) < 0)
          err_sys("pipe error");
  }
- 
+
  void
  TELL_PARENT(pid_t pid)
  {
      if (write(pfd2[1], "c", 1) != 1)
          err_sys("write error");
  }
- 
+
  void
  WAIT_PARENT(void)
  {
      char c;
- 
+
      if (read(pfd1[0], &c, 1) != 1)
          err_sys("read error");
- 
+
      if (c != 'p')
          err_quit("WAIT_PARENT: incorrect data");
  }
- 
+
  void
  TELL_CHILD(pid_t pid)
  {
      if (write(pfd1[1], "p", 1) != 1)
          err_sys("write error");
  }
- 
+
  void
  WAIT_CHILD(void)
  {
      char c;
- 
+
      if (read(pfd2[0], &c, 1) != 1)
          err_sys("read error");
- 
+
      if (c != 'c')
          err_quit("WAIT_CHILD: incorrect data");
  }
@@ -3645,7 +4214,7 @@ popen 和 pclose 实现的操作是：创建一个管道，fork 一个子进程�
 
  #include "apue.h"
  #include <sys/wait.h>
- 
+
  /* 如果shell变量PAGER已经定义，且其值非空，则使用其值，否则使用字符串more */
  #define PAGER   "${PAGER:-more}"    /* environmen variable, or default */
      /* gcc apue.h apue_err.c figure-15.11.c */int
@@ -3653,28 +4222,28 @@ popen 和 pclose 实现的操作是：创建一个管道，fork 一个子进程�
  {
      char line[MAXLINE];
      FILE *fpin, *fpout;
- 
+
      if (argc != 2)
          err_quit("usage: a.out <pathname>");
      if ((fpin = fopen(argv[1], "r")) == NULL)
          err_sys("can't open %s", argv[1]);
- 
+
      if ((fpout = popen(PAGER, "w")) == NULL)
          err_sys("popen error");
- 
+
      /* copy argv[1] to pager */
      while (fgets(line, MAXLINE, fpin) != NULL) {
          if (fputs(line, fpout) == EOF)
              err_sys("fputs error to pipe");
- 
+
      }
      if (ferror(fpin))
          err_sys("fgets error");
      if (pclose(fpout) == -1)
          err_sys("pclose error");
- 
+
      exit(0);
- 
+
  }
 ```
 
@@ -3687,17 +4256,17 @@ popen 和 pclose 实现的操作是：创建一个管道，fork 一个子进程�
  #include <error.h>
  #include <fcntl.h>
  #include <sys/wait.h>
- 
+
  /*
   * Pointer to array allocated at run-time
   */
  static pid_t *childpid = NULL;
- 
+
  /*
   * From our open_max(), {Figure 2.17}
   */
  static int   maxfd;
- 
+
  FILE *
  popen(const char *cmdstring, const char *type)
  {
@@ -3705,20 +4274,20 @@ popen 和 pclose 实现的操作是：创建一个管道，fork 一个子进程�
      int     pfd[2];
      pid_t   pid;
      FILE   *fp;
- 
+
      /* only allow "r" or "w" */
      if ((type[0] != 'r' && type[0] != 'w') || type[1] != 0) {
          errno = EINVAL;
          return(NULL);
      }
- 
+
      if (childpid == NULL) { /* first time throught */
          /* allocate zeroed out array for child pids */
          maxfd = open_max();
          if ((childpid = calloc(maxfd, sizeof(pid_t))) == NULL)
              return(NULL);
      }
- 
+
      if (pipe(pfd) < 0)
          return(NULL); /* errno set by pipe() */
      if (pfd[0] >= maxfd || pfd[1] >= maxfd) {
@@ -3727,7 +4296,7 @@ popen 和 pclose 实现的操作是：创建一个管道，fork 一个子进程�
          errno = EMFILE;
          return(NULL);
      }
- 
+
      if ((pid = fork()) < 0) {
          return(NULL);   /* errno set by fork() */
      } else if (pid == 0) {  /* child */
@@ -3744,7 +4313,7 @@ popen 和 pclose 实现的操作是：创建一个管道，fork 一个子进程�
                  close(pfd[0]);
              }
          }
- 
+
          /* close all descriptors in childpid[] */
          for (i = 0; i < maxfd; i++)
              if (childpid[i] > 0)
@@ -3752,7 +4321,7 @@ popen 和 pclose 实现的操作是：创建一个管道，fork 一个子进程�
          execl("/bin/sh", "sh", "-c", cmdstring, (char*)0);
          _exit(127);
      }
- 
+
      /* parent continues... */
      if (*type == 'r') {
          close(pfd[1]);
@@ -3763,22 +4332,22 @@ popen 和 pclose 实现的操作是：创建一个管道，fork 一个子进程�
          if ((fp = fdopen(pfd[1], type)) == NULL)
              return(NULL);
      }
- 
+
      childpid[fileno(fp)] = pid;     /* remeber child pid for this fd */
      return(fp);
  }
- 
+
  int
  pclose(FILE *fp)
  {
      int     fd, stat;
      pid_t   pid;
- 
+
      if (childpid == NULL) {
          errno = EINVAL;
          return(-1);     /* popen() has never been called */
      }
- 
+
      fd = fileno(fp);
      if (fd >= maxfd) {
          errno = EINVAL;
@@ -3788,15 +4357,15 @@ popen 和 pclose 实现的操作是：创建一个管道，fork 一个子进程�
          errno = EINVAL;
          return(-1);     /* fp wasn't opened by popen() */
      }
- 
+
      childpid[fd] = 0;
      if (fclose(fp) == EOF)
          return(-1);
- 
+
      while (waitpid(pid, &stat, 0) < 0)
          if (errno != EINTR)
              return(-1); /* error other than EINTR from waitpid() */
- 
+
      return(stat);   /* return child's termination status */
  }
 ```
@@ -3811,14 +4380,14 @@ popen 和 pclose 实现的操作是：创建一个管道，fork 一个子进程�
 
  #include "apue.h"
  #include <ctype.h>
- 
+
  /* gcc apue.h apue_err.c figure-15.14.c -o myuclc */
  /* 转义大写 */
  int
  main(void)
  {
      int     c;
- 
+
      while ((c = getchar()) != EOF) {
          if (isupper(c))
              c = tolower(c);
@@ -3839,14 +4408,14 @@ popen 和 pclose 实现的操作是：创建一个管道，fork 一个子进程�
 
  #include "apue.h"
  #include <sys/wait.h>
- 
+
  /* gcc apue.h apue_err.c figure-15.15.c */
  int
  main(void)
  {
      char    line[MAXLINE];
      FILE   *fpin;
- 
+
      if ((fpin = popen("./myuclc", "r")) == NULL)    /* 从过滤程序中获取输入 */
          err_sys("popen error");
      for ( ; ;  ) {
@@ -3868,13 +4437,13 @@ popen 和 pclose 实现的操作是：创建一个管道，fork 一个子进程�
 
 ```sh
 
-[fanbin@localhost apue]$ ./a.out 
+[fanbin@localhost apue]$ ./a.out
 prompt> HellO, WorlD!
 hello, world!
 prompt> PiPE
 pipe
 prompt> ^C
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 因为标准输出通常是行缓冲的，而提示并不包含换行符，所以在写了提示之后，需要调用 `fflush` 来执行IO操作。关于行缓冲概念可参考 [5.4 缓冲](#54-缓冲) 小结。
@@ -3894,7 +4463,7 @@ prompt> ^C
 ```c
 
  #include "apue.h"
- 
+
  /* 协同进程 */
  /* gcc apue.h apue_err.c figure-15.17.c -o add2 */
  int
@@ -3902,7 +4471,7 @@ prompt> ^C
  {
      int     n, int1, int2;
      char    line[MAXLINE];
- 
+
      while ((n = read(STDIN_FILENO, line, MAXLINE)) > 0) {
          line[n] = 0;    /* null terminate */
          if (sscanf(line, "%d%d", &int1, &int2) == 2) {
@@ -3917,7 +4486,7 @@ prompt> ^C
      }
      exit(0);
  }
- 
+
  /* 标准输入输入数据，输出结果至标准输出 */
 ```
 
@@ -3930,9 +4499,9 @@ prompt> ^C
 ```c
 
  #include "apue.h"
- 
+
  static void sig_pipe(int);  /* our signal handler */
- 
+
  /* gcc apue.h apue_err.c figure-15.18.c */
  int
  main(void)
@@ -3940,19 +4509,19 @@ prompt> ^C
      int     n, fd1[2], fd2[2];
      pid_t   pid;
      char    line[MAXLINE];
- 
+
      if (signal(SIGPIPE, sig_pipe) == SIG_ERR)
          err_sys("signal error");
- 
+
      if (pipe(fd1) < 0 || pipe(fd2) < 0)
          err_sys("pipe error");
- 
+
      if ((pid = fork()) < 0) {
          err_sys("fork error");
      } else if (pid > 0) {   /* parent */
          close(fd1[0]);  /* 关闭输入 */
          close(fd2[1]);  /* 关闭输出 */
- 
+
          while (fgets(line, MAXLINE, stdin) != NULL) {
              n = strlen(line);
              if (write(fd1[1], line, n) != n)
@@ -3967,7 +4536,7 @@ prompt> ^C
              if (fputs(line, stdout) == EOF)
                  err_sys("fputs error");
          }
- 
+
          if (ferror(stdin))
              err_sys("fgets error on stdin");
          exit(0);
@@ -3980,7 +4549,7 @@ prompt> ^C
                  err_sys("dup2 error to stdin");
              close(fd1[0]);
          }
- 
+
          if (fd2[1] != STDOUT_FILENO) {  /* fd2[1]作为标砖输出 */
              if (dup2(fd2[1], STDOUT_FILENO) != STDOUT_FILENO)
                  err_sys("dup2 error to stdout");
@@ -3991,7 +4560,7 @@ prompt> ^C
      }
      exit(0);
  }
- 
+
  static void
  sig_pipe(int signo)
  {
@@ -4005,13 +4574,13 @@ prompt> ^C
 ```sh
 [fanbin@localhost apue]$ gcc apue.h apue_err.c figure-15.17.c -o add2
 [fanbin@localhost apue]$ gcc apue.h apue_err.c figure-15.18.c
-[fanbin@localhost apue]$ ./a.out 
+[fanbin@localhost apue]$ ./a.out
 1 3
 4
 2 4
 6
 ^C
-[fanbin@localhost apue]$ 
+[fanbin@localhost apue]$
 ```
 
 **以上例子中，若 [figure-15.18.c](#figure-1518c) 在等待输入时，kill 掉协同进程add2（子进程打开的所有描述符被关闭），然后又输入数据，那么程序会对没有读进程的管道进行写操作时，会调用信号处理程序。（参见 [15.2 管道](#152-管道)）** 关于 `execl` 我们可以参考 [8.10 函数exec](#810-函数exec)，**在执行 exec 后，进程ID没有改变。**
@@ -4059,7 +4628,7 @@ tmux(21746)─┬─bash(2951)
  {
      int     int1, int2;
      char    line[MAXLINE];
- 
+
      /* 若不增加如下内容，标准I/O使用缓冲机制，因为标准输入是一个管道，
       * 标准I/O库默认是全缓冲的，标准输出也是如此 */
      /* 强行更改成行缓冲模式 */
@@ -4089,7 +4658,7 @@ tmux(21746)─┬─bash(2951)
 ```sh
 
  [fanbin@localhost apue]$ gcc apue.h apue_err.c figure-5.11.c -o add2
- [fanbin@localhost apue]$ ./a.out 
+ [fanbin@localhost apue]$ ./a.out
  1 2
  one line to standared error
  enter any character
@@ -4098,7 +4667,7 @@ tmux(21746)─┬─bash(2951)
  stream = stderr      , fileno = 2, unbuffered     , buffer size = 1
  stream = /etc/passwd , fileno = 3, fully buffered , buffer size = 4096
  ^C
- [fanbin@localhost apue]$ 
+ [fanbin@localhost apue]$
 ```
 
 只是利用了一下协同进程的概念来达到我们的目的。

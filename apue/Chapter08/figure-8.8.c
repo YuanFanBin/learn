@@ -3,7 +3,7 @@
 #include <sys/types.h>  /* waitpid, getppid */
 #include <unistd.h> /* getppid */
 
-/* gcc 8.6-2.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-8.8.c */
 int
 main(void)
 {
@@ -28,7 +28,7 @@ main(void)
          * 打印进程ID为1的进程，即init进程。
          * 调大参数，使用命令pstree查看更直观
          */
-        sleep(2); /* 等待父进程（first child）结束 */
+        sleep(10); /* 等待父进程（first child）结束 */
         printf("second child, parent pid = %ld\n", (long)getppid());
         exit(0); 
     }

@@ -2,7 +2,7 @@
 
 static void f1(void), f2(void);
 
-/* gcc e8.2.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c exercise-8.2.c */
 int
 main(void)
 {

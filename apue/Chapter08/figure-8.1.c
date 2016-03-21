@@ -7,8 +7,8 @@ char buf[] = "a write to stdout\n";
 /* 一般来说，在fork之后是父进程先执行还是子进程先执行是不确定的。 
  * 这取决于内核所使用的调度算法。如果要求父进程和子进程直线相互同步，
  * 则要求某种形式的进程间通信（10.16） */
-/* COW技术 */
-/* gcc 8.3.c apue.h apue_err.c */
+/* COW技术(https://en.wikipedia.org/wiki/Copy-on-write) */
+/* gcc apue.h apue_err.c figure-8.1.c */
 /* $ ./a.out         # 行缓冲，数据已输出
  * $ ./a.out > temp  # 全缓冲，数据未输出，缓冲数据被copy
  */
