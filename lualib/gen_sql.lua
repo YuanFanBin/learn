@@ -172,11 +172,11 @@ local muti_query = function(params)
 end
 
 return {
-    insert           = insert,
-    delete           = delete,
-    update           = update,
-    query            = query,
-    muti_query       = muti_query,
+    insert     = insert,
+    delete     = delete,
+    update     = update,
+    query      = query,
+    muti_query = muti_query,
 }
 --==================================================================================================
 -- END: MYSQL 语句生成器(openresty(ngx+lua)中使用)
