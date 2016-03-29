@@ -4,7 +4,7 @@
 
 static void sig_usr(int); /* one handler for both signals */
 
-/* gcc 10.3.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-10.2.c */
 int
 main(void)
 {
@@ -13,7 +13,7 @@ main(void)
     if (signal(SIGUSR2, sig_usr) == SIG_ERR)
         err_sys("can't catch SIGUSR2");
     for ( ; ; )
-        pause();
+        pause();    /* man 7 signal or man pause */
 }
 
 static void

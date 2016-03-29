@@ -1,14 +1,9 @@
 #include "apue.h"
-#include <setjmp.h>
-#include <signal.h>
-#include <unistd.h>
-
-static jmp_buf env_alrm;
 
 unsigned int sleep2(unsigned int);
 static void sig_int(int);
 
-/* gcc 10.10-2.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-10.8.c figure-10.9.c */
 /* $ ./a.out
  * ^C       # 等大约4秒后
  * sig_int starting
@@ -44,23 +39,4 @@ static void sig_int(int signo)
             k += i * j;
     printf("sig_int finished\n");
     /* 这里面捕获到了中断信号SIGALRM，处理对应中断程序，环境恢复失败 */
-}
-
-
-static void
-sig_alrm(int signo)
-{
-    longjmp(env_alrm, 1); /* 解决第三个问题:竞争条件 */
-}
-
-unsigned int
-sleep2(unsigned int seconds)
-{
-    if (signal(SIGALRM, sig_alrm) == SIG_ERR)
-        return(seconds);
-    if (setjmp(env_alrm) == 0) {
-        alarm(seconds);  /* start the timer */
-        pause();         /* next caught signal wakes us up */
-    }
-    return(alarm(0));    /* turn off timer, return unslept time */
 }

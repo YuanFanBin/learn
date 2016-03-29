@@ -22,9 +22,11 @@ abort(void) /* POSIX-style abort() function */
     sigfillset(&mask);
     sigdelset(&mask, SIGABRT); /* mask has only SIGABRT turned off */
     sigprocmask(SIG_SETMASK, &mask, NULL);
+    /* kill返回前该信号就被传送给了该进程 */
     kill(getpid(), SIGABRT); /* send the signal */
 
     /* If we're here, process caught SIGABRT and returned */
+    /* 在信号处理handler中可能又产生了输出，我们需要再次冲洗缓冲区 */
     fflush(NULL); /* flush all open stdio streams */
     action.sa_handler = SIG_DFL;
     sigaction(SIGABRT, &action, NULL); /* reset to default */

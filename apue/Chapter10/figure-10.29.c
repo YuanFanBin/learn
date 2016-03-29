@@ -6,6 +6,8 @@ sig_alrm(void)
     /* nothing to do, just returning wakes up sigsuspend() */
 }
 
+/* Figure-10.7.c的修改版 */
+/* 可靠的处理了信号 */
 unsigned int
 sleep(unsigned int seconds)
 {
@@ -44,3 +46,5 @@ sleep(unsigned int seconds)
     sigprocmask(SIG_SETMASK, &oldmask, NULL);
     return(unslept);
 }
+
+/* 此函数可靠地处理信号，避免了早期实现中的竞争条件，但是仍未处理与以前设置的闹钟的交互作用。*/

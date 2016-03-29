@@ -3,6 +3,8 @@
 
 static void charatatime(char *);
 
+/* Figure-10.24.c 信号实现 */
+/* Figure-15.7.c  管道实现 */
 /* gcc apue.h apue_err.c figure-8.12.c */
 int
 main(void)

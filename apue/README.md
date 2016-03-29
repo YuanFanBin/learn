@@ -107,6 +107,31 @@
         * [Figure-8.17.c](#figure-817c)
     * [8.13 函数system](#813-函数system)
     * [8.17 进程时间](#817-进程时间)
+* [第十章 信号](#第十章-信号)
+    * [10.1 引言](#101-引言)
+    * [10.2 信号概念](#102-信号概念)
+    * [10.3 函数signal](#103-函数signal)
+        * [Figure-10.2.c](#figure-102c)
+    * [10.5 中断的系统调用](#105-中断的系统调用)
+    * [10.6 可重入函数](#106-可重入函数)
+    * [10.10 函数alarm和pause](#1010-函数alarm和pause)
+        * [Figure-10.7.c](#figure-107c)
+        * [Figure-10.8.c](#figure-108c)
+        * [Figure-10.9.c](#figure-109c)
+        * [Figure-10.10.c](#figure-1010c)
+        * [Figure-10.11.c](#figure-1011c)
+        * [Figure-10.12.c](#figure-1012c)
+    * [10.12 函数sigprocmask](#1012-函数sigprocmask)
+        * [Figure-10.14.c](#figure-1014c)
+    * [10.13 函数sigpending](#1013-函数sigpending)
+        * [Figure-10.15.c](#figure-1015c)
+    * [10.14 函数sigaction](#1014-函数sigaction)
+    * [10.15 函数sigsetjmp和siglongjmp](#1015-函数sigsetjmp和siglongjmp)
+        * [Figure-10.20.c](#figure-1020c)
+    * [10.16 函数sigsuspend](#1016-函数sigsuspend)
+        * [Figure-10.22.c](#figure-1022c)
+        * [Figure-10.23.c](#figure-1023c)
+    * [10.18 函数system](#1018-函数system)
 * [第十五章 进程间通信](#第十五章-进程间通信)
     * [进程间通信方式](#进程间通信方式)
     * [15.2 管道](#152-管道)
@@ -404,6 +429,8 @@
 ## 1.7 出错处理
 
 **当UNIX系统出错时，通常会返回一个负值，而且整型变量 *errno* 通常被设置为具有特定信息的值。** 文件 [`<errno.h>`](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/errno.h.html) 中定义了 *errno* 以及可以赋予它的各种常量，这些常量都以字符E开头。
+
+**在支持线程的环境中，多个线程共享进程地址空间，每个线程都有数据它自己的局部 `errno` 以避免一个线程干扰另一个线程。**
 
 **对于 *errno* 应当注意两条规则：**
 
@@ -2898,14 +2925,6 @@ ISO C 标准I/O提供了创建临时文件方式，**但用 `tmpnam` 和 `tempna
 [BACK TO TOP](#目录)
 
 -------------------
-第十章
-===================
-
-10.15 重启动！！！，[Figure-16.19.c](#figure-1619c)
-
-[BACK TO TOP](#目录)
-
--------------------
 第十三章
 ===================
 
@@ -3182,6 +3201,8 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
 
 非局部指的是，这不是由普通的 C 语言 goto 语句在一个函数内实施的跳转，而是在栈上跳过若干调用帧，返回到当前函数调用路径上的某一个函数中。（**注意，此处提到的是跳过栈，中间函数创建的堆并没有说明情况，我们不可做任何假设**）
 
+但是，调用 `longjmp` 有一个问题。当捕捉到一个信号时，进入信号捕捉函数，此时当前信号被自动地加到进程的信号屏蔽字中。这阻止了后来产生的这种信号中断该信号处理程序。如果用 `longjmp` 跳出信号处理程序，那么，对此进程的信号屏蔽字会发生什么呢？([10.15 函数sigsetjmp和siglongjmp](#1015-函数sigsetjmp和siglongjmp))
+
 ### 1. 自动变量、寄存器变量和易失变量
 
 关于此点，阅读原书内容即可。
@@ -3368,7 +3389,7 @@ http://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777431.html
 涉及函数：
 [fork(2)](http://man7.org/linux/man-pages/man2/fork.2.html)
 
-沉淀内容：fork 函数的基本理解，温习各种缓冲类型(标准I/O)，了解 COW 技术
+沉淀内容：fork 函数的基本理解，温习各种缓冲类型(标准I/O)，了解 [COW](https://en.wikipedia.org/wiki/Copy-on-write) 技术
 
 ```c
 
@@ -3471,7 +3492,7 @@ fork 有以下两种用法：
 
 > It is used to create new processes without copying the page tables of the parent process.
 
-新创建的子进程并没有copy父进程的页表，也就是说他们会共享内存数据(APUE中提及，子进程时在父进程的地址空间中运行。我们还可参考 [vfork - wikipedia](https://en.wikipedia.org/wiki/Fork_(system_call)\#Vfork))。因此若在子进程中修改从父进程继承下来的变量，在父进程中也会被更改(没有使用 [copy-on-write](https://en.wikipedia.org/wiki/Copy-on-write) 技术)，我们可看一个例子。
+新创建的子进程并没有copy父进程的页表，也就是说他们会共享内存数据(APUE中提及，子进程是在父进程的地址空间中运行。我们还可参考 [vfork - wikipedia](https://en.wikipedia.org/wiki/Fork_(system_call)\#Vfork))。因此若在子进程中修改从父进程继承下来的变量，在父进程中也会被更改(没有使用 [copy-on-write](https://en.wikipedia.org/wiki/Copy-on-write) 技术)，我们可看一个例子。
 
 ### Figure-8.3.c
 
@@ -3538,7 +3559,7 @@ fork 有以下两种用法：
   * 以上两点均可在 wikipedia 获取更详细的解释。
   */
  /* 子进程并不将父进程的地址空间完全复制到子进程中，因为子进程会立即调用
-  * exec(或exit), 于是也就不会引用该地址空间。 子进程中修改会直接更改父进程
+  * exec(或_exit), 于是也就不会引用该地址空间。 子进程中修改会直接更改父进程
   * 数据，若在子进程中return则会造成错误，因共用了父进程堆栈。
   */
 
@@ -3561,13 +3582,13 @@ fork 有以下两种用法：
 
 ## 8.5 函数exit
 
-此节内容参考原书章节 & [7.3 进程终止](#73-进程终止) & `man 3 exit` & `man 2 _exit` & [Anker](http://www.cnblogs.com/Anker/p/3271773.html) 博客。
+此节内容参考原书章节 & [7.3 进程终止](#73-进程终止) & [man 3 exit](http://man7.org/linux/man-pages/man3/exit.3.html) & [man 2 _exit](http://man7.org/linux/man-pages/man2/_exit.2.html) & [Anker](http://www.cnblogs.com/Anker/p/3271773.html) 博客。
 
 注意：原书 [8.5 函数exit](#xx) 中提及：
 
 > 不管进程如何终止，最后都会执行内核中的同一段代码。这段代码为相应进程关闭所有打开描述符，释放它所使用的存储器等。(后提及)
 
-而在5中正常终止方式的第二种有如下描述：
+而在5种正常终止方式的第二种有如下描述：
 
 > (2) 调用exit函数。此函数由 ISO C 定义，其操作包括调用各终止处理程序，然后关闭所有标准I/O流等。因为 ISO C 并不处理文件描述符、多进程（父进程和子进程）以及作业控制，所以这一定义对 UNIX 系统而言是不完整的。（先提及）
 
@@ -3665,7 +3686,7 @@ init进程如何收集孤儿进程？看原书。
 
 当多个进程都企图对共享数据进行某种处理，而最后的结果由取决于进程运行的顺序时，我们认为发生了竞争条件。
 
-如果在 `fork` 之后的某种逻辑显式或隐式的依赖于在 `fork` 之后是父进城先运行还是子进程先运行，那么 `fork` 函数就会是竞争条件活跃的滋生地。
+如果在 `fork` 之后的某种逻辑显式或隐式的依赖于在 `fork` 之后是父进程先运行还是子进程先运行，那么 `fork` 函数就会是竞争条件活跃的滋生地。
 
 ### Figure-8.12.c
 
@@ -3888,17 +3909,1025 @@ init进程如何收集孤儿进程？看原书。
  [fanbin@localhost apue]$
 ```
 
+[BACK TO TOP](#目录)
+
+
 ## 8.13 函数system
 
 查看 [Figure-8-23.c](#xx) 代码，system的一个简易实现。
 
 查看 [Figure-8.24.c](#xx) 代码，system的基本用法。
 
+参见 [10.18 函数system](#1018-函数system)。
+
 [BACK TO TOP](#目录)
 
 ## 8.17 进程时间
 
 查看 [Figure-8.31.c](#xx) 代码，`times` 的基本用法。
+
+[BACK TO TOP](#目录)
+
+--------------------------------------------------------------------------------
+第十章 信号
+================================================================================
+
+## 10.1 引言
+
+信号是软件中断，它提供了一种处理异步事件的方法。
+
+[BACK TO TOP](#目录)
+
+## 10.2 信号概念
+
+下面列举几个常见的信号及产生原因
+
+SIGABRT：调用 `abort` 函数时（见10.17节）产生此信号。进程异常终止。
+
+SIGALRM：当用 `alarm` 函数设置的定时器超时时，产生此信号。
+
+SIGCHLD：在一个进程终止或停止时，SIGCHLD信号被送到其父进程。
+
+SIGHUP：如果终端接口检测到一个连接断开，则将此信号送给 `session` 接口中 `s_leader` 字段所指向的进程。如果会话首进程终止，也产生此信号。**通常用此信号通知守护进程（见 [第十三章 守护进程](#第十三章-守护进程) 再次读取它们的配置文件。**
+
+SIGINT：当用户按中断键（一般采用 `DELETE` 或 `CTRL + C`）时，终端驱动程序产生此信号并发送至前台进程组中的每一进程。当一个进程在运行时失控，特别是它正在屏幕上产生大量不需要的输出时，常用此信号终止它。
+
+SIGIO：此信号指示一个异步I/O事件。在 14.5.2 节中将对此进行讨论。
+
+SIGPIPE：如果在管道的读进程终止时写管道，则产生此信号。15.2 节将说明管道。
+
+SIGQUIT：当用户在终端上按退出键（一般采用 `CTRL + \`）时，中断驱动程序产生此信号，并发送给前台进程组中的所有进程。此信号不仅终止前台进程组（如SIGINT所做的那样），同时产生一个core文件。关于 core dump 可参见 [man 5 core](http://man7.org/linux/man-pages/man5/core.5.html)
+
+SIGTERM：这是 `kill(1)` 命令发送的系统默认终止信号。
+
+SIGURG：此信号通知进程已经发生一个紧急情况。在网络连接上接到带外的数据时，可选择地产生此信号。
+
+SIGUSR1：用户定义的信号，可用于应用程序。
+
+SIGUSR2：用户定义的信号，与SIGUSR1相似，可用于应用程序。
+
+关于信号的其他概念可参考 [man 7 signal](http://man7.org/linux/man-pages/man7/signal.7.html)（强烈建议读一读，基本是本章的一个精简，后续内容及未来的其他几章均有涉及）
+
+## 10.3 函数signal
+
+**因为 `signal` 的语义与实现有关，所以最好使用 `sigaction` 函数代替 `signal`。**
+
+### Figure-10.2.c
+
+功能：演示一个signal如何捕获一个信号&如何处理信号
+
+涉及头文件：
+[unistd.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/unistd.h.html),
+[signal.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/signal.h.html)
+
+涉及函数：
+[signal(2)](http://man7.org/linux/man-pages/man2/signal.2.html),
+[pause(2)](http://man7.org/linux/man-pages/man2/pause.2.html)
+
+沉淀内容：了解如何捕获信号，如何想进程发送信号，如何对信号做合理处理。
+
+```c
+
+ #include "apue.h"
+ #include <unistd.h> /* pause */
+ #include <signal.h> /* SIGXXX */
+ 
+ static void sig_usr(int); /* one handler for both signals */
+ 
+ /* gcc apue.h apue_err.c figure-10.2.c */
+ int
+ main(void)
+ {
+     if (signal(SIGUSR1, sig_usr) == SIG_ERR)
+         err_sys("can't catch SIGUSR1");
+     if (signal(SIGUSR2, sig_usr) == SIG_ERR)
+         err_sys("can't catch SIGUSR2");
+     for ( ; ;  )
+         pause();    /* man 7 signal or man pause */
+ 
+ }
+ 
+ static void
+ sig_usr(int signo) /* argument is signal number */
+ {
+     if (signo == SIGUSR1)
+         printf("received SIGUSR1\n");
+     else if (signo == SIGUSR2)
+         printf("received SIGUSR2\n");
+     else
+         err_dump("received signal %d\n", signo);
+ 
+ }
+ /* exec函数将原先设置为要捕捉的信号都更改为默认动作，其他信号的状态
+  * 不变。
+  */
+ /* fork子进程后，子进程继承父进程的信号处理方式 */
+```
+
+执行结果：
+
+```sh
+
+ [fanbin@localhost apue]$ ./a.out &
+ [1] 21979
+ [fanbin@localhost apue]$ kill -USR1 21979
+ [fanbin@localhost apue]$ received SIGUSR1
+ 
+ [fanbin@localhost apue]$ kill -USR2 21979
+ received SIGUSR2
+ [fanbin@localhost apue]$ kill 21979
+ [fanbin@localhost apue]$ 
+```
+
+关于 `pause` 函数，除了直接通过 [man 2 pause](http://man7.org/linux/man-pages/man2/pause.2.html)，查看其基本用途外，在 [man 7 signal](http://man7.org/linux/man-pages/man7/signal.7.html) 中有语句简洁的介绍
+
+> Suspends execution until any signal is caught.
+
+[BACK TO TOP](#目录)
+
+## 10.5 中断的系统调用
+
+首次提及自动重启动功能，支持列表可查询 [man 7 signal](http://man7.org/linux/man-pages/man7/signal.7.html)。
+
+10.15 重启动！！！，[Figure-16.19.c](#figure-1619c)， [10.5 中断的系统调用](#105-中断的系统调用)
+
+[BACK TO TOP](#目录)
+
+## 10.6 可重入函数
+
+进程捕捉到信号并对其进行处理时，进程正在执行的正常指令序列就被信号处理程序临时中断，它首先执行该信号处理程序中的指令。如果从信号处理程序返回（例如没有调用 `exit` 或 `longjmp`），则继续执行在捕捉到信号时正在执行的正常指令序列（这类似于发生硬件中断时所做的）。**但在信号处理程序中，不能判断捕捉到信号时进程执行到何处。** 如果进程正在执行 `malloc`，在其堆中分配另外的存储空间，而此时由于捕捉到信号而插入执行该信号处理程序，其中又调用 `malloc`，这时会对进程造成破坏，因为 `malloc` 通常为它所分配的存储区维护一个链表，而插入执行信号处理程序时，进程可能正在更改此链表。
+
+
+Single UNIX Specification说明了在信号处理程序中保证调用安全的函数。这些函数是 **可重入的** 并被称为 **异步信号安全的(async-signal safe)**。除了可重入以外，在信号处理操作期间，它会阻塞任何会引起不一致的信号发送。不在 [man 7 signal](http://man7.org/linux/man-pages/man7/signal.7.html) 中列举的函数大多数是不可重入的，因为
+
+(a) 已知他们使用静态数据结构；
+
+(b) 它们调用 `malloc` 或 `free`；
+
+(c) 它们是标准I/O函数。标准I/O函数很多实现都以不可重入方式使用全局数据结构。
+
+应当了解，即使信号处理程序调用了 [man 7 signal](http://man7.org/linux/man-pages/man7/signal.7.html) 中的函数，但是由于每个线程只有一个 `errno` 变量（[1.7 出错处理](#17-出错处理)），所以信号处理程序可能修改其原先值。
+
+**因此，作为一个通用的规则，当在信号处理程序中调用 [man 7 signal](http://man7.org/linux/man-pages/man7/signal.7.html) 中的函数时，应当在调用前保存 `errno`，在调用后恢复 `errno`。（应当了解，经常被捕捉到的信号是 SIGCHLD，其信号处理程序通常调用一种 `wait` 函数，而各种 `wait` 函数都能改变 `errno`。可参考 nginx-1.8.0 源码 `./src/os/unix/ngx_process.c` 中的SIGCHLD处理程序。）**
+
+其他可参考信息：[可重入(reentrancy) - wikipedia](https://en.wikipedia.org/wiki/Reentrancy_(computing)) 详细描述了此概念，[man 7 signal](http://man7.org/linux/man-pages/man7/signal.7.html) 提供一个异步信号安全函数的列表。
+
+### Figure-10.5.c
+
+功能：处理中断
+
+涉及头文件：
+[sys/types.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/sys_types.h.html),
+[pwd.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/pwd.h.html),
+[signal.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/signal.h.html),
+[unistd.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/unistd.h.html)
+
+涉及函数：
+[signal(2)](http://man7.org/linux/man-pages/man2/signal.2.html)
+
+```c
+
+ #include "apue.h"
+ #include <sys/types.h> /* getpwnam */
+ #include <pwd.h> /* getpwnam */
+ #include <signal.h> /* signal */
+ #include <unistd.h> /* alarm */
+ 
+ static void
+ my_alarm(int signo)
+ {
+     struct passwd *rootptr;
+ 
+     printf("in signal handler\n");
+     if ((rootptr = getpwnam("root")) == NULL)
+         err_sys("getpwnam(root) error");
+     alarm(1);
+ 
+ }
+ 
+ /* gcc apue.h apue_err.c figure-10.5.c */
+ int
+ main(void)
+ {
+     struct passwd *ptr;
+ 
+     signal(SIGALRM, my_alarm);
+     alarm(1);
+     for ( ; ;  ) {
+         if ((ptr = getpwnam("fanbin")) == NULL)
+             err_sys("getpwnam error");
+         if (strcmp(ptr->pw_name, "fanbin") != 0)
+             printf("return value corrupted!, pw_name = %s\n", ptr->pw_name);
+     }
+ 
+ }
+ /*
+  * 保证函数的可重入性的方法：
+  * 1）在写函数时候尽量使用局部变量（例如寄存器、堆栈中的变量）；
+  * 2）对于要使用的全局变量要加以保护（如采取关中断、信号量等互斥方法），
+  * 这样构成的函数就一定是一个可重入的函数。
+  *
+  * 满足下列条件的函数多数是不可重入（不安全）的：
+  * 1）函数体内使用了静态的数据结构；
+  * 2）函数体内调用了malloc() 或者 free() 函数；
+  * 3）函数体内调用了标准 I/O 函数。
+  *
+  * 如何将一个不可重入的函数改写成可重入函数呢？把一个不可重入函数变成可重入
+  * 的唯一方法是用可重入规则来重写它。其实很简单，只要遵守了几条很容易理解的
+  * 规则，那么写出来的函数就是可重入的：
+  * 1）不要使用全局变量。因为别的代码很可能改变这些变量值。
+  * 2）在和硬件发生交互的时候，切记执行类似 disinterrupt() 之类的操作，就是关闭
+  * 硬件中断。完成交互记得打开中断，在有些系列上，这叫做“进入/ 退出核心”。
+  * 3）不能调用其它任何不可重入的函数。
+  * 4）谨慎使用堆栈。
+  */
+ /* 可重入函数，简单理解为安全函数，详细说明参考以下博客内容
+  * http://blog.csdn.net/tennysonsky/article/details/45127125 
+  */
+```
+
+[BACK TO TOP](#目录)
+
+## 10.8 可靠信号术语和语义
+
+在信号产生(generation)和信号递送(delivery)之间的时间间隔内，称信号是未决的(pending)。
+
+[BACK TO TOP](#目录)
+
+## 10.10 函数alarm和pause
+
+使用 `alarm` 函数可以设置一个定时器（闹钟时间），在将来的某个时刻该定时器会超时。**当定时器超时时，产生 SIGALRM 信号。如果忽略或不捕捉此信号，则其默认动作是终止调用该 `alarm` 函数的进程。**
+
+**每个进程只能有一个闹钟时间。**
+
+### Figure-10.7.c
+
+功能：实现一个简略的sleep函数
+
+沉淀内容：学会查找自定义函数的问题，学会如何设计&编写一个供其他函数调用的可靠函数。
+
+```c
+
+ #include <signal.h> /* signal */
+ #include <unistd.h> /* alarm, pause */
+ 
+ static void
+ sig_alrm(int signo)
+ {
+         /* nothing to do, just return to wake up the pause */
+ 
+ }
+ 
+ unsigned int
+ sleep1(unsigned int seconds)
+ {
+     if (signal(SIGALRM, sig_alrm) == SIG_ERR)
+         return(seconds);
+     alarm(seconds); /* start the timer */
+     pause(); /* next caught signal wakes us up */
+     return(alarm(0)); /* turn off timer, return unslept time */
+ 
+ }
+```
+
+每个进程只能有一个闹钟时间。如果在调用alarm时，之前已为该进程注册的闹钟时间还没有超时，则该闹钟时间的余留值作为本次alarm函数调用的值返回。以前注册的闹钟时间则被新值代替。
+
+此 `sleep` 函数实现的问题有3个：
+
+1.如果在调用sleep1之前，调用者已设置了闹钟，则它被sleep1函数中的第一次alarm调用檫除。
+
+2.该程序中修改了SIGALRM的配置。
+
+3.在第一次调用alarm和pause之间有一个竞争条件。
+
+### Figure-10.8.c
+
+功能：完善 `sleep1` 函数，解决 [Figure-10.7.c](#figure-107c) 中的第三个问题。
+
+沉淀内容：学会仔细处理信号相关的函数，需要考虑周到。
+
+```c
+
+ #include <setjmp.h>
+ #include <signal.h>
+ #include <unistd.h>
+ 
+ static jmp_buf env_alrm;
+ 
+ static void
+ sig_alrm(int signo)
+ {
+     longjmp(env_alrm, 1); /* 解决第三个问题:竞争条件 */
+ 
+ }
+ 
+ unsigned int
+ sleep2(unsigned int seconds)
+ {
+     if (signal(SIGALRM, sig_alrm) == SIG_ERR)
+         return(seconds);
+     if (setjmp(env_alrm) == 0) {
+         alarm(seconds);  /* start the timer */
+         pause();         /* next caught signal wakes us up */
+ 
+     }
+     return(alarm(0));    /* turn off timer, return unslept time */
+ 
+ }
+```
+
+但是，`sleep2` 函数中却有一个难以察觉的问题，它涉及与其他信号的交互。如果 SIGALRM 中断了某一个信号处理程序，则调用 `longjmp` 会提早终止该信号处理程序。[Figure-10.9.c](#figure-109c)
+
+### Figure-10.9.c
+
+功能：暴露出 `sleep2` 函数的问题
+
+沉淀内容：仔细仔细处理信号
+
+```c
+
+ #include "apue.h"
+ 
+ unsigned int sleep2(unsigned int);
+ static void sig_int(int);
+ 
+ /* gcc apue.h apue_err.c figure-10.8.c figure-10.9.c */
+ /* $ ./a.out
+  * ^C       # 等大约4秒后
+  * sig_int starting
+  * sleep2 returned: 0
+  */
+ int
+ main(void)
+ {
+     unsigned int unslept;
+ 
+     if (signal(SIGINT, sig_int) == SIG_ERR)
+         err_sys("signal(SIGINT) error");
+     unslept = sleep2(5);
+     printf("sleep2 returned: %u\n", unslept);
+     exit(0);
+ 
+ }
+ /* 执行现象，SIGALRM的中断处理程序使另一个信号处理程序sig_int提早结束，
+  * 即时它未完成。这是个问题
+  */
+ 
+ static void sig_int(int signo)
+ {
+     int          i, j;
+     volatile int k; /* 7.10-2.c */
+ 
+     /*
+      * Turn these loops to run for more than 5 seconds
+      * on whatever system this test program is run.
+      */
+     printf("\nsig_int starting\n");
+     for (i = 0; i < 300000; i++)
+         for (j = 0; j < 4000; j++)
+             k += i * j;
+     printf("sig_int finished\n");
+     /* 这里面捕获到了中断信号SIGALRM，处理对应中断程序，环境恢复失败 */
+ 
+ }
+```
+
+执行结果：
+
+```sh
+[fanbin@localhost apue]$ ./a.out 
+^C                      # 大约4秒后，发送中断信号。
+sig_int starting
+sleep2 returned: 0
+[fanbin@localhost apue]$ 
+```
+
+由执行结果可看出，`longjmp` 使另一个信号处理程序 `sig_int` 提早结束。关于使用 `longjmp` 带来的 `sleep` BUG问题我们可参考 [man 3 sleep](http://man7.org/linux/man-pages/man3/sleep.3.html) 所提及的BUG。
+
+**`sleep1` 和 `sleep2` 函数的这两个实例是告诉我们在涉及信号时需要有精细而周到的考虑。**
+
+### Figure-10.10.c
+
+功能：利用 `alarm` 对可能阻塞的操作设置时间上限。
+
+沉淀内容：温习 [自动重启动](#105-中断的系统调用) 概念，了解 `alarm` 的一些常用方法([Figure-16.19.c](#figure-1619c无连接的客户端))。
+
+```c
+
+ #include "apue.h"
+ 
+ static void sig_alrm(int);
+ 
+ /* gcc apue.h apue_err.c figure-10.10.c */
+ int
+ main(void)
+ {
+     int  n;
+     char line[MAXLINE];
+ 
+     if (signal(SIGALRM, sig_alrm) == SIG_ERR)
+         err_sys("signal(SIGALRM) error");
+ 
+     alarm(10);
+     if ((n = read(STDIN_FILENO, line, MAXLINE)) < 0)
+         err_sys("read error");
+     alarm(0);
+ 
+     write(STDOUT_FILENO, line, n);
+     exit(0);
+ 
+ }
+ 
+ static void
+ sig_alrm(int signo)
+ {
+     /* nothing to do, just return to interrupt the read */
+ 
+ }
+ 
+```
+
+alarm处理用于sleep函数外，还常用于对可能阻塞的操作设置时间上限值问题：
+
+1.与之前相同：第一次alarm调用和read调用之间存在竞争。
+
+2.若系统调用是自动重启动的(APUE-3 10.5)，则当从SIGALRM信号处理程序返回时，read 并不被中断，这种情况下，设置时间限制不起作用。
+
+### Figure-10.11.c 
+
+功能：用 `longjmp` 实现前面的实例。使用这个方法无需担心一个慢速系统调用是否被中断
+
+沉淀内容：如何处理慢速系统，谨慎使用信号 & `longjmp`
+
+```c
+
+ #include "apue.h"
+ #include <setjmp.h>
+ 
+ static void    sig_alrm(int);
+ static jmp_buf env_alrm;
+ 
+ /* gcc apue.h apue_er.c figure-10.11.c */
+ int
+ main(void)
+ {
+     int  n;
+     char line[MAXLINE];
+ 
+     if (signal(SIGALRM, sig_alrm) == SIG_ERR)
+         err_sys("signal(SIGALRM) error");
+     if (setjmp(env_alrm) != 0)
+         err_quit("read timeout");
+ 
+     alarm(10);
+     if ((n = read(STDIN_FILENO, line, MAXLINE)) < 0)
+         err_sys("read error");
+     alarm(0);
+ 
+     write(STDOUT_FILENO, line, 0);
+     exit(0);
+ 
+ }
+ 
+ static void
+ sig_alrm(int signo)
+ {
+     longjmp(env_alrm, 1);
+ 
+ }
+```
+
+执行结果：
+
+```sh
+
+ [fanbin@localhost apue]$ ./a.out 
+ read timeout
+ [fanbin@localhost apue]$ 
+```
+
+不管系统是否重启动被中断的系统调用，改程序都会如预期的那样工作。但和 [Figure-10.8.c](#figure-108c) 有同样的问题。
+
+[BACK TO TOP](#目录)
+
+## 10.12 函数sigprocmask
+
+**sigprocmask是仅为单线程定义的。处理多线程进程中的信号的屏蔽使用另一个函数。[Figure-12.8](#xx)**
+
+### Figure-10.14.c
+
+功能：打印调用进程信号屏蔽字中的信号名
+
+涉及头文件：
+[signal.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/signal.h.html)
+
+涉及函数：
+[sigprocmask(2)](http://man7.org/linux/man-pages/man2/sigprocmask.2.html),
+[sigismember(3)](http://man7.org/linux/man-pages/man3/sigismember.3.html)
+
+沉淀内容：**加深对 [可重入函数](#106-可重入函数) 的理解，信号处理程序中调用了 [可重入函数](#106-可重入函数) 时，对 `errno` 的上下文环境应当保存。**，因可重入函数可能会修改 `errno` 值。可参考nginx-1.8.0源码 `src/os/unix/ngx_process.c` 中的 `ngx_signal_handler` 函数。
+
+```c
+
+ #include "apue.h"
+ #include <errno.h>
+ 
+ /* 打印调用进程信号屏蔽字中的信号名 */
+ void
+ pr_mask(const char *str)
+ {
+     sigset_t  sigset;
+     int       errno_save;
+ 
+     errno_save = errno; /* we can be called by signal handlers */
+     if (sigprocmask(0, NULL, &sigset) < 0) {
+         err_ret("sigprocmask error");
+ 
+     } else {
+         printf("%s", str);
+         if (sigismember(&sigset, SIGINT))
+             printf(" SIGINT");
+         if (sigismember(&sigset, SIGQUIT))
+             printf(" SIGQUIT");
+         if (sigismember(&sigset, SIGUSR1))
+             printf(" SIGUSR1");
+         if (sigismember(&sigset, SIGALRM))
+             printf(" SIGALRM");
+ 
+         /* remaining signal can go here */
+ 
+         printf("\n");
+ 
+     }
+ 
+     errno = errno_save; /* restore errno */
+ 
+ }
+```
+
+程序中的所有 `sigxxx` 函数均是可重入函数，可从 [man 7 signal](http://man7.org/linux/man-pages/man7/signal.7.html) 查询。
+
+[BACK TO TOP](#目录)
+
+## 10.13 函数sigpending
+
+### Figure-10.15.c
+
+功能：阻塞信号。
+
+涉及头文件：
+[signal.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/signal.h.html)
+
+涉及函数：
+[signal(2)](http://man7.org/linux/man-pages/man2/signal.2.html),
+[sigemptyset(3)](http://man7.org/linux/man-pages/man3/sigemptyset.3.html),
+[sigaddset(3)](http://man7.org/linux/man-pages/man3/sigaddset.3.html),
+[sigprocmask(2)](http://man7.org/linux/man-pages/man2/sigprocmask.2.html),
+[sigpending(2)](http://man7.org/linux/man-pages/man2/sigpending.2.html),
+[sigismember(3)](http://man7.org/linux/man-pages/man3/sigismember.3.html)
+
+沉淀内容：
+
+```c
+
+ #include "apue.h"
+ 
+ static void sig_quit(int);
+ 
+ /* gcc apue.h apue_err.c figure-10.15.c */
+ int
+ main(void)
+ {
+     sigset_t newmask, oldmask, pendmask;
+ 
+     if (signal(SIGQUIT, sig_quit) == SIG_ERR)
+         err_sys("can't catch SIGQUIT");
+ 
+     /*
+      * Block SIGQUIT and save current signal mask.
+      */
+     sigemptyset(&newmask);
+     sigaddset(&newmask, SIGQUIT);
+     if (sigprocmask(SIG_BLOCK, &newmask, &oldmask) < 0)
+         err_sys("SIG_BLCOK error");
+ 
+     sleep(5);  /* SIGQUIT here will remain pending */
+ 
+     if (sigpending(&pendmask) < 0)
+         err_sys("sigpending error");
+     if (sigismember(&pendmask, SIGQUIT))
+         printf("\nSIGQUIT pending\n");
+ 
+     /*
+      * Restore signal mask which unblocks SIGQUIT.
+      */
+     if (sigprocmask(SIG_SETMASK, &oldmask, NULL) < 0)
+         err_sys("SIG_SETMASK errro");
+     printf("SIGQUIT unblocks\n");
+ 
+     sleep(5); /* SIGQUIT here will terminate with core file */
+     exit(0);
+ 
+ }
+ 
+ static void
+ sig_quit(int signo)
+ {
+     printf("caught SIGQUIT\n");
+     if (signal(SIGQUIT, SIG_DFL) == SIG_ERR)
+         err_sys("can't reset SIGQUIT");
+ }
+```
+
+执行结果：
+
+```sh
+ [fanbin@localhost apue]$ ./a.out 
+ ^\                 # 信号阻塞
+ SIGQUIT pending
+ caught SIGQUIT
+ SIGQUIT unblocks
+ ^\Quit             # 信号立即执行
+ [fanbin@localhost apue]$ 
+```
+
+SIGQUIT: `CTRL + \`
+
+连续多次 ^\，若只有一次信号处理，则可看出系统没有将信号排队。
+
+当进程的信号被阻塞时，信号不会传递给进程，但会停留在待处理状态。
+
+在休眠期间如果产生了退出信号，那么此时该信号是 [未决的](108-可靠信号术语和语义)，但是不再受阻塞。
+
+[BACK TO TOP](#目录)
+
+## 10.14 函数sigaction
+
+`sigaction` 函数的功能是检查或修改（或检查并修改）与指定信号关联的处理动作。**此函数取代了UNIX早期版本使用的 `signal` 函数。**
+
+**现在很多系统都是用 `sigaction` 函数来实现 `signal` 函数。**
+
+## 10.15 函数sigsetjmp和siglongjmp
+
+### Figure-10.20.c
+
+功能：演示在信号处理程序被调用时，系统所设置的信号屏蔽字如何自动地包括刚才捕捉到的信号。
+
+涉及头文件：
+[signal.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/signal.h.html),
+[setjmp.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/setjmp.h.html)
+
+涉及函数：
+[signal(2)](http://man7.org/linux/man-pages/man2/signal.2.html),
+[sigsetjmp(3)](http://man7.org/linux/man-pages/man3/sigsetjmp.3.html),
+[siglongjmp(3)](http://man7.org/linux/man-pages/man3/siglongjmp.3.html)
+
+沉淀内容：理解信号中断机制，及信号处理函数内的jump。
+
+```c
+
+ #include "apue.h"
+ #include <signal.h> /* signal */
+ #include <setjmp.h> /* sigsetjmp, siglongjmp */
+ #include <time.h>
+ 
+ static void sig_usr1(int);
+ static void sig_alrm(int);
+ static sigjmp_buf jmpbuf;
+ static volatile sig_atomic_t canjump;
+ 
+ /* gcc apue.h apue_err.c figure-10.14.c figure-10.18.c figure-10.20.c */
+ /* $ ./a.out &
+  * [1] xxxx
+  * $ kill -USR1 xxxx
+  */
+ int
+ main(void)
+ {
+     if (signal(SIGUSR1, sig_usr1) == SIG_ERR)   /* figure-10.18.c */
+         err_sys("signal(SIGUSR1) error");
+     if (signal(SIGALRM, sig_alrm) == SIG_ERR)   /* figure-10.18.c */
+         err_sys("signal(SIGALRM) error");
+ 
+     pr_mask("starting main: "); /* Figure 10.14 */
+ 
+     if (sigsetjmp(jmpbuf, 1)) {
+         pr_mask("ending main: ");
+         exit(0);
+ 
+     }
+     canjump = 1; /* now sigsetjmp() is OK */
+ 
+     for ( ; ;  )
+         pause();
+ 
+ }
+ 
+ static void
+ sig_usr1(int signo)
+ {
+     time_t starttime;
+ 
+     if (canjump == 0)
+         return;  /* unexpected signal, ignore */
+ 
+     pr_mask("starting sig_usr1: ");
+ 
+     alarm(3); /* SIGALRM in 3 seconds  */
+     starttime = time(NULL);
+     for ( ; ;  ) /* busy wait for 5 second */
+         if (time(NULL) > starttime + 5)
+             break;
+ 
+     pr_mask("finishing sig_usr1: ");
+ 
+     canjump = 0;
+     siglongjmp(jmpbuf, 1); /* jump back to main, don't return */
+ 
+ }
+ 
+ static void
+ sig_alrm(int signo)
+ {
+     pr_mask("in sig_alrm: ");
+ 
+ }
+```
+
+执行结果：
+
+```sh
+
+ [fanbin@localhost apue]$ ./a.out &
+ [1] 7962
+ [fanbin@localhost apue]$ starting main: 
+ kill -USR1 7962
+ starting sig_usr1:  SIGUSR1
+ [fanbin@localhost apue]$ in sig_alrm:  SIGUSR1 SIGALRM
+ finishing sig_usr1:  SIGUSR1
+ ending main: 
+ 
+ [1]+  Done                    ./a.out
+ [fanbin@localhost apue]$ 
+```
+
+**在程序中使用了数据类型 `sig_atomic_t`，这是 ISO C 标准定义的变量类型，在写这种类型变量时不会被中断。**这意味着在具有虚拟存储器的系统上，这种变量不会跨越页边界，可以用一条机器指令对其进行访问。这种类型的变量总是包括 ISO 类型修饰符 `volatile`，其原因是：该变量将由两个不同的控制线程---main函数和异步执行的信号处理程序访问。
+
+[BACK TO TOP](#目录)
+
+## 10.16 函数sigsuspend
+
+### Figure-10.22.c
+
+功能：**保护临界区代码使其不被特定信号中断的方法。**
+
+涉及头文件：
+[signal.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/signal.h.html),
+
+涉及函数：
+[sigsuspend(2)](http://man7.org/linux/man-pages/man2/sigsuspend.2.html)
+
+沉淀内容：了解 `sigsuspend` 解决的问题，以及 `sigsuspend` 的正确用法。
+
+```c
+
+ #include "apue.h"
+ #include <signal.h> /* signal, sigemptyset, sigaddset, sigprocmask */
+ 
+ static void sig_int(int);
+ 
+ /* gcc  apue.h apue_err.c figure-10.14.c figure-10.18.c figure-10.22.c */
+ /* 保护代码临界区，使其不被特定信号中断 */
+ int
+ main(void)
+ {
+     sigset_t newmask, oldmask, waitmask;
+ 
+     pr_mask("program start: "); /* Figure-10.14 */
+ 
+     if (signal(SIGINT, sig_int) == SIG_ERR) /* Figure-10.18 */
+         err_sys("signal(SIGINT) error");
+     sigemptyset(&waitmask);
+     sigaddset(&waitmask, SIGUSR1);
+     sigemptyset(&newmask);
+     sigaddset(&newmask, SIGINT);
+ 
+     /*
+      * Block SIGINT and save current signal mask.
+      */
+     if (sigprocmask(SIG_BLOCK, &newmask, &oldmask) < 0)
+         err_sys("SIG_BLCOK error");
+ 
+     /*
+      * Critical region of code.
+      */
+     pr_mask("in critical region: ");
+ 
+     /*
+      * Pause, allowing all signal except SIGUSR1.
+      */
+     if (sigsuspend(&waitmask) != -1) /* 挂起waitmask */
+         err_sys("sigsuspend error");
+ 
+     pr_mask("after return from sigsuspend: ");
+ 
+     /*
+      * Reset signal mask which unblocks SIGINT.
+      */
+     if (sigprocmask(SIG_SETMASK, &oldmask, NULL) < 0)
+         err_sys("SIG_SETMASK error");
+ 
+     /*
+      * And continue processing ...
+      */
+     pr_mask("program exit: ");
+ 
+     exit(0);
+ 
+ }
+ 
+ static void
+ sig_int(int signo)
+ {
+     pr_mask("\nin sig_int: ");
+ 
+ }
+```
+
+执行结果：
+
+```sh
+[fanbin@localhost apue]$ ./a.out 
+program start: 
+in critical region:  SIGINT             # 临界区中的信号屏蔽字
+^C
+in sig_int:  SIGINT SIGUSR1             # SIGINT信号处理程序的信号屏蔽字，由sigsuspend所增加
+after return from sigsuspend:  SIGINT   # 退出挂起状态，信号屏蔽字恢复之前状态
+program exit:                           # 恢复原始信号屏蔽字
+[fanbin@localhost apue]$ 
+```
+
+### Figure-10.23.c
+
+功能：等待一个信号处理程序设置一个全局变量。
+
+沉淀内容：了解 `sigsuspend` 的另一种用法
+
+```c
+
+ #include "apue.h"
+ #include <signal.h>
+ 
+ volatile sig_atomic_t quitflag; /* set nonzero by signal handler */
+ 
+ static void
+ sig_int(int signo) /* one signal handler for SIGINT and SIGQUIT */
+ {
+     if (signo == SIGINT)
+         printf("\ninterrupt\n");
+     else if (signo == SIGQUIT)
+         quitflag = 1; /* set flag for main loop */
+ 
+ }
+ 
+ /* gcc apue.h apue_err.c figure-10.18.c figure-10.23.c */
+ /* sigsuspend的另一个应用是等待一个信号处理程序设置一个全局变量。*/
+ int
+ main(void)
+ {
+     sigset_t newmask, oldmask, zeromask;
+ 
+     if (signal(SIGINT, sig_int) == SIG_ERR) /* Figure-10.18 */
+         err_sys("signal(SIGINT) error");
+     if (signal(SIGQUIT, sig_int) == SIG_ERR)
+         err_sys("signal(SIGQUIT) error");
+ 
+     sigemptyset(&zeromask);
+     sigemptyset(&newmask);
+     sigaddset(&newmask, SIGQUIT);
+ 
+     /*
+      * Block SIGQUIT and save current signal mask.
+      */
+     /* 阻塞在这里 */
+     if (sigprocmask(SIG_BLOCK, &newmask, &oldmask) < 0)
+         err_sys("sigprocmask error");
+ 
+     while (quitflag == 0)
+         sigsuspend(&zeromask);
+ 
+     /*
+      * SIGQUIT has been caught and is now blocked; do whatever.
+      */
+     quitflag = 0;
+ 
+     /*
+      * Reset signal mask which unblocks SIGQUIT.
+      */
+     if (sigprocmask(SIG_SETMASK, &oldmask, NULL) < 0)
+         err_sys("SIG_SETMASK error");
+ 
+     exit(0);
+ 
+ }
+```
+
+执行结果：
+
+```sh
+
+ [fanbin@localhost apue]$ ./a.out 
+ ^C
+ interrupt
+ ^C
+ interrupt
+ ^C
+ interrupt
+ ^\[fanbin@localhost apue]$
+```
+
+考虑到支持 ISO C 的非 POSIX 系统与 POSIX 系统两者之间的可移植性，在一个信号处理程序中唯一应当做的是为 `sig_atomic_t` 类型的变量赋一个值。（参见 [Figure-10.20.c](#figure-1020c)）
+
+[BACK TO TOP](#目录)
+
+## 10.18 函数system
+
+POSIX.1 要求 `system` 忽略 *SIGINT* 和 *SIGQUIT*，阻塞 *SIGCHLD*。（为什么这么处理，参考原书 [10.18 函数system](#xx)）
+
+### Figure-10.28.c 
+
+功能：system函数的 POSIX.1 正确实现
+
+沉淀内容：了解如何正确的处理信号。
+
+```c
+
+ #include <sys/wait.h>
+ #include <errno.h>
+ #include <signal.h>
+ #include <unistd.h>
+ 
+ /* Figure-8.22.c 一个简略版的system（未处理信号） */
+ /* system函数的 POSIX.1 正确实现 */
+ int
+ system(const char *cmdstring) /* with appropriate signal handling */
+ {
+     pid_t            pid;
+     int              status;
+     struct sigaction ignore, saveintr, savequit;
+     sigset_t         chldmask, savemask;
+ 
+     if (cmdstring == NULL)
+         return(1); /* always a command processor with UNIX */
+ 
+     ignore.sa_handler = SIG_IGN; /* ignore SIGINT and SIGQUIT */
+     sigemptyset(&ignore.sa_mask);
+     ignore.sa_flags = 1;
+     if (sigaction(SIGINT, &ignore, &saveintr) < 0)
+         return(-1);
+     if (sigaction(SIGQUIT, &ignore, &savequit) < 0)
+         return(-1);
+     sigemptyset(&chldmask); /* now block SIGCHLD */
+     sigaddset(&chldmask, SIGCHLD);
+     if (sigprocmask(SIG_BLOCK, &chldmask, &savemask) < 0)
+         return(-1);
+ 
+     if ((pid = fork()) < 0) {
+         status = -1; /* probably out of process */
+ 
+     } else if (pid == 0) { /* child */
+         /* restore previous signal action & reset signal mask */
+         sigaction(SIGINT, &saveintr, NULL);
+         sigaction(SIGQUIT, &savequit, NULL);
+         sigprocmask(SIG_SETMASK, &savemask, NULL);
+ 
+         execl("/bin/sh", "sh", "-c", cmdstring, (char*)0);
+         _exit(127); /* exec error */
+     } else { /* parent */ 
+         while(waitpid(pid, &status, 0) < 0)
+             if (errno != EINTR) {
+                 status = -1; /* error other than EINTR from waitpid() */
+                 break;
+ 
+             }
+     }
+ 
+     /* restore previous signal action & reset signal mask */
+     if (sigaction(SIGINT, &saveintr, NULL) < 0)
+         return(-1);
+     if (sigaction(SIGQUIT, &savequit, NULL) < 0)
+         return(-1);
+     if (sigprocmask(SIG_SETMASK, &savemask, NULL) < 0)
+         return(-1);
+ 
+     return(status);
+ 
+ }
+```
+
+在编写使用 `system` 函数的程序时，一定要正确地解释返回值。如果直接调用 `fork`, `exec` 和 `wait`，则终止状态与调用 `system` 是不同的。
+
+[BACK TO TOP](#目录)
 
 --------------------------------------------------------------------------------
 第十五章 进程间通信
@@ -5470,7 +6499,7 @@ http://blog.csdn.net/andyxie407/article/details/1672325
 [getaddrinfo(3)](http://man7.org/linux/man-pages/man3/getaddrinfo.3.html)，
 [socket(2)](http://man7.org/linux/man-pages/man2/socket.2.html)
 
-沉淀内容：学会基本的无连接客户端，温习信号机制，`alarm` 的用法及 [重启动](#10.5) 概念
+沉淀内容：学会基本的无连接客户端，温习信号机制，`alarm` 的用法(参见 [Figure-10.10.c](#figure-1010c))及 [自动重启动](#105-中断的系统调用) 概念
 
 ```c
 
@@ -5496,7 +6525,7 @@ http://blog.csdn.net/andyxie407/article/details/1672325
      buf[0] = 0;
      if (sendto(sockfd, buf, 1, 0, aip->ai_addr, aip->ai_addrlen) < 0)
          err_sys("sendto error");
-     alarm(TIMEOUT); /* 用于产生 SIGALRM 中断 */
+     alarm(TIMEOUT); /* 用于产生 SIGALRM 中断 */    /* 其实这里可能会有一个竞争条件 */
      if ((n = recvfrom(sockfd, buf, BUFLEN, 0, NULL, NULL)) < 0) {
          if (errno != EINTR)
              alarm(0);           /* 取消 SIGALRM 中断 */
@@ -5546,7 +6575,7 @@ http://blog.csdn.net/andyxie407/article/details/1672325
 
 以上例子除了增加安装一个 *SIGALRM* 的信号处理程序以外，基于数据报的客户端中的main 函数和面向连接的客户端中的类似。
 
-如果服务器不在运行状态，客户端调用 `recvfrom` 便会无限期阻塞。对于这个面向连接的实例，如果服务器不运行，connect调用会失败。为了避免无限期阻塞，可以在调用 `recvfrom` 之前设置警告时钟。关于 `alarm` 的使用可参考 [这个](http://liuzhigong.blog.163.com/blog/static/178272375201172021328123/) 博客的介绍，或者至 [10.5](#xx)、[10.6](#xx) 了解 **重启动** 概念。
+如果服务器不在运行状态，客户端调用 `recvfrom` 便会无限期阻塞。对于这个面向连接的实例，如果服务器不运行，connect调用会失败。为了避免无限期阻塞，可以在调用 `recvfrom` 之前设置警告时钟。关于 `alarm` 的使用可参考 [这个](http://liuzhigong.blog.163.com/blog/static/178272375201172021328123/) 博客的介绍，或者至 [10.5 中断的系统调用](#105-中断的系统调用) 了解 **重启动** 概念，至 [10.6 可重入函数](#106-可重入函数) 了解异步信号安全函数（或 [man 7 signal](http://man7.org/linux/man-pages/man7/signal.7.html)）。
 
 执行结果：
 

@@ -1,6 +1,7 @@
 #include "apue.h"
 #include <errno.h>
 
+/* 打印调用进程信号屏蔽字中的信号名 */
 void
 pr_mask(const char *str)
 {

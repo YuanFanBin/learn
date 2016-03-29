@@ -2,7 +2,7 @@
 
 static void sig_alrm(int);
 
-/* gcc 10.10-3.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-10.10.c */
 int
 main(void)
 {
@@ -24,7 +24,7 @@ main(void)
 static void
 sig_alrm(int signo)
 {
-    /* nothing to do, just return to tinterrupt the read */
+    /* nothing to do, just return to interrupt the read */
 }
 
 /* alarm处理用于sleep函数外，还常用于对可能阻塞的操作设置时间上限值 */

@@ -2,7 +2,7 @@
 
 static void sig_quit(int);
 
-/* gcc 10.13.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-10.15.c */
 int
 main(void)
 {
@@ -45,7 +45,5 @@ sig_quit(int signo)
         err_sys("can't reset SIGQUIT");
 }
 /* SIGQUIT: CTRL+\ */
-/* 连续多次 ^\，若只有一次信号处理，则可看出系统没有将信号排队 */
-/* 当进程的信号被阻塞时，信号不会传递给进程，但会停留在待处理状态，
- * 当进程解除对信号的阻塞时，待处理信号将立即被处理。
+/* 连续多次 ^\，若只有一次信号处理，则可看出系统没有将信号排队
  */

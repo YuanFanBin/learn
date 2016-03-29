@@ -8,6 +8,8 @@
  * UNIX中总是可用的。
  * */
 
+/* Figure-10.28.c 有更详细的实现（处理信号） */
+
 int
 system(const char *cmdstring) /* version without signal handling */
 {

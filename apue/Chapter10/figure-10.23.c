@@ -12,7 +12,7 @@ sig_int(int signo) /* one signal handler for SIGINT and SIGQUIT */
         quitflag = 1; /* set flag for main loop */
 }
 
-/* gcc 10.16-2.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-10.18.c figure-10.23.c */
 /* 代码跑的不对啊！！*/
 /* sigsuspend的另一个应用是等待一个信号处理程序设置一个全局变量。*/
 int
@@ -20,7 +20,7 @@ main(void)
 {
     sigset_t newmask, oldmask, zeromask;
 
-    if (signal(SIGINT, sig_int) == SIG_ERR)
+    if (signal(SIGINT, sig_int) == SIG_ERR) /* Figure-10.18 */
         err_sys("signal(SIGINT) error");
     if (signal(SIGQUIT, sig_int) == SIG_ERR)
         err_sys("signal(SIGQUIT) error");

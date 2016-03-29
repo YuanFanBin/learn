@@ -3,7 +3,7 @@
 
 static void sig_cld(int);
 
-/* gcc 10.7.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-10.6.c */
 int main()
 {
     pid_t  pid;
@@ -37,3 +37,7 @@ sig_cld(int signo) /* interrupts pause() */
 
     printf("pid = %d\n", pid);
 }
+
+/*
+ * signal的用法及SIGCLD不过多学习
+ */

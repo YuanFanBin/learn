@@ -11,8 +11,9 @@ sig_usr(int signo) /* one signal handler for SIGUSR1 and SIGUSR2 */
 }
 
 /*  
- *  10.16-3.c--信号实现
- *  15.2-3.c --管道实现
+ *  Figure-8.12.c  --进程同步模板
+ *  Figure-10.24.c --信号实现
+ *  Figure-15.7.c  --管道实现
  */
 
 void
@@ -41,7 +42,7 @@ TELL_PARENT(pid_t pid)
 void
 WAIT_PARENT(void)
 {
-    while (sigflag == 0)
+    while (sigflag == 0)    /* 这个的用法方式参见 Figure-10.23.c */
         sigsuspend(&zeromask); /* and wait for parent */
     sigflag = 0;
 
@@ -69,3 +70,4 @@ WAIT_CHILD(void)
 }
 /* 可以用信号实现父、子进程之间的同步。 */
 /* 图15-7显示了使用管道的这5个函数的另一种实现 */
+/* 如果在等待信号发生时希望去休眠，则使用 `sigsuspend` 函数是非常适当的。 */

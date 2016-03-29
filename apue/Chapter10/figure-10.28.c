@@ -3,6 +3,8 @@
 #include <signal.h>
 #include <unistd.h>
 
+/* Figure-8.22.c 一个简略版的system（未处理信号） */
+/* system函数的 POSIX.1 正确实现 */
 int
 system(const char *cmdstring) /* with appropriate signal handling */
 {

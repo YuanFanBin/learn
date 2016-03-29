@@ -3,22 +3,21 @@
 
 static void sig_int(int);
 
-/* gcc 10.16-1.c apue.h apue_err.c 10.12.c */
+/* gcc  apue.h apue_err.c figure-10.14.c figure-10.18.c figure-10.22.c */
 /* 保护代码临界区，使其不被特定信号中断 */
 int
 main(void)
 {
     sigset_t newmask, oldmask, waitmask;
 
-    pr_mask("program start: ");
+    pr_mask("program start: "); /* Figure-10.14 */
 
-    if (signal(SIGINT, sig_int) == SIG_ERR)
+    if (signal(SIGINT, sig_int) == SIG_ERR) /* Figure-10.18 */
         err_sys("signal(SIGINT) error");
     sigemptyset(&waitmask);
     sigaddset(&waitmask, SIGUSR1);
     sigemptyset(&newmask);
     sigaddset(&newmask, SIGINT);
-    pr_mask("----------------: ");
 
     /*
      * Block SIGINT and save current signal mask.

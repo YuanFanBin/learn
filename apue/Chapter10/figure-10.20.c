@@ -8,7 +8,7 @@ static void sig_alrm(int);
 static sigjmp_buf jmpbuf;
 static volatile sig_atomic_t canjump;
 
-/* gcc 10.15.c apue.h apue_err.c 10.12.c */
+/* gcc apue.h apue_err.c figure-10.14.c figure-10.18.c figure-10.20.c */
 /* $ ./a.out &
  * [1] xxxx
  * $ kill -USR1 xxxx
@@ -16,12 +16,12 @@ static volatile sig_atomic_t canjump;
 int
 main(void)
 {
-    if (signal(SIGUSR1, sig_usr1) == SIG_ERR)
+    if (signal(SIGUSR1, sig_usr1) == SIG_ERR)   /* figure-10.18.c */
         err_sys("signal(SIGUSR1) error");
-    if (signal(SIGALRM, sig_alrm) == SIG_ERR)
+    if (signal(SIGALRM, sig_alrm) == SIG_ERR)   /* figure-10.18.c */
         err_sys("signal(SIGALRM) error");
 
-    pr_mask("starting main: "); /* Figure 10.14, 10.12.c */
+    pr_mask("starting main: "); /* Figure 10.14 */
 
     if (sigsetjmp(jmpbuf, 1)) {
         pr_mask("ending main: ");
@@ -41,7 +41,7 @@ sig_usr1(int signo)
     if (canjump == 0)
         return;  /* unexpected signal, ignore */
 
-    pr_mask("starting sig_usr1: "); /* ??? 打印不出来， 奇怪 */
+    pr_mask("starting sig_usr1: ");
 
     alarm(3); /* SIGALRM in 3 seconds  */
     starttime = time(NULL);

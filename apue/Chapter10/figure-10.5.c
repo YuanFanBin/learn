@@ -15,7 +15,7 @@ my_alarm(int signo)
     alarm(1);
 }
 
-/* gcc 10.6.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-10.5.c */
 int
 main(void)
 {

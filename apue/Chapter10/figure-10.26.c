@@ -12,7 +12,7 @@ sig_chld(int signo)
     printf("caught SIGCHLD");
 }
 
-/* gcc 10.18.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-10.26.c */
 int
 main(void)
 {

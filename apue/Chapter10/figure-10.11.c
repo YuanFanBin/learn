@@ -4,7 +4,7 @@
 static void    sig_alrm(int);
 static jmp_buf env_alrm;
 
-/* gcc 10.10-4.c apue.h apue_er.c */
+/* gcc apue.h apue_er.c figure-10.11.c */
 int
 main(void)
 {
