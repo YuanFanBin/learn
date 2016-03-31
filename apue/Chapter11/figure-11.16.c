@@ -76,7 +76,7 @@ merge()
     }
 }
 
-/* gcc 11.6.8.c apue.h apue_err.c -lpthread */
+/* gcc apue.h apue_err.c figure-11.16.c -lpthread */
 int
 main()
 {
@@ -121,4 +121,13 @@ main()
 }
 
 /* 线程同步：5.屏障 */
+/* 
+ * 线程同步的各种方法：
+ * https://en.wikipedia.org/wiki/Synchronization_(computer_science)#Pthreads_synchronization
+ */
 
+/*
+ * 屏障（barrier）是用户协调多个线程并行工作的同步机制。
+ *
+ * 屏障允许每个线程等待，直到所有的合作线程都到达某一点，然后从该店继续执行。
+ */

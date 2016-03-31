@@ -132,6 +132,14 @@
         * [Figure-10.22.c](#figure-1022c)
         * [Figure-10.23.c](#figure-1023c)
     * [10.18 函数system](#1018-函数system)
+* [第十一章 线程](#第十一章-线程)
+    * [11.1 引言](#111-引言)
+    * [11.2 线程概念](#112-线程概念)
+    * [11.4 线程创建](#114-线程创建)
+        * [Figure-11.2.c](#figure-112c)
+    * [11.5 线程终止](#115-线程终止)
+        * [Figure-11.3.c](#figure-113c)
+        * [Figure-11.5.c](#figure-115c)
 * [第十五章 进程间通信](#第十五章-进程间通信)
     * [进程间通信方式](#进程间通信方式)
     * [15.2 管道](#152-管道)
@@ -4406,7 +4414,7 @@ alarm处理用于sleep函数外，还常用于对可能阻塞的操作设置时�
  [fanbin@localhost apue]$ 
 ```
 
-不管系统是否重启动被中断的系统调用，改程序都会如预期的那样工作。但和 [Figure-10.8.c](#figure-108c) 有同样的问题。
+不管系统是否重启动被中断的系统调用，该程序都会如预期的那样工作。但和 [Figure-10.8.c](#figure-108c) 有同样的问题。
 
 [BACK TO TOP](#目录)
 
@@ -4425,7 +4433,7 @@ alarm处理用于sleep函数外，还常用于对可能阻塞的操作设置时�
 [sigprocmask(2)](http://man7.org/linux/man-pages/man2/sigprocmask.2.html),
 [sigismember(3)](http://man7.org/linux/man-pages/man3/sigismember.3.html)
 
-沉淀内容：**加深对 [可重入函数](#106-可重入函数) 的理解，信号处理程序中调用了 [可重入函数](#106-可重入函数) 时，对 `errno` 的上下文环境应当保存。**，因可重入函数可能会修改 `errno` 值。可参考nginx-1.8.0源码 `src/os/unix/ngx_process.c` 中的 `ngx_signal_handler` 函数。
+沉淀内容：**加深对 [可重入函数](#106-可重入函数) 的理解，信号处理程序中调用了 [可重入函数](#106-可重入函数) 时，对 `errno` 的上下文环境应当保存。**因可重入函数可能会修改 `errno` 值。可参考nginx-1.8.0源码 `src/os/unix/ngx_process.c` 中的 `ngx_signal_handler` 函数。
 
 ```c
 
@@ -4926,6 +4934,309 @@ POSIX.1 要求 `system` 忽略 *SIGINT* 和 *SIGQUIT*，阻塞 *SIGCHLD*。（�
 ```
 
 在编写使用 `system` 函数的程序时，一定要正确地解释返回值。如果直接调用 `fork`, `exec` 和 `wait`，则终止状态与调用 `system` 是不同的。
+
+[BACK TO TOP](#目录)
+
+--------------------------------------------------------------------------------
+第十一章 线程
+================================================================================
+
+## 11.1 引言
+
+不管在什么情况下，只要单个资源需要在多个用户间共享，就必须处理一致性问题。
+
+[BACK TO TOP](#目录)
+
+## 11.2 线程概念
+
+每个线程都包含表示执行环境所必需的信息，其中包括进程中标识线程的线程ID、一组寄存器值、栈、调度优先级和策略、信号屏蔽字、errno变量（见 [1.7](#xx)）以及线程私有数据（见 [12.6](#xx)）。关于线程的概念可参考 [man 7 pthreads](http://man7.org/linux/man-pages/man7/pthreads.7.html)
+
+[BACK TO TOP](#目录)
+
+## 11.4 线程创建
+
+**线程创建时并不能保证哪个线程会先运行：是新创建的线程，还是调用线程。**
+
+### Figure-11.2.c
+
+功能：打印线程ID
+
+涉及头文件：
+[pthread.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/pthread.h.html)
+
+涉及函数：
+[pthread_create(3)](http://man7.org/linux/man-pages/man3/pthread_create.3.html),
+[pthread_self(3)](http://man7.org/linux/man-pages/man3/pthread_self.3.html)
+
+沉淀内容：了解线程的基本创建方法及编译时需链接的库
+
+```c
+
+ #include "apue.h"
+ #include <pthread.h>
+ 
+ pthread_t ntid;
+ 
+ void
+ printids(const char *s)
+ {
+     pid_t     pid;
+     pthread_t tid;
+ 
+     pid = getpid();
+     tid = pthread_self();
+     printf("%s pid %lu tid %lu (0x%lx)\n", s, (unsigned long)pid,
+             (unsigned long)tid, (unsigned long)tid);
+ 
+ }
+ 
+ void *
+ thr_fn(void *arg)
+ {
+     printids("new thread: ");
+     return((void*)0);
+ 
+ }
+ 
+ /* gcc apue.h apue_err.c figure-11.2.c -lpthread */
+ /* 进程ID相同，线程ID不同 */
+ int
+ main(void)
+ {
+     int err;
+     err = pthread_create(&ntid, NULL, thr_fn, NULL);
+     if (err != 0)
+         err_exit(err, "can't create thread");
+     printids("main thread:");
+     sleep(1);
+     exit(0);
+ 
+ }
+```
+
+有两个特别之处，需要处理主线程和新线程之间的竞争。
+
+1.主线程需要休眠，如果主线程不休眠，它就可能会退出，这样新线程还没有机会运行，整个进程可能就已经终止了。（依赖系统的线程实现及调度算法）
+
+2.新线程是通过调用pthread_self函数获取自己的线程ID的，而不是从共享内存中读出的，或者从线程的启动例程中以参数的形式接收到的。
+
+执行结果：
+
+```sh
+
+ [fanbin@localhost apue]$ ./a.out 
+ main thread: pid 11375 tid 3078526656 (0xb77e96c0)
+ new thread:  pid 11375 tid 3078523760 (0xb77e8b70)
+ [fanbin@localhost apue]$ 
+```
+
+## 11.5 线程终止
+
+单个线程可以通过3中方式退出，因此可以在不终止整个进程的情况下，停止它的控制流。
+
+（1）线程可以简单的从启动例程中返回，返回值是线程的退出码。
+
+（2）线程可以被同一进程中的其他线程取消。
+
+（3）线程调用 `pthread_exit`
+
+以上信息均可从 [man 3 pthread_create](http://man7.org/linux/man-pages/man3/pthread_create.3.html) 获得。
+
+### Figure-11.3.c
+
+功能：展示如何获取已终止的线程的退出码。
+
+涉及头文件：
+[pthread.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/pthread.h.html)
+
+涉及函数：
+[pthread_create(3)](http://man7.org/linux/man-pages/man3/pthread_create.3.html),
+[pthread_exit(3)](http://man7.org/linux/man-pages/man3/pthread_exit.3.html),
+[pthread_join(3)](http://man7.org/linux/man-pages/man3/pthread_join.3.html)
+
+沉淀内容：学会线程的退出及如何获取退出码（与进程fork, wait对比着学习）
+
+```c
+
+ #include "apue.h"
+ #include <pthread.h>
+ 
+ void *
+ thr_fn1(void *arg)
+ {
+     printf("thread 1 returning\n");
+     return((void*)1);
+ }
+ 
+ void *
+ thr_fn2(void *arg)
+ {
+     printf("thread 2 exiting\n");
+     pthread_exit((void*)2);
+ }
+ 
+ /* gcc apue.h apue_err.c figure-11.3.c -lpthread */
+ int
+ main(void)
+ {
+     int        err;
+     pthread_t  tid1, tid2;
+     void      *tret;
+ 
+     err = pthread_create(&tid1, NULL, thr_fn1, NULL);
+     if (err != 0)
+         err_exit(err, "can't create thread 1");
+     err = pthread_create(&tid2, NULL, thr_fn2, NULL);
+     if (err != 0)
+         err_exit(err, "can't create thread 2");
+     err = pthread_join(tid1, &tret);
+     if (err != 0)
+         err_exit(err, "can't join with thread 1");
+     printf("thread 1 exit code %ld\n", (long)tret);
+     err = pthread_join(tid2, &tret);
+     if (err != 0)
+         err_exit(err, "can't join with thread 2");
+     printf("thread 2 exit code %ld\n", (long)tret);
+     exit(0);
+ 
+ }
+```
+
+执行结果：
+
+```sh
+
+ [fanbin@localhost apue]$ ./a.out 
+ thread 1 returning
+ thread 2 exiting
+ thread 1 exit code 1
+ thread 2 exit code 2
+ [fanbin@localhost apue]$ 
+```
+
+可以看到，当一个线程通过调用 `pthread_exit` 退出或简单的从启动例程中返回时，进程中其他线程可以通过调用 `pthread_join` 函数获得该线程的退出状态。
+
+## Figure-11.5.c
+
+功能：如何使用线程清理处理程序
+
+涉及头文件：
+[pthread.h](http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/pthread.h.html)
+
+涉及函数：
+[pthread_cleanup_push(3)](http://man7.org/linux/man-pages/man3/pthread_cleanup_push.3.html),
+[pthread_cleanup_pop(3)](http://man7.org/linux/man-pages/man3/pthread_cleanup_pop.3.html),
+[pthread_exit(2)](http://man7.org/linux/man-pages/man3/pthread_exit.3.html)
+
+沉淀内容：对照进程的 `atexit`，学习线程的退出清理函数，及用法。
+
+```c
+
+ #include "apue.h"
+ #include <pthread.h>
+ 
+ void
+ cleanup(void *arg)
+ {
+     printf("cleanup: %s\n", (char *)arg);
+ }
+ 
+ void *
+ thr_fn1(void *arg)
+ {
+     printf("thread 1 start\n");
+     pthread_cleanup_push(cleanup, "thread 1 first handler");
+     pthread_cleanup_push(cleanup, "thread 1 second handler");
+     printf("thread 1 push complete\n");
+     if (arg)
+         return((void *)1);  /* 不会调用退出函数(不可移植方法，栈变更了) */
+     pthread_cleanup_pop(0);
+     pthread_cleanup_pop(0);
+     return((void *)1);
+ }
+ 
+ void *
+ thr_fn2(void *arg)
+ {
+     printf("thread 2 start\n");
+     pthread_cleanup_push(cleanup, "thread 2 first handler");
+     pthread_cleanup_push(cleanup, "thread 2 second handler");
+     printf("thread 2 push complete\n");
+     if (arg)
+         pthread_exit((void *)2);    /* 会调用退出函数(可移植方法) */
+     pthread_cleanup_pop(0);
+     pthread_cleanup_pop(0);
+     pthread_exit((void *)2);
+ 
+ }
+ 
+ /* gcc apue.h apue_err.c figure-11.5.c -lpthread */
+ int
+ main(void)
+ {
+     int        err;
+     pthread_t  tid1, tid2;
+     void      *tret;
+ 
+     err = pthread_create(&tid1, NULL, thr_fn1, (void *)1);
+     if (err != 0)
+         err_exit(err, "can't create thread 1");
+     err = pthread_create(&tid2, NULL, thr_fn2, (void *)1);
+     if (err != 0)
+         err_exit(err, "can't create thread 2");
+     err = pthread_join(tid1, &tret);
+     if (err != 0)
+         err_exit(err, "can't join with thread 1");
+     printf("thread 1 exit code %ld\n", (long)tret);
+     err = pthread_join(tid2, &tret);
+     if (err != 0)
+         err_exit(err, "can't join with thread 2");
+     printf("thread 2 exit code %ld\n", (long)tret);
+     exit(0);
+ 
+ }
+```
+
+执行结果：
+
+```sh
+
+ [fanbin@localhost apue]$ ./a.out 
+ thread 1 start
+ thread 2 start
+ thread 2 push complete
+ thread 1 push complete
+ thread 1 exit code 1
+ cleanup: thread 2 second handler
+ cleanup: thread 2 first handler
+ thread 2 exit code 2
+ [fanbin@localhost apue]$ 
+```
+
+`pthread_clean_push`, `pthread_clean_pop` 需成对出现，当线程执行以下动作时，清理函数是由 `pthread_cleanup_push` 函数调度的， 调用时只有一个参数arg：
+
+(1) 调用 `pthread_exit` 时：
+
+(2) 响应取消请求时；
+
+(3) 用非零参数调用pthread_clean_pop时。
+
+`thread_cancel` 并不等待线程终止，它仅仅提出请求。
+
+以上内容可参见原书或者 [man 3 pthread_cleanup_pop/pthread_cleanup_push](http://man7.org/linux/man-pages/man3/pthread_cleanup_pop.3.html)
+ 
+进城函数和线程函数之间的相似之处
+
+|进城原语|线程原语|描述|
+|--------|--------|----|
+|fork|pthread_create|创建新的控制流|
+|exit|pthread_exit|从现有的控制流中退出|
+|waitpid|pthread_join|从控制流中得到退出状态|
+|atexit|pthread_cancel_push|注册在退出控制流时调用的函数|
+|getpid|pthread_self|获取控制流的ID|
+|abort|pthread_cancel|请求控制流的非正常退出|
+
+[BACK TO TOP](#目录)
 
 [BACK TO TOP](#目录)
 

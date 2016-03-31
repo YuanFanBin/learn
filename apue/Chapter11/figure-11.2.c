@@ -22,7 +22,7 @@ thr_fn(void *arg)
     return((void*)0);
 }
 
-/* gcc 11.4.c apue.h apue_err.c -lpthread */
+/* gcc apue.h apue_err.c figure-11.2.c -lpthread */
 /* 进程ID相同，线程ID不同 */
 int
 main(void)

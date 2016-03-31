@@ -15,7 +15,7 @@ thr_fn1(void *arg)
     pthread_cleanup_push(cleanup, "thread 1 second handler");
     printf("thread 1 push complete\n");
     if (arg)
-        return((void *)1);
+        return((void *)1);  /* 不会调用退出函数(不可移植方法，栈变更了) */
     pthread_cleanup_pop(0);
     pthread_cleanup_pop(0);
     return((void *)1);
@@ -29,13 +29,13 @@ thr_fn2(void *arg)
     pthread_cleanup_push(cleanup, "thread 2 second handler");
     printf("thread 2 push complete\n");
     if (arg)
-        pthread_exit((void *)2);
+        pthread_exit((void *)2);    /* 会调用退出函数(可移植方法) */
     pthread_cleanup_pop(0);
     pthread_cleanup_pop(0);
     pthread_exit((void *)2);
 }
 
-/* gcc 11.5-3.c apue.h apue_err.c -lpthread */
+/* gcc apue.h apue_err.c figure-11.5.c -lpthread */
 int
 main(void)
 {

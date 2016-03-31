@@ -15,7 +15,7 @@ thr_fn2(void *arg)
     pthread_exit((void*)2);
 }
 
-/* gcc 11.5-1.c apue.h apue_err.c -lpthread */
+/* gcc apue.h apue_err.c figure-11.3.c -lpthread */
 int
 main(void)
 {
@@ -39,12 +39,3 @@ main(void)
     printf("thread 2 exit code %ld\n", (long)tret);
     exit(0);
 }
-/* pthread_join的使用线程将会一直阻塞，直到指定的线程调用pthread_exit，
- * 从启动历程中返回或被取消。
- */
-/*   单个线程可以通过3中方式退出，因此可以在不终止整个进程的情况下，停止它
- * 的控制流。
- *   1.线程可以简单地从启动例程中返回，返回值是线程的退出码。
- *   2.线程可以被同一进程中的其他线程取消。
- *   3.线程调用pthread_exit。
- */

@@ -21,7 +21,7 @@ thr_fn1(void *arg)
 {
     struct foo *fp;
     
-    if ((fp = malloc(sizeof(struct foo))) == NULL)
+    if ((fp = malloc(sizeof(struct foo))) == NULL)  /* 堆上数据，线程退出后，数据仍可用 */
         err_sys("can't allocate memory");
     fp->a = 1;
     fp->b = 2;
@@ -31,7 +31,7 @@ thr_fn1(void *arg)
     return((void *)fp);
 }
 
-/* gcc e11.1.c apue.h apue_err.c -lpthread */
+/* gcc apue.h apue_err.c exercise-11.1.c -lpthread */
 int
 main(void)
 {

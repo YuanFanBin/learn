@@ -101,3 +101,19 @@ job_find(struct queue *qp, pthread_t id)
 /* P328, 11.6.4 */
 
 /* 线程同步：2.读写锁 */
+/* 
+ * 线程同步的各种方法：
+ * https://en.wikipedia.org/wiki/Synchronization_(computer_science)#Pthreads_synchronization
+ */
+
+/*
+ * 读写锁非常适合于对数据结构读的次数远大于写的情况。
+ *
+ *
+ * 在释放读写锁占用的内存之前，需要调用 `pthread_rwlock_destroy` 做清理工作。
+ *
+ * 如果 `pthread_rwlock_init` 为读写锁分配了资源，`pthread_rwlock_destroy` 将释放这些资源。
+ *
+ * 如果在调用 `pthread_rwlock_destroy` 之前就释放了读写锁占用的内存空间，那么分配给这个锁
+ * 的资源就会丢失。
+ */

@@ -2,13 +2,14 @@
 #include <pthread.h>
 #include <time.h>
 
-/* gcc 11.6.3.c apue.h apue_err.c -lpthread -lrt */
 /* 参考资料 http://blog.csdn.net/langeldep/article/details/6427780 */
 /* or $ man clock_gettime  # Link with -lrt */
 /* 
  * clock_gettime并不是所有平台都支持，APUE 11.6.6(P333)有通过gettimtofday
  * 实现的timespec时间
  */
+
+/* gcc apue.h apue_err.c figure-11.13.c -lpthread -lrt */
 int
 main(void)
 {
@@ -20,7 +21,7 @@ main(void)
 
     pthread_mutex_lock(&lock);
     printf("mutex is locked\n");
-    clock_gettime(CLOCK_REALTIME, &tout);  /* 编译时需要 -lrq */
+    clock_gettime(CLOCK_REALTIME, &tout);  /* 编译时需要 -lrt */
     tmp = localtime(&tout.tv_sec);
     strftime(buf, sizeof(buf), "%r", tmp);
     printf("current time is now %s\n", buf);
@@ -41,3 +42,7 @@ main(void)
 /* 使用pthread_mutex_timedlock避免永久阻塞 */
 
 /* 线程同步：1.互斥量 */
+/* 
+ * 线程同步的各种方法：
+ * https://en.wikipedia.org/wiki/Synchronization_(computer_science)#Pthreads_synchronization
+ */

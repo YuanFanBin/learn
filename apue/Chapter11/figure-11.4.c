@@ -19,7 +19,7 @@ printfoo(const char *s, const struct foo *fp)
 void *
 thr_fn1(void *arg)
 {
-    struct foo foo = {1, 2, 3, 4};
+    struct foo foo = {1, 2, 3, 4};  /* 线程栈上数据，线程结束后，栈数据可不用。*/
 
     printfoo("thread 1: \n", &foo);
     pthread_exit((void*)&foo);
@@ -32,7 +32,7 @@ thr_fn2(void *arg)
     pthread_exit((void*)0);
 }
 
-/* gcc 11.5-2.c apue.h apue_err.c -lpthread */
+/* gcc apue.h apue_err.c figure-11.4.c -lpthread */
 int
 main(void)
 {
