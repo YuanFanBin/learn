@@ -15,7 +15,9 @@ local quote_sql_str = ngx.quote_sql_str
 --==================================================================================================
 local function process_where(where_params)
     --[[ where条件处理 ]]
-    if not (type(where_params) == 'table' and next(where_params)) then return nil end
+    if not (type(where_params) == 'table' and next(where_params)) then 
+        return ' 1=1 '      -- 未提供条件，默认ALL
+    end
     local where = {}
     for k, v in pairs(where_params) do
         if type(v) == 'string' then                             -- 可接受string
@@ -116,7 +118,6 @@ local gen_sql = {
     end,
 
     ['SELECT'] = function(table, query_fields, where_params, other_params)
-        if not (type(where_params) == 'table' and next(where_params)) then return nil end
         local query = '*'
         if type(query_fields) == 'table' and next(query_fields) then
             query = concat(query_fields, ',')
