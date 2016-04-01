@@ -39,3 +39,18 @@ main(void)
     printf("thread 2 exit code %ld\n", (long)tret);
     exit(0);
 }
+
+/*
+ * pthread_detach 线程分离，如果对某个线程的终止状态不感新区的话，可以使用
+ * pthread_detach函数让操作系统在线程退出时收回它所占用的资源。
+ *
+ * man pthread_detach样例用法：
+ *
+ * pthread_detach(pthread_self());
+ */
+
+/*
+ * 通过查看 man pthread_join 我们可以了解，若不分离线程（pthread_join/pthread_detach/
+ * 通过设置pthread_attr_t的相应属性）那么线程终止时，会形成僵死线程（zombie thread），
+ * 此概念与僵死进程（zombie process）相似。
+ */

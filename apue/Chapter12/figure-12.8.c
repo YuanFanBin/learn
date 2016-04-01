@@ -4,7 +4,7 @@
 #include <time.h> /* clock_nanosleep(Link with -lrt) */
 #include <sys/time.h> /* gettimeofday */
 
-/* 12.3.c */
+/* figure-12.4.c */
 extern int makethread(void *(*)(void *), void *);
 
 struct to_info {
@@ -97,7 +97,7 @@ retry(void *arg) /* 递归互斥量锁++,-- */
     pthread_mutex_unlock(&mutex);
 }
 
-/* gcc 12.4.1.c 12.3.c apue.h apue_err.c -lpthread -lrt */
+/* gcc apue.h apue_err.c figure-12.4.c figure-12.8.c -lpthread -lrt */
 int main(void)
 {
     int             err, condition, arg;

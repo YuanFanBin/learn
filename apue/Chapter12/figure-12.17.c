@@ -49,7 +49,7 @@ thr_fn(void *arg)
 }
 
 /* 有关线程和fork还需查询资料了解 */
-/* gcc 12.9.c apue.h apue_err.c -lpthread */
+/* gcc apue.h apue_err.c figure-12.17.c -lpthread */
 int
 main(void)
 {

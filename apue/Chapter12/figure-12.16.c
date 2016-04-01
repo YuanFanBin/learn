@@ -35,7 +35,7 @@ thr_fn(void *arg)
     }
 }
 
-/* gcc 12.8.c apue.h apue_err.c -lpthread */
+/* gcc apue.h apue_err.c figure-12.16.c -lpthread */
 int
 main(void)
 {
