@@ -10,18 +10,9 @@
 #define LOCKFILE "/var/run/daemon.pid"
 #define LOCKMODE (S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)
 
+/* figure-14.9.c */
+extern int lockfile(int);
 /* 参考资料：http://blog.csdn.net/cxxmaker/article/details/7416136 */
-int 
-lockfile(int fd) /* 3.14, 14.3-4.c */
-{
-    struct flock fl;
-
-    fl.l_type = F_WRLCK;
-    fl.l_start = 0;
-    fl.l_whence = SEEK_SET;
-    fl.l_len = 0;
-    return(fcntl(fd, F_SETLK, &fl));
-}
 
 int
 already_running(void)

@@ -1,13 +1,13 @@
 #include "apue.h"
 
-/* gcc e13.4.c 13.3.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-13.1.c exercise-13.4.c */
 int
 main(void)
 {
     FILE *fp;
     char *p;
 
-    daemonize("getlog");
+    daemonize("getlog");    /* figure-13.1.c */
     p = getlogin();
     fp = fopen("/tmp/getlog.out", "w");
     if (fp != NULL) {

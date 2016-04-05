@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+/* figure-13.6.c */
 int
 lockfile(int fd)
 {

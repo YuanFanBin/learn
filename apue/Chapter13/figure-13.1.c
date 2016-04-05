@@ -39,8 +39,9 @@ daemonize(const char *cmd)
     sa.sa_flags = 0;
     if (sigaction(SIGHUP, &sa, NULL) < 0)
         err_quit("%s: can't ignore SIGHUP", cmd);
+    /* ？？？ 为什么要fork两次 */
     /* 参考资料：http://blog.chinaunix.net/uid-24174632-id-4153614.html */
-    if ((pid = fork()) < 0) /* ？？？ 为什么要fork两次 */
+    if ((pid = fork()) < 0)
         err_quit("%s: can't fork", cmd);
     else if (pid != 0) /* parent */
         exit(0);

@@ -4,7 +4,7 @@
 
 sigset_t mask;
 
-/* 13.5.c */
+/* figure-13.6.c */
 extern int already_running(void);
 
 void
@@ -41,7 +41,7 @@ thr_fn(void *arg)
     return(0);
 }
 
-/* gcc 13.6-1.c 13.5.c 13.3.c apue.h apue_err.c -lpthread */
+/* gcc apue.h apue_err.c figure-13.1.c figure-14.9.c figure-13.6.c figure-13.7.c -lpthread -o daemon */
 int
 main(int argc, char *argv[])
 {
@@ -58,12 +58,12 @@ main(int argc, char *argv[])
     /*
      * Become a daemon.
      */
-    daemonize(cmd); /* 13.3.c */
+    daemonize(cmd); /* firure-13.1.c */
 
     /*
      * Make sure only one copy of the daemon is running.
      */
-    if (already_running()) {
+    if (already_running()) {    /* figure-13.6.c */ /* ???? 为什么不好使 */
         syslog(LOG_ERR, "daemon already running");
         exit(1);
     }
@@ -96,6 +96,8 @@ main(int argc, char *argv[])
     }
     exit(0);
 }
+
+/* sudo tail -f /var/log/messages */
 
 
 /* 多线程守护进程 */
