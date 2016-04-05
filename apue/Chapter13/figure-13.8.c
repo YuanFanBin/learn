@@ -16,7 +16,6 @@ sigterm(int signo)
 {
     /* sudo kill -TERM xxxx */
     syslog(LOG_INFO, "got SIGTERM; exiting");
-    syslog(LOG_EMERG, "got SIGTERM; exiting"); // 这个才能打出日志
     exit(0);
 }
 
@@ -25,11 +24,10 @@ sighup(int signo)
 {
     /* sudo kill -HUP xxxx */
     syslog(LOG_INFO, "Re-reading configuration file");
-    syslog(LOG_EMERG, "Re-reading configuration file"); // 这个才能打出日志
     reread();
 }
 
-/* gcc 13.6-2.c 13.5.c 13.3.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-13.1.c figure-14.9.c figure-13.6.c figure-13.8.c -lpthread -o daemon */
 int
 main(int argc, char *argv[])
 {
@@ -78,7 +76,6 @@ main(int argc, char *argv[])
      * Proceed with the rest of the daemon.
      */
     /* ... */
-    syslog(LOG_EMERG, "LOG_EMERG can print log"); // 这个才能打出日志
     /* 这样就能看到守护进程了 */
     for (;;) {
     }

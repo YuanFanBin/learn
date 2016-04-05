@@ -63,7 +63,7 @@ main(int argc, char *argv[])
     /*
      * Make sure only one copy of the daemon is running.
      */
-    if (already_running()) {    /* figure-13.6.c */ /* ???? 为什么不好使 */
+    if (already_running()) {    /* figure-13.6.c */ /* ???? 为什么不好使，是figure-14.9.c的一个BUG */
         syslog(LOG_ERR, "daemon already running");
         exit(1);
     }
