@@ -22,7 +22,7 @@ translate(unsigned char c)
     return(c);
 }
 
-/* gcc 14.5.3-1.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-14.20.c -o rot13 */
 int
 main(int argc, char *argv[])
 {

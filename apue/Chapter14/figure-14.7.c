@@ -4,12 +4,12 @@
 static void
 lockabyte(const char *name, int fd, off_t offset)
 {
-    if (writew_lock(fd, offset, SEEK_SET, 1) < 0)
+    if (writew_lock(fd, offset, SEEK_SET, 1) < 0)   /* Figure-14.5.c */
         err_sys("%s: writew_lock error", name);
     printf("%s: got the lock, byte %lld\n", name, (long long)offset);
 }
 
-/* gcc 14.3-3.c ./10/10.16-3.c 14.3-1.c 14.3-2.c apue_err.c */
+/* gcc apue.h apue_err.c figure-14.5.c figure-10.24.c figure-14.7.c */
 int
 main(void)
 {
@@ -24,7 +24,7 @@ main(void)
     if (write(fd, "ab", 2) != 2)
         err_sys("write error");
 
-    TELL_WAIT();        /* 8.9节 */
+    TELL_WAIT();        /* figure-10.24.c */
     if ((pid = fork()) < 0) {
         err_sys("fork error");
     } else if (pid == 0) {  /* child */

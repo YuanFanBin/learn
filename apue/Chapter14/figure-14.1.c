@@ -4,7 +4,7 @@
 
 char  buf[500000];
 
-/* gcc 14.2.c 03/3.14-2.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-3.12.c figure-14.1.c */
 int
 main(void)
 {
@@ -20,7 +20,7 @@ main(void)
     ntowrite = read(STDIN_FILENO, buf, sizeof(buf)); /* man unistd.h查看 */
     fprintf(stderr, "read %d bytes\n", ntowrite);
 
-    set_fl(STDOUT_FILENO, O_NONBLOCK); /* set nonblocking */
+    set_fl(STDOUT_FILENO, O_NONBLOCK); /* figure-3.12.c set nonblocking */
 
     ptr = buf;
     while(ntowrite > 0) { /* 轮询 */

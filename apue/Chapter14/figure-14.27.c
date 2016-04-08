@@ -4,7 +4,7 @@
 
 #define COPYINCR (1024*1024*1024)   /* 1GB */
 
-/* gcc 14.8.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-14.27.c */
 int
 main(int argc, char *argv[])
 {

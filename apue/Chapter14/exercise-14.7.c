@@ -1,6 +1,7 @@
 #include "apue.h"
 #include <fcntl.h>
 
+/* gcc apue.h apue_err.c figure-3.12.c exercise-14.7.c */
 int
 main(void)
 {
@@ -10,7 +11,7 @@ main(void)
 
     if (pipe(fd) < 0)
         err_sys("pipe error");
-    set_fl(fd[1], O_NONBLOCK); /* ./03/3.14-2.c */
+    set_fl(fd[1], O_NONBLOCK); /* figure-3.12.c */
 
     /* write 1 byte at a time until pipe is full */
     for (n = 0; ; n++) {

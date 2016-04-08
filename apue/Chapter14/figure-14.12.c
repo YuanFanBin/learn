@@ -3,7 +3,7 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
-/* gcc 14.3-5.c ./03/3.14-2.c ./10/10.16-3.c 14.3-1.c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-3.12.c figure-10.24.c figure-14.5.c figure-14.12.c */
 int
 main(int argc, char *argv[])
 {
@@ -28,12 +28,12 @@ main(int argc, char *argv[])
     if (fchmod(fd, (statbuf.st_mode & ~S_IXGRP) | S_ISGID) < 0)
         err_sys("fchmod error");
 
-    TELL_WAIT(); /* 10.16-3.c */
+    TELL_WAIT(); /* figure-10.24.c */
 
     if ((pid = fork()) < 0) {
         err_sys("fork error");
     } else if (pid > 0) { /* parent */
-        if (write_lock(fd, 0, SEEK_SET, 0) < 0)
+        if (write_lock(fd, 0, SEEK_SET, 0) < 0) /* figure-14.5.c */
             err_sys("write_lock error");
 
         TELL_CHILD(pid);
@@ -43,7 +43,7 @@ main(int argc, char *argv[])
     } else { /* child */
         WAIT_PARENT();      /* wait for parent to set lock */
 
-        set_fl(fd, O_NONBLOCK); /* 3.14-2.c */
+        set_fl(fd, O_NONBLOCK); /* figure-3.12.c */
 
         /* first let's see what error we get if region is locked */
         if (read_lock(fd, 0, SEEK_SET, 0) != -1)  /* no wait */

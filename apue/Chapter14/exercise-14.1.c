@@ -7,7 +7,7 @@ sigint(int signo)
 {
 }
 
-/* gcc e14.1.c ./10/10.14-2.c 14.3-1.c apue_err.c */
+/* gcc apue.h apue_err.c figure-10.19.c figure-14.5.c exercise-14.1.c */
 int
 main(void)
 {
@@ -15,7 +15,7 @@ main(void)
     int fd;
 
     setbuf(stdout, NULL);
-    signal_intr(SIGINT, sigint);    /* ./10/10.14-2.c */
+    signal_intr(SIGINT, sigint);    /* figure-10.19.c */
 
     /*
      * Create a file.
@@ -29,11 +29,11 @@ main(void)
     if ((pid1 = fork()) < 0) {
         err_sys("fork failed");
     } else if (pid1 == 0) { /* child */
-        if (lock_reg(fd, F_SETLK, F_RDLCK, 0, SEEK_SET, 0) < 0) /* 14.3-1.c */
+        if (lock_reg(fd, F_SETLK, F_RDLCK, 0, SEEK_SET, 0) < 0) /* figure-14.5.c */
             err_sys("child 1: can't read-lock file");
         printf("child 1: obtained read lock on file\n");
         pause();
-        printf("child 1: exit after apuse\n");
+        printf("child 1: exit after pause\n");
         exit(0);
     } else {    /* parent */
         sleep(2);
@@ -64,7 +64,7 @@ main(void)
         if (lock_reg(fd, F_SETLK, F_WRLCK, 0, SEEK_SET, 0) < 0)
             printf("child 3: can't set write lock: %s\n", strerror(errno));
         printf("child 3 about to block in write-lock...\n");
-        if (lock_reg(fd, F_SETLKW, F_WRLCK, 0, SEEK_SET, 0) < 0)
+        if (lock_reg(fd, F_SETLKW, F_WRLCK, 0, SEEK_SET, 0) < 0)    /* 阻塞加写锁 */
             err_sys("child 3: can't write-lock file");
         printf("child 3: returned and got write lock???\n");
         pause();
@@ -88,5 +88,11 @@ main(void)
     kill(pid2, SIGINT);
     printf("killing child 3 ...\n");
     kill(pid3, SIGINT);
+
+    /* exercise-8.6.c */
+    /* 本进程创建了僵死进程 */
+#define PSCMD   "ps -o pid,ppid,state,tty,command"
+    system(PSCMD);
+
     exit(0);
 }

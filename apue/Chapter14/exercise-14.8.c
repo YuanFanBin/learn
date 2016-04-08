@@ -5,7 +5,7 @@
 #include <errno.h>
 
 #define BSZ 4096
-#define NBUF 8
+#define NBUF 1      /* 只需1个即可 */
 
 enum rwop {
     UNUSED = 0,
@@ -15,7 +15,7 @@ enum rwop {
 
 struct buf {
     enum rwop       op;
-    int             last;
+    int             readn;
     struct aiocb    aiocb;
     unsigned char   data[BSZ];
 };
@@ -46,34 +46,32 @@ translate(unsigned char c)
  * asynchronous  |  I/O multiplexing(select, poll)  |   AIO
  */
 
-/* 异步IO读写数据 */
-/* gcc 14.5.3-2.c apue.h apue_err.c -lrt */
+/* 利用异步IO实现figure-14.20.c的读写数据 */
+/* gcc apue.h apue_err.c exercise-14.8.c -lrt -o rot13 */
 int
 main(int argc, char *argv[])
 {
-    int                 ifd, ofd, i, j, n, err, numop;
-    struct stat         sbuf;
+    int                 ifd, ofd, i, j, n, err, numr, bnum;
     const struct aiocb *aiolist[NBUF];
     off_t               off = 0;
 
-    if (argc != 3)
-        err_quit("usage: rot13 infile outfile");
-    if ((ifd = open(argv[1], O_RDONLY)) < 0)
+    if (fdopen(STDIN_FILENO, "r") < 0)
         err_sys("can't open %s", argv[1]);
-    if ((ofd = open(argv[2], O_RDWR|O_CREAT|O_TRUNC, FILE_MODE)) < 0)
+    ifd = STDIN_FILENO;
+    if (fdopen(STDOUT_FILENO, "w+") < 0)
         err_sys("can't create %s", argv[2]);
-    if (fstat(ifd, &sbuf) < 0)
-        err_sys("fstat failed");
+    ofd = STDOUT_FILENO;
 
     /* initialize the buffers */
     for (i = 0; i < NBUF; i++) {
         bufs[i].op = UNUSED;
+        bufs[i].readn = 0;
         bufs[i].aiocb.aio_buf = bufs[i].data;
         bufs[i].aiocb.aio_sigevent.sigev_notify = SIGEV_NONE;
         aiolist[i] = NULL;
     }
 
-    numop = 0;
+    numr = 0, bnum = 0;
     for (;;) {
         for (i = 0; i < NBUF; i++) {
             switch(bufs[i].op) {
@@ -82,19 +80,15 @@ main(int argc, char *argv[])
                  * Read from the input file if more data
                  * remains unread.
                  */
-                if (off < sbuf.st_size) {
-                    bufs[i].op = READ_PENDING;
-                    bufs[i].aiocb.aio_fildes = ifd;
-                    bufs[i].aiocb.aio_offset = off;
-                    off += BSZ;
-                    if (off >= sbuf.st_size)
-                        bufs[i].last = 1;
-                    bufs[i].aiocb.aio_nbytes = BSZ;
-                    if (aio_read(&bufs[i].aiocb) < 0)
-                        err_sys("aio_read failed");
-                    aiolist[i] = &bufs[i].aiocb;
-                    numop++;
-                }
+                bufs[i].op = READ_PENDING;
+                bufs[i].aiocb.aio_fildes = ifd;
+                bufs[i].aiocb.aio_offset = off;
+                off += BSZ;
+                bufs[i].aiocb.aio_nbytes = BSZ;
+                if (aio_read(&bufs[i].aiocb) < 0)
+                    err_sys("aio_read failed");
+                aiolist[i] = &bufs[i].aiocb;
+                numr++;
                 break;
 
             case READ_PENDING:
@@ -111,10 +105,15 @@ main(int argc, char *argv[])
                  * A read is complete; translate the buffer
                  * and write it.
                  */
+                /* 获取实际读取的字节数 */
                 if ((n = aio_return(&bufs[i].aiocb)) < 0)
                     err_sys("aio_return failed");
-                if (n != BSZ && !bufs[i].last)
-                    err_quit("short read (%d/%d)", n, BSZ);
+                if (n == 0) {   /* 读结束 */
+                    numr--;
+                    break;
+                }
+                bufs[i].readn = n;
+
                 for (j = 0; j < n; j++)
                     bufs[i].data[j] = translate(bufs[i].data[j]);
                 bufs[i].op = WRITE_PENDING;
@@ -126,6 +125,7 @@ main(int argc, char *argv[])
                 break;
 
             case WRITE_PENDING:
+                bnum = 1;
                 if ((err = aio_error(&bufs[i].aiocb)) == EINPROGRESS)
                     continue;
                 if (err != 0) {
@@ -144,14 +144,14 @@ main(int argc, char *argv[])
                     err_quit("short write (%d/%d)", n, BSZ);
                 aiolist[i] = NULL;
                 bufs[i].op = UNUSED;
-                numop--;
+                bnum = 0;
                 break;
             }
         }
-        if (numop == 0) {
-            if (off >= sbuf.st_size)
-                break;
-        } else {
+        /* 没有任何读/写操作，退出 */
+        if (numr == 0 && bnum == 0) {
+            break;
+        } else if (numr == 0) {
             if (aio_suspend(aiolist, NBUF, NULL) < 0)
                 err_sys("aio_suspend failed");
         }
