@@ -26,6 +26,7 @@
 #include <string.h>         /* for convenience */
 #include <unistd.h>
 #include <signal.h>
+#include <fcntl.h>
 
 #define MAXLINE 4096 /* max line length */
 

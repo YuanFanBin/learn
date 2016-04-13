@@ -8,7 +8,7 @@
 
 char array[ARRAY_SIZE]; /* uninitialized data = bss segment */
 
-/* gcc 15.9.1-c apue.h apue_err.c */
+/* gcc apue.h apue_err.c figure-15.31.c */
 int
 main(void)
 {
@@ -17,7 +17,7 @@ main(void)
 
     printf("array[] from %p to %p\n", (void *)&array[0],
            (void *)&array[ARRAY_SIZE]);
-    printf("stack around %p\n", (void *)&shmid);
+    printf("stack around %p, id = %d\n", (void *)&shmid, shmid);
 
     if ((ptr = malloc(MALLOC_SIZE)) == NULL)
         err_sys("malloc error");
@@ -37,3 +37,4 @@ main(void)
 
     exit(0);
 }
+/* XSI 共享存储 */

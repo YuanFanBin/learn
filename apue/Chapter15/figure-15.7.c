@@ -3,8 +3,10 @@
 static int pfd1[2], pfd2[2];
 
 /*  
- *  figure-10.24.c -- 信号实现
- *  figure-15.7.c  -- 管道实现
+ *  figure-8.12.c   --进程同步模板
+ *  figure-10.24.c  -- 信号实现
+ *  figure-14.3.2.c -- 记录锁实现（自己实现的）
+ *  figure-15.7.c   -- 管道实现
  */
 /* 参考资料：http://www.cnblogs.com/mickole/p/3192461.html */
 /* 管道创建时默认打开了文件描述符，且默认是阻塞（block）模式打开 */

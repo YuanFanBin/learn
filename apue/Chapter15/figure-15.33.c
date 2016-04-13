@@ -11,7 +11,7 @@ update(long *ptr)
     return((*ptr)++);       /* return value before increment */
 }
 
-/* gcc 15.9-2.c apue.h apue_err.c 15.2-3.c */
+/* gcc apue.h apue_err.c figure-15.7.c figure-15.33.c */
 int
 main(void)
 {
@@ -27,7 +27,7 @@ main(void)
         err_sys("mmap error");
     close(fd);      /* can close /dev/zero now that it's mapped */
 
-    /* 使用15.2-3.c -- 管道实现 */
+    /* 使用figure-15.7.c -- 管道实现 */
     TELL_WAIT();
 
     if ((pid = fork()) < 0) {
@@ -50,5 +50,6 @@ main(void)
             TELL_PARENT(getppid());
         }
     }
+    fprintf(stdout, "OK");
     exit(0);
 }

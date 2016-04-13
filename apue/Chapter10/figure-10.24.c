@@ -11,9 +11,10 @@ sig_usr(int signo) /* one signal handler for SIGUSR1 and SIGUSR2 */
 }
 
 /*  
- *  Figure-8.12.c  --进程同步模板
- *  Figure-10.24.c --信号实现
- *  Figure-15.7.c  --管道实现
+ *  figure-8.12.c   --进程同步模板
+ *  figure-10.24.c  --信号实现
+ *  figure-14.3.2.c -- 记录锁实现（自己实现的）
+ *  figure-15.7.c   --管道实现
  */
 
 void

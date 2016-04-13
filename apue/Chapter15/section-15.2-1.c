@@ -28,6 +28,7 @@ pipe_buf_max(int fd)
 #endif
 }
 
+/* gcc apue.h apue_err.c section-15.2-1.c */
 int
 main(int argc, char *argv[])
 {

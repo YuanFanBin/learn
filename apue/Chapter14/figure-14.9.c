@@ -12,7 +12,7 @@ lockfile(int fd)
     fl.l_whence = SEEK_SET;
     fl.l_len = 0;
     /* 
-     * F*K，这里写错了，导致一直没能查出守护进程创建不正确的原因，
+     * 这里写错了，导致一直没能查出守护进程创建不正确的原因，
      * 总是能创建多个相同副本的进程 
      */
     //return(fcntl(fd, F_SETFL, &fl));

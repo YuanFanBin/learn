@@ -52,7 +52,7 @@ semaphore_open(char *semaphore_name)
     return(semap);
 }
 
-/* 增加信号量值 */
+/* (V操作)增加信号量值 */
 void
 semaphore_post(semaphore_t *semap)
 {
@@ -63,7 +63,7 @@ semaphore_post(semaphore_t *semap)
     pthread_mutex_unlock(&semap->lock);
 }
 
-/* 减少信号量值 */
+/* (P操作)减少信号量值 */
 void
 semaphore_wait(semaphore_t *semap)
 {

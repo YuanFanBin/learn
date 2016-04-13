@@ -13,7 +13,7 @@
  *     阻塞读版本       : br
  *     以及非阻塞读版本 : nbr
  */
-/* gcc 15.5-2.c */
+/* gcc section-15.5-2.c */
 /* sudo ... */
 int
 main(int argc, char *argv[])

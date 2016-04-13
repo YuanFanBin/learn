@@ -36,7 +36,7 @@ main(int argc, char *argv[])
         if (ferror(fp))
             err_sys("fgets error");
 
-        close(fd[1]);   /* clsoe writed end of pipe for reader */
+        close(fd[1]);   /* close writed end of pipe for reader */
 
         if (waitpid(pid, NULL, 0) < 0) /* 阻塞等待子进程结束，避免僵尸进程 */
             err_sys("waitpid error");

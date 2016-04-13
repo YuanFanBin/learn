@@ -19,7 +19,7 @@
  *     阻塞且请求写的字节数大于PIPE_BUF版本     : bwg
  *     阻塞且请求写的字节数不大于PIPE_BUF版本   : bw
  */
-/* gcc 15.5-1.c */
+/* gcc section-15.5-1.c */
 /* sudo ... */
 int
 main(int argc, char *argv[])
