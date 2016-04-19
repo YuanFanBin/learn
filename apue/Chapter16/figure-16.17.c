@@ -40,7 +40,8 @@ serve(int sockfd)
     }
 }
 
-/* gcc apue.h apue_err.c figure-13.1.c figure-13.9.c figure-16.22.c figure-16.17.c -o server */
+/* 面向连接的服务器 */
+/* gcc apue.h apue_err.c figure-13.1.c figure-13.9.c figure-16.22.c figure-16.17.c -o ruptimed */
 int
 main(int argc, char *argv[])
 {

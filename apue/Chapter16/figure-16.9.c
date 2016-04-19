@@ -37,16 +37,16 @@ print_type(struct addrinfo *aip)
     printf(" type ");
     switch (aip->ai_socktype) {
     case SOCK_STREAM:
-        printf("stream");
+        printf("[stream]");
         break;
     case SOCK_DGRAM:
-        printf("datagram");
+        printf("[datagram]");
         break;
     case SOCK_SEQPACKET:
-        printf("seqpacket");
+        printf("[seqpacket]");
         break;
     case SOCK_RAW:
-        printf("raw");
+        printf("[raw]");
         break;
     default:
         printf("unknown (%d)", aip->ai_socktype);
@@ -130,7 +130,7 @@ main(int argc, char *argv[])
             sinp = (struct sockaddr_in *)aip->ai_addr;
             addr = inet_ntop(AF_INET, &sinp->sin_addr, abuf, INET_ADDRSTRLEN);
             printf(" address %s", addr ? addr : "unknown");
-            printf(" port %d", ntohs(sinp->sin_port));
+            printf(" port %d\n", ntohs(sinp->sin_port));
         }
         printf("\n");
     }

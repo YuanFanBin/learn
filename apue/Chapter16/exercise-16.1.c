@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
+/* gcc exercise-16.1.c */
 int
 main(int argc, char *argv[])
 {
@@ -11,7 +12,7 @@ main(int argc, char *argv[])
     if (*cp == 1) {
         printf("litte-endian\n");
     } else if (*cp == 4) {
-        printf("bid-endian\n");
+        printf("big-endian\n");
     } else {
         printf("who knows?\n");
     }

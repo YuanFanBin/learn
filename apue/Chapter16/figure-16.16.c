@@ -20,7 +20,8 @@ print_uptime(int sockfd)
         err_sys("recv error");
 }
 
-/* gcc apue.h apue_err.c figure-16.11.c figure-16.16.c -o ruptime */
+/* 面向连接的客户端 */
+/* gcc apue.h apue_err.c figure-16.11.c figure-16.16.c -o client */
 int
 main(int argc, char *argv[])
 {

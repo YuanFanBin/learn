@@ -31,3 +31,5 @@ connect_retry(int domain, int type, int protocol, const struct sockaddr *addr,
     }
     return(-1);
 }
+
+/* 解决figure-16.10中的问题 */

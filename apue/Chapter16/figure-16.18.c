@@ -44,7 +44,7 @@ serve(int sockfd)
                 exit(1);
             }
             close(clfd);
-            execl("/usr/bin/uptime", "uptime", "-V", (char *)0);
+            execl("/usr/bin/uptime", "uptime", (char *)0);
             syslog(LOG_ERR, "ruptimed: unexpected return from exec: %s",
                     strerror(errno));
         } else {        /* parent */
@@ -54,7 +54,8 @@ serve(int sockfd)
     }
 }
 
-/* gcc apue.h apue_err.c figure-13.1.c figure-13.9.c figure-16.22.c figure-16.18.c -o server */
+/* 另一个面向连接的服务器 */
+/* gcc apue.h apue_err.c figure-13.1.c figure-13.9.c figure-16.22.c figure-16.18.c -o ruptimed */
 int
 main(int argc, char *argv[])
 {

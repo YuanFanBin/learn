@@ -24,3 +24,8 @@ errout:
     errno = err;
     return(-1);
 }
+
+/*
+ * TCP socket 基本流程（连接方式）
+ * 参考资料：https://en.wikipedia.org/wiki/Berkeley_sockets
+ */

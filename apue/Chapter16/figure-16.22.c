@@ -12,7 +12,7 @@ initserver(int type, const struct sockaddr *addr, socklen_t alen, int qlen)
         return(-1);
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int)) < 0)
         goto errout;
-    if (bind(fd, addr, alen) < 0)
+    if (bind(fd, addr, alen) < 0)   /* 对 TCP 来说不可以bind同一个地址多次 */
         goto errout;
     if (type == SOCK_STREAM || type == SOCK_SEQPACKET)
         if (listen(fd, qlen) < 0)

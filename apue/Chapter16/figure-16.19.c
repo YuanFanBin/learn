@@ -18,6 +18,7 @@ print_uptime(int sockfd, struct addrinfo *aip)
     char    buf[BUFLEN];
 
     buf[0] = 0;
+    /* 通知服务器执行服务 */
     if (sendto(sockfd, buf, 1, 0, aip->ai_addr, aip->ai_addrlen) < 0)
         err_sys("sendto error");
     alarm(TIMEOUT); /* 用于产生 SIGALRM 中断 */
@@ -30,7 +31,8 @@ print_uptime(int sockfd, struct addrinfo *aip)
     write(STDOUT_FILENO, buf, n);
 }
 
-/* gcc apue.h apue_err.c figure-16.19.c -o ruptime */
+/* 无连接的客户端 */
+/* gcc apue.h apue_err.c figure-16.19.c -o client */
 int
 main(int argc, char *argv[])
 {
