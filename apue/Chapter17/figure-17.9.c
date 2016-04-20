@@ -26,7 +26,7 @@ serv_accept(int listenfd, uid_t *uidptr)
     if ((name = malloc(sizeof(un.sun_path) + 1)) == NULL)
         return(-1);
     len = sizeof(un);
-    if ((chifd = accept(listenfd, (struct sockaddr *)&un, &len)) < 0) {
+    if ((clifd = accept(listenfd, (struct sockaddr *)&un, &len)) < 0) {
         free(name);
         return(-2);     /* often errno = EINTR, if signal caught */
     }

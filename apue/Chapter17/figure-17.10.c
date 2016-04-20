@@ -33,7 +33,7 @@ cli_conn(const char *name)
     len = offsetof(struct sockaddr_un, sun_path) + strlen(un.sun_path);
 
     unlink(un.sun_path);        /* in case it already exists */
-    if (bind(fd, (struct sockaddr_in*)&un, len) < 0) {
+    if (bind(fd, (struct sockaddr *) &un, len) < 0) {
         rval = -2;
         goto errout;
     }
@@ -48,7 +48,7 @@ cli_conn(const char *name)
     sun.sun_family = AF_UNIX;
     strcpy(sun.sun_path, name);
     len = offsetof(struct sockaddr_un, sun_path) + strlen(name);
-    if (connect(fd, (struct sockaddr_in*)&sun, len) < 0) {
+    if (connect(fd, (struct sockaddr *) &sun, len) < 0) {
         rval = -4;
         do_unlink = 1;
         goto errout;

@@ -42,3 +42,7 @@ main(void)
     close(SocketFD);
     return EXIT_SUCCESS;
 }
+
+/*
+ * 关于 sockaddr_in 请参考 man 7 ip(man socket)
+ */
