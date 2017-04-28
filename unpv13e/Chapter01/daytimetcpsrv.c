@@ -12,7 +12,7 @@
 #define LISTENQ 1024    /* 2nd argument to listen() */
 
 /* figure-1.9 */
-/* $ gcc error.h daytimetcpsrc.c */
+/* $ gcc error.h daytimetcpsrv.c */
 int main(int argc, char **argv)
 {
     int                 err, n;
