@@ -1,7 +1,7 @@
-#include <stdio.h>      /* snprintf */
-#include <string.h>     /* strlen */
 #include <arpa/inet.h>  /* htonl, inet_ntop */
 #include <netinet/in.h> /* sockaddr_in */
+#include <stdio.h>      /* snprintf */
+#include <string.h>     /* strlen */
 #include <strings.h>    /* bzero */
 #include <sys/socket.h> /* socket, bind, listen, accept */
 #include <time.h>       /* time, ctime */
@@ -47,7 +47,7 @@ again:
         if ((connfd = accept(listenfd, (struct sockaddr *) &cliaddr,
                              &len)) < 0)
         {
-#ifdef EPROTP
+#ifdef EPROTO
             if (errno == EPROTO || errno == ECONNABORTED) {
 #else
             if (errno == ECONNABORTED) {
