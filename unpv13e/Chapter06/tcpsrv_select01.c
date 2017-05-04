@@ -54,8 +54,8 @@ int main(int argc, char **argv)
 
         if (FD_ISSET(listenfd, &rset)) {    /* new client connection */
             clilen = sizeof(cliaddr);
-            if (connfd = accept(listenfd, (struct sockaddr *) &cliaddr,
-                        &clilen) < 0) {
+            if ((connfd = accept(listenfd, (struct sockaddr *) &cliaddr,
+                        &clilen)) < 0) {
                 err_sys("accept error");
             }
             for (i = 0; i < FD_SETSIZE; i++) {
