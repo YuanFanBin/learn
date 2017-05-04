@@ -1,0 +1,8 @@
+## 第六章 I/O复用：select和poll函数
+
+I/O模型
+1. 阻塞式I/O
+2. 非阻塞式I/O
+3. I/O复用(select和poll)
+4. 信号驱动式I/O(SIGIO)
+5. 异步I/O(POSIX的aio_系列函数)
