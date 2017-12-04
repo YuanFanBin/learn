@@ -1,11 +1,12 @@
 /* intro/daytimetcpcli */
-#include <stdio.h>      /* fputs */
+#include <arpa/inet.h>  /* inet_pton */
 #include <errno.h>      /* errno */
 #include <netinet/in.h> /* socket, sockaddr_in */
+#include <stdio.h>      /* fputs */
+#include <stdlib.h>
 #include <strings.h>    /* bzero */
-#include <arpa/inet.h>  /* inet_pton */
-#include <sys/types.h>  /* connect, read */
 #include <sys/socket.h> /* connect */
+#include <sys/types.h>  /* connect, read */
 #include <sys/uio.h>    /* read */
 #include <unistd.h>     /* read */
 #include "error.h"      /* err_* */

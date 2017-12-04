@@ -2,7 +2,7 @@
 #include <netinet/in.h>     /* sockaddr_in */
 #include <sys/socket.h>     /* socket, bind, listen */
 #include <sys/select.h>     /* select */
-#include <string.h>         /* bzero */
+#include <strings.h>         /* bzero */
 #include <unistd.h>         /* read, write, close */
 #include "error.h"
 
@@ -30,8 +30,7 @@ int main(int argc, char **argv)
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(SERV_PORT);
 
-    if (bind(listenfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0)
-    {
+    if (bind(listenfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0) {
         err_sys("bind error");
     }
     if (listen(listenfd, LISTENQ) < 0) {
@@ -54,8 +53,7 @@ int main(int argc, char **argv)
 
         if (FD_ISSET(listenfd, &rset)) {    /* new client connection */
             clilen = sizeof(cliaddr);
-            if ((connfd = accept(listenfd, (struct sockaddr *) &cliaddr,
-                        &clilen)) < 0) {
+            if ((connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &clilen)) < 0) {
                 err_sys("accept error");
             }
             for (i = 0; i < FD_SETSIZE; i++) {

@@ -1,6 +1,7 @@
-#include <stdio.h>  /* FILE */
-#include <string.h> /* strlen */
-#include <unistd.h> /* write */
+#include <stdio.h>      /* FILE */
+#include <string.h>     /* strlen */
+#include <unistd.h>     /* write */
+#include <sys/select.h> /* fd_set */
 #include "error.h"
 #include "header.h"
 

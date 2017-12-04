@@ -18,7 +18,7 @@ void str_cli(FILE *fp, int sockfd)
         }
         sleep(1);
         /* 产生SIGPIPE */
-        if (write(sockfd, sendline + 1, strlen(sendline) - 1) 
+        if (write(sockfd, sendline + 1, strlen(sendline) - 1)
                 != strlen(sendline) - 1)
         {
             err_sys("write error");

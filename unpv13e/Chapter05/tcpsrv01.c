@@ -1,10 +1,10 @@
 #include <arpa/inet.h>      /* htonl, htons */
-#include <netinet/in.h>     /* sockaddr_in */
-#include <string.h>         /* bzero */
-#include <sys/socket.h>     /* socklen_t */
-#include <stdlib.h>         /* exit */
-#include <unistd.h>         /* fork, read, write */
 #include <errno.h>          /* errno */
+#include <netinet/in.h>     /* sockaddr_in */
+#include <stdlib.h>         /* exit */
+#include <strings.h>        /* bzero */
+#include <sys/socket.h>     /* socklen_t */
+#include <unistd.h>         /* fork, read, write */
 #include "error.h"
 
 #include "str_echo.c"
@@ -16,7 +16,7 @@
 /* gcc tcpserv01.c */
 int main(int argc, char **argv)
 {
-    int                 err, n;
+    int                 err;
     int                 listenfd, connfd;
     pid_t               childpid;
     socklen_t           clilen;
@@ -58,7 +58,7 @@ again:
             }
         }
         if ((childpid = fork()) == -1) {
-            err_sys("fork error");    
+            err_sys("fork error");
         } else if (childpid == 0) {         /* child process */
             if (close(listenfd) == -1) {    /* close listening socket */
                 err_sys("close error");

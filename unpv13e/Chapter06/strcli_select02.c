@@ -2,6 +2,7 @@
 #include <string.h>         /* strlen */
 #include <unistd.h>         /* write */
 #include <sys/socket.h>     /* shutdown */
+#include <sys/select.h>
 #include "error.h"
 #include "header.h"
 

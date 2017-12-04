@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include <unistd.h>     /* ssize_t, read, write */
+#include <string.h>
 #include <errno.h>      /* errno */
 #include "error.h"
 

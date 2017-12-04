@@ -1,7 +1,7 @@
 #include <sys/socket.h> /* socket */
 #include <netinet/in.h> /* sockaddr_in */
 #include <arpa/inet.h>  /* inet_pton */
-#include <string.h>     /* bzero */
+#include <strings.h>    /* bzero */
 #include <stdlib.h>     /* exit */
 #include <errno.h>      /* errno */
 #include "error.h"

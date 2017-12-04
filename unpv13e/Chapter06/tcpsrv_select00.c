@@ -1,6 +1,6 @@
 #include <arpa/inet.h>      /* htonl, htons */
 #include <netinet/in.h>     /* sockaddr_in */
-#include <string.h>         /* bzero */
+#include <strings.h>         /* bzero */
 #include <sys/socket.h>     /* socklen_t */
 #include <stdlib.h>         /* exit */
 #include <unistd.h>         /* fork, read, write */
@@ -18,7 +18,7 @@
 /* gcc tcpsrv_select00.c error.c -o srv00 */
 int main(int argc, char **argv)
 {
-    int                 err, n;
+    int                 err;
     int                 listenfd, connfd;
     pid_t               childpid;
     socklen_t           clilen;

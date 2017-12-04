@@ -1,4 +1,5 @@
 #include <arpa/inet.h>  /* htonl, inet_ntop */
+#include <errno.h>
 #include <netinet/in.h> /* sockaddr_in */
 #include <stdio.h>      /* snprintf */
 #include <string.h>     /* strlen */

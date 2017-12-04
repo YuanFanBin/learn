@@ -3,7 +3,7 @@
 #include <poll.h>       /* poll */
 #include <limits.h>     /* for OPEN_MAX */
 #include <errno.h>      /* errno */
-#include <string.h>     /* bzero */
+#include <strings.h>    /* bzero */
 #include <arpa/inet.h>  /* ssize_t, socklen_t */
 #include <unistd.h>     /* read, write, close */
 #include "error.h"
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     }
 
     client[0].fd = listenfd;
-    client[0].events = POLLRDNORM;
+    client[0].events = POLLIN; // TODO: 未定义POLLRDNORM;
     for (i = 0; i < OPEN_MAX; i++) {
         client[i].fd = -1;          /* -1 indicates avaliable entry */
     }
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
             err_sys("poll error");
         }
 
-        if (client[0].revents & POLLRDNORM) {    /* new client connection */
+        if (client[0].revents & POLLIN /* TODO: POLLRDNORM */ ) {    /* new client connection */
             clilen = sizeof(cliaddr);
             if ((connfd = accept(listenfd, (struct sockaddr *) &cliaddr,
                                  &clilen)) < 0)
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
             if (i == OPEN_MAX) {
                 err_quit("too many clients");
             }
-            client[i].events = POLLRDNORM;
+            client[i].events = POLLIN /* TODO: POLLRDNORM*/ ;
             if (i > maxi) {
                 maxi = i;       /* max index in client[] array */
             }
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
             if ((sockfd = client[i].fd) < 0) {
                 continue;
             }
-            if (client[i].revents & (POLLRDNORM | POLLERR)) {
+            if (client[i].revents & (POLLIN /* TODO: POLLRDNORM */ | POLLERR)) {
                 if ((n = read(sockfd, buf, MAXLINE)) < 0) {
                     if (errno == ECONNRESET) {
                         /* connection reset by client */

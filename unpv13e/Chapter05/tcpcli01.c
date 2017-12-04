@@ -1,7 +1,7 @@
 #include <sys/socket.h>     /* socket */
 #include <netinet/in.h>     /* sockaddr_in */
 #include <arpa/inet.h>      /* inet_pton */
-#include <string.h>         /* bzero */
+#include <strings.h>         /* bzero */
 #include <errno.h>          /* errno */
 #include <stdlib.h>         /* exit */
 #include "error.h"
@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     if (argc != 2) {
         err_quit("usage: tcpcli <IPaddress>");
     }
-    
+
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         err_sys("socket error");
     }

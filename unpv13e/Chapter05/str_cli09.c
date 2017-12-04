@@ -13,7 +13,7 @@ void str_cli(FILE *fp, int sockfd)
     char            sendline[MAXLINE];
     struct args     args;
     struct result   result;
-    
+
     while (fgets(sendline, MAXLINE, fp) != NULL) {
         if (sscanf(sendline, "%ld%ld", &args.arg1, &args.arg2) != 2) {
             printf("invalid input: %s", sendline);

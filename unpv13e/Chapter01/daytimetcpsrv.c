@@ -6,6 +6,7 @@
 #include <sys/socket.h> /* socket, bind, listen, accept */
 #include <time.h>       /* time, ctime */
 #include <unistd.h>     /* write, close */
+#include <errno.h>
 #include "error.h"      /* err_* */
 
 #define MAXLINE 4096    /* max text line length */

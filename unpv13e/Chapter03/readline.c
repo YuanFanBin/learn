@@ -49,7 +49,7 @@ again:
         } else if (read_cnt == 0) {
             return(0);
         }
-        read_ptr = read_ptr;
+        read_ptr = read_buf;
     }
     read_cnt--;
     *ptr = *read_ptr++;

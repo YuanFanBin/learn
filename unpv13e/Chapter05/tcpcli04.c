@@ -1,8 +1,9 @@
-#include <sys/socket.h> /* socket */
-#include <netinet/in.h> /* sockaddr_in */
 #include <arpa/inet.h>  /* inet_pton */
-#include <string.h>     /* bzero */
 #include <errno.h>      /* errno */
+#include <netinet/in.h> /* sockaddr_in */
+#include <stdlib.h>     /* exit */
+#include <strings.h>    /* bzero */
+#include <sys/socket.h> /* socket */
 #include "error.h"
 
 #include "str_cli.c"

@@ -1,7 +1,8 @@
-#include <string.h>     /* memcpy */
-#include <errno.h>      /* EAFNOSUPPORT */
 #include <arpa/inet.h>  /* inet_aton */
+#include <errno.h>      /* EAFNOSUPPORT */
 #include <netinet/in.h> /* struct in_addr, AF_INET */
+#include <string.h>     /* memcpy */
+#include <sys/socket.h>
 
 int inet_pton(int family, const char *strptr, void *addrptr)
 {
