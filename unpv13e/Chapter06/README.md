@@ -73,6 +73,56 @@ void FD_ISSET(int fd, fd_set *fdset);
 
 [tcpsrv\_select01.c](tcpsrv_select01.c)
 
+6.9 [pselect](http://man7.org/linux/man-pages/man2/pselect.2.html) 函数
+
+```c
+#include <sys/select.h>
+#include <signal.h>
+#include <time.h>
+
+int pselect(int nfds,
+            fd_set *readfds,
+            fd_set *writefds,
+            fd_set *exceptfds,
+            const struct timespec *timeout, // 定时：精度更高
+            // 结合信号处理与select操作，避免分离操作导致死锁（处理信号时又产生新信号，
+            // 未捕获处理导致select永久阻塞）
+            const sigset_t *sigmask);
+
+// 
+struct timespec {
+    time_t tv_sec;  /* seconds */
+    long   tv_nsec; /* nanoseconds */
+}
+```
+
+6.10 [poll](http://man7.org/linux/man-pages/man2/poll.2.html) 函数
+
+```sh
+#include <poll.h>
+
+int poll(struct pollfd *fds,
+         unsigned long nfds,
+         // INFTIM  永远等待
+         // 0       立即返回，不阻塞进程
+         // > 0     等待指定数目的毫秒数
+         int timeout);
+
+struct pollfd {
+    int   fd;       // 用于测试的fd
+    short events;   // 要测试的条件
+    short revents;  // 描述符状态
+}
+```
+
+*poll* 与 *select* 相比，解决了 *select* 中 `FD_SETSIZE` 的问题，fd的数量由 `*fds` 指定，而不由内核来决定，但是时间精度 *pselect* 更高。
+
+6.11 TCP回射服务器程序（再修订版）
+
+用poll来实现6.8中用select实现的TCP回射服务器程序
+
+[tcpsrv\_poll01.c](tcpsrv_poll01.c)
+
 **4. 信号驱动式I/O(SIGIO)**
 
 ![signal io image](doc/figure-6-4.png)

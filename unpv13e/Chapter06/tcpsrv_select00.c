@@ -1,6 +1,6 @@
 #include <arpa/inet.h>      /* htonl, htons */
 #include <netinet/in.h>     /* sockaddr_in */
-#include <strings.h>         /* bzero */
+#include <strings.h>        /* bzero */
 #include <sys/socket.h>     /* socklen_t */
 #include <stdlib.h>         /* exit */
 #include <unistd.h>         /* fork, read, write */
