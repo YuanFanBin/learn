@@ -41,8 +41,11 @@ void str_cli(FILE *fp, int sockfd)
         }
 
         if (FD_ISSET(fileno(fp), &rset)) {  /* input is readable */
+            // 这里有stdio的缓冲区，但fgets只返回第一行数据，其他数据还在缓冲区中
+            // 可能会造成select时发现fp已不可读，丢失缓冲区中的部分数据
             if (fgets(sendline, MAXLINE, fp) == NULL) {
-                return;                     /* all done */
+                // 这里过早终止，会导致sockfd中的正在流动数据丢失
+                return;                     /* all done, here */
             }
             if (write(sockfd, sendline, strlen(sendline)) != strlen(sendline)) {
                 err_sys("write error");
@@ -50,3 +53,9 @@ void str_cli(FILE *fp, int sockfd)
         }
     }
 }
+
+// 带有缓冲区的读操作（自己写或某些头文件中的读函数）与select混用时必须十分小心，
+// 否则数据可能遗留在缓冲区中而导致数据丢失。根源在于select是从系统read角度看是
+// 否有数据可读，并不是其他读函数角度看。
+//
+// 尽可能不去混用，否则处理问题的复杂度会增长到无法控制的地步。
