@@ -34,8 +34,10 @@ void str_cli(FILE *fp, int sockfd)
         if (FD_ISSET(sockfd, &rset)) {  /* socket is readable */
             if ((n = read(sockfd, buf, MAXLINE)) == 0) {
                 if (stdineof == 1) {
+                    // sockfd 已无数据，并且fp数据已读完
                     return;             /* normal termination */
                 } else {
+                    // sockfd 已无数据，但fp数据未读完，数据未传输完
                     err_quit("str_cli: server terminated prematurely");
                 }
             }
@@ -45,10 +47,12 @@ void str_cli(FILE *fp, int sockfd)
         }
         if (FD_ISSET(fileno(fp), &rset)) {  /* input is readable */
             if ((n = read(fileno(fp), buf, MAXLINE)) == 0) {
+                // 从文件中读完数据，关闭对sockfd的写端
                 stdineof = 1;
                 if (shutdown(sockfd, SHUT_WR) < 0) { /* send FIN */
                     err_sys("shutdown error");
                 }
+                // 并清除select对fp的等待
                 FD_CLR(fileno(fp), &rset);
                 continue;
             }

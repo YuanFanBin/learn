@@ -2,7 +2,7 @@
 #include <netinet/in.h>     /* sockaddr_in */
 #include <sys/socket.h>     /* socket, bind, listen */
 #include <sys/select.h>     /* select */
-#include <strings.h>         /* bzero */
+#include <strings.h>        /* bzero */
 #include <unistd.h>         /* read, write, close */
 #include "error.h"
 
@@ -11,6 +11,7 @@
 #define LISTENQ     1024    /* 2nd argument to listen() */
 
 /* 不派生子进程来处理链接，减少进程开销 */
+// gcc tcpsrv_select01.c error.c error.h -o tcpsrv01
 int main(int argc, char **argv)
 {
     int                 i, maxi, maxfd, listenfd, connfd, sockfd;

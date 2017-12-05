@@ -56,6 +56,23 @@ void FD_ISSET(int fd, fd_set *fdset);
 
 [strcli\_select01.c](strcli_select01.c)
 
+6.6 shutdown 函数
+
+终止网络连接的方法通常是 [close](http://man7.org/linux/man-pages/man2/close.2.html) 函数，不过 *close* 有两个限制
+
+(1). *close* 把描述符的引用计数减1,仅在该计数变为0时才关闭套接字。
+(2). *close* 同时终止读和写两个方向的数据传输。
+
+这两个限制我们都可以利用 [shutdown](http://man7.org/linux/man-pages/man2/shutdown.2.html) 函数来解决。
+
+6.7 str\_cli（再修订版）
+
+[strcli\_select01.c](strcli_select02.c)
+
+6.8 TCP回射服务器程序（修订版）
+
+[tcpsrv\_select01.c](tcpsrv_select01.c)
+
 **4. 信号驱动式I/O(SIGIO)**
 
 ![signal io image](doc/figure-6-4.png)
