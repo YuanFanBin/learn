@@ -4,21 +4,24 @@
 
 **1. 阻塞式I/O**
 
-参考6.2.1小节图
+
+![block io image](doc/figure-6-1.png)
 
 **2. 非阻塞式I/O**
 
-参考6.2.2小节图
+![nonblock io image](doc/figure-6-2.png)
 
 **3. I/O复用(select和poll)**
 
-参考6.2.3小节图
+![synchronous io multiplexing image](doc/figure-6-3.png)
 
 **4. 信号驱动式I/O(SIGIO)**
 
-参考6.2.4小节图
+![signal io image](doc/figure-6-4.png)
 
 **5. 异步I/O(POSIX的aio_系列函数)**
+
+![aio image](doc/figure-6-5.png)
 
 #### 5中I/O模型比较
 
