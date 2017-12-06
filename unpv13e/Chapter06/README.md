@@ -85,8 +85,8 @@ int pselect(int nfds,
             fd_set *writefds,
             fd_set *exceptfds,
             const struct timespec *timeout, // 定时：精度更高
-            // 结合信号处理与select操作，避免分离操作导致死锁（处理信号时又产生新信号，
-            // 未捕获处理导致select永久阻塞）
+            // 结合信号处理与select操作，避免分离操作的竞争条件导致死锁
+            // （处理信号时又产生新信号，未捕获处理导致select永久阻塞）
             const sigset_t *sigmask);
 
 // 
