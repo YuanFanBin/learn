@@ -1051,11 +1051,11 @@ UNIX系统提供一种原子操作方法，即在打开文件时设置 [O_APPEND
 
 2. 获取/设置文件描述符标识（F_GETFD，F_SETFD）
 
-3. 获取/设置文件状态标识（F_GETFL，F_SETFL）， 例 [Figure-3.12.c](#figure-312c)
+3. 获取/设置文件状态标识（F_GETFL，F_SETFL），例 [Figure-3.12.c](#figure-312c)
 
 4. 获取/设置异步I/O所有权（F_GETOWN，F_SETOWN）
 
-5. 获取/设置记录锁（F_GETLK，F_SETLK，F_SETLKW）
+5. 获取/设置记录锁（F_GETLK，F_SETLK，F_SETLKW），例 [example.c](example.c)
 
 ### Figure-3.11.c
 
