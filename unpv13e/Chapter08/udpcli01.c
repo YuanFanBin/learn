@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
-#include "error.h"
+#include "../lib/error.h"
 
 #define SERV_PORT 9877 /* TCP and UDP client-servers */
 
@@ -35,10 +35,10 @@ int main(int argc, char **argv) {
 }
 
 // #1
-// $ gcc udpcli01.c error.c error.h dg_cli.c -o udpcli
+// $ gcc udpcli01.c ../lib/error.c ../lib/error.h dg_cli.c -o udpcli
 // #2
-// $ gcc udpcli01.c error.c error.h dg_cliaddr.c sock_ntop.c -o udpcli
+// $ gcc udpcli01.c ../lib/error.c ../lib/error.h dg_cliaddr.c sock_ntop.c -o udpcli
 // #3
-// $ gcc udpcli01.c error.c error.h dg_cliconnect.c -o udpcli
+// $ gcc udpcli01.c ../lib/error.c ../lib/error.h dg_cliconnect.c -o udpcli
 // #4
-// $ gcc udpcli01.c error.c error.h dg_cliloop1.c -o udpcli
+// $ gcc udpcli01.c ../lib/error.c ../lib/error.h dg_cliloop1.c -o udpcli

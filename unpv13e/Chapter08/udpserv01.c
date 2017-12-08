@@ -1,7 +1,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h> /* sockaddr_in */
 #include <strings.h>
-#include "error.h"
+#include "../lib/error.h"
 
 #define SERV_PORT 9877 /* TCP and UDP client-servers */
 
@@ -26,11 +26,11 @@ int main(int argc, char **argv) {
 }
 
 // #1
-// $ gcc udpserv01.c error.c error.h dg_echo.c -o udpsrv
+// $ gcc udpserv01.c ../lib/error.c ../lib/error.h dg_echo.c -o udpsrv
 // $ netcat -uv 127.0.0.1 9877
 // hello
 // hello
 // #2
-// $ gcc udpserv01.c error.c error.h dg_echoloop1.c -o udpsrv
+// $ gcc udpserv01.c ../lib/error.c ../lib/error.h dg_echoloop1.c -o udpsrv
 // #3
-// $ gcc udpserv01.c error.c error.h dg_echoloop2.c -o udpsrv
+// $ gcc udpserv01.c ../lib/error.c ../lib/error.h dg_echoloop2.c -o udpsrv

@@ -2,7 +2,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "error.h"
+#include "../lib/error.h"
 
 #define MAXLINE 4096 /* max text line length */
 

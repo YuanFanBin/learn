@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "error.h"
+#include "../lib/error.h"
 
 #define MAXLINE 4096 /* max text line length */
 #define SERV_PORT 9877 /* TCP and UDP client-servers */
@@ -102,4 +102,4 @@ int main(int argc, char **argv) {
     }
 }
 
-// $ gcc udpserv_select01.c error.c error.h ../Chapter05/str_echo09.c -o udpserv
+// $ gcc udpserv_select01.c ../lib/error.c ../lib/error.h ../Chapter05/str_echo09.c -o udpsrv

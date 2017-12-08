@@ -3,7 +3,7 @@
 #include <netinet/in.h>
 #include <stdio.h>
 #include <string.h>
-#include "error.h"
+#include "../lib/error.h"
 
 #ifdef	HAVE_SOCKADDR_DL_STRUCT
 # include	<net/if_dl.h>

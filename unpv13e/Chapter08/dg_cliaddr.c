@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <arpa/inet.h>
-#include "error.h"
+#include "../lib/error.h"
 
 char * Sock_ntop(const struct sockaddr *sa, socklen_t salen);
 

@@ -1,7 +1,7 @@
 #include <sys/socket.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "error.h"
+#include "../lib/error.h"
 
 int main(int argc, char **argv) {
     int       sockfd;
@@ -19,4 +19,4 @@ int main(int argc, char **argv) {
     close(sockfd);
 }
 
-// $ gcc so_rcvbuf.c error.c error.h
+// $ gcc so_rcvbuf.c ../lib/error.c ../lib/error.h
