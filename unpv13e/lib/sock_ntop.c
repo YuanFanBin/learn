@@ -1,9 +1,10 @@
 #include <arpa/inet.h>
-#include <sys/un.h>
+#include <errno.h>
 #include <netinet/in.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include "../lib/error.h"
+#include <sys/un.h>
 
 #ifdef	HAVE_SOCKADDR_DL_STRUCT
 # include	<net/if_dl.h>
@@ -83,8 +84,10 @@ Sock_ntop(const struct sockaddr *sa, socklen_t salen)
 {
 	char	*ptr;
 
-	if ( (ptr = sock_ntop(sa, salen)) == NULL)
-		err_sys("sock_ntop error");	/* inet_ntop() sets errno */
+    if ( (ptr = sock_ntop(sa, salen)) == NULL) {
+        fprintf(stderr, "sock_ntop error: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
 	return(ptr);
 }
 

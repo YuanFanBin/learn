@@ -13,7 +13,7 @@ echo '[8.5(udpcli01.c #1) & 8.6] DONE'
 echo ''
 
 # 8.8(udpcli01.c #2)
-gcc udpcli01.c ../lib/error.c ../lib/error.h dg_cliaddr.c sock_ntop.c -o udpcli
+gcc udpcli01.c ../lib/error.c ../lib/error.h dg_cliaddr.c ../lib/sock_ntop.c -o udpcli
 rm udpcli
 echo '[8.8(udpcli01.c #2)] DONE'
 echo ''
