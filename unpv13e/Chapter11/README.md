@@ -889,3 +889,54 @@ $ ./daytimeudpcli1 localhost unpv13e
 ArchLinux [192.168.1.42] 58888 (unpv13e) open
 Sat Dec  9 15:44:15 2017
 ```
+
+#### 11.17 [getnameinfo](http://man7.org/linux/man-pages/man3/getnameinfo.3.html) 函数
+
+```c
+// man getnameinfo
+#include <sys/socket.h>
+#include <netdb.h>
+
+int getnameinfo(const struct sockaddr *addr,
+                socklen_t addrlen,
+                char *host, socklen_t hostlen,
+                char *serv, socklen_t servlen,
+                int flags);
+```
+
+*sockaddr*, *addrlen* 通常由 *accept*, *recvfrom*, *getsockname* 或 *getpeername* 返回。
+
+若不想返回主机字符串，指定 *hostlen* 为0
+
+若不想返回服务名称，则指定 *servlen* 为0
+
+调用此函数时，通常涉及以下文件
+
+```
+/etc/hosts
+/etc/nsswitch.conf
+/etc/resolv.conf
+```
+
+#### 11.18 可重入函数
+
+#### 11.19 [gethostbyname_r](http://man7.org/linux/man-pages/man3/gethostbyname_r.3.html) 和 [gethostbyaddr_r](http://man7.org/linux/man-pages/man3/gethostbyaddr_r.3.html) 函数
+
+有两种办法可以把诸如 *gethostbyname* 之类不可重入的函数改为可重入函数。
+
+(1) 把由不可重入函数填写并返回静态结构的做法改为由调用者分配再由可重入函数填写结构。（特点：自定义结构--结构复杂--及内存分配，内存释放）
+
+(2) 由可重入函数调用 *malloc* 以动态分配内存空间。（特点：主动调用 *freeaddrinfo* 函数）
+
+#### 11.21 其他网络相关信息
+
+| 信息 | 数据文件       | 结构     | 键值查找函数                     |
+| ---- | -------------- | -------- | -------------------------------- |
+| 主机 | /etc/hosts     | hostent  | gethostbyaddr, gethostbyname     |
+| 网络 | /etc/networks  | netent   | getnetbyaddr, getnetbyname       |
+| 协议 | /etc/protocols | protoent | getprotobyname, getprotobynumber |
+| 服务 | /etc/services  | servent  | getservbyname, getservbyport     |
+
+#### 11.22 小结
+
+*getaddrinfo*, *getnamebyinfo* 更为有用，既能解析IPv6地址，有符合线程安全调用约定。
