@@ -1,18 +1,15 @@
-/* intro/daytimetcpcli */
-#include <arpa/inet.h>  /* inet_pton */
-#include <errno.h>      /* errno */
-#include <netinet/in.h> /* socket, sockaddr_in */
-#include <stdio.h>      /* fputs */
+#include <arpa/inet.h>
+#include <errno.h>
+#include <netinet/in.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <strings.h>    /* bzero */
-#include <sys/socket.h> /* connect */
-#include <sys/types.h>  /* connect, read */
-#include <sys/uio.h>    /* read */
-#include <unistd.h>     /* read */
-#include "error.h"      /* err_* */
+#include <strings.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include "../lib/error.h"
 
-/* figure-1.6 */
-/* $ gcc error.h daytimetcpcliv6.c */
+#define MAXLINE 4096    /* max text line length */
+
 int main(int argc, char **argv)
 {
     int                 sockfd, n;
@@ -20,7 +17,7 @@ int main(int argc, char **argv)
     struct sockaddr_in6 servaddr;
 
     if (argc != 2) {
-        err_quit("usage: a.out <IPaddress>");
+        err_quit("usage: daytimetcpcli6 <IPaddress>");
     }
 
     if ((sockfd = socket(AF_INET6, SOCK_STREAM, 0)) < 0) {
