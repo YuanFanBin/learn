@@ -4,9 +4,9 @@
 
 #define MAXLINE     4096    /* max text line length */
 
-static int read_cnt;
+static int   read_cnt;
 static char *read_ptr;
-static char read_buf[MAXLINE];
+static char  read_buf[MAXLINE];
 
 static ssize_t my_read(int fd, char *ptr)
 {

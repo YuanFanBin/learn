@@ -5,7 +5,7 @@
 #include <stdlib.h>         /* exit */
 #include <unistd.h>         /* fork, read, write */
 #include <errno.h>          /* errno */
-#include "error.h"
+#include "../lib/error.h"
 
 #include "str_echo.c"
 #include "signal.c"

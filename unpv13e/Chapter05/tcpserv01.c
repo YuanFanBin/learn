@@ -1,19 +1,19 @@
 #include <arpa/inet.h>      /* htonl, htons */
 #include <errno.h>          /* errno */
 #include <netinet/in.h>     /* sockaddr_in */
+#include <stdio.h>
 #include <stdlib.h>         /* exit */
 #include <strings.h>        /* bzero */
 #include <sys/socket.h>     /* socklen_t */
 #include <unistd.h>         /* fork, read, write */
-#include "error.h"
-
-#include "str_echo.c"
+#include "../lib/error.h"
 
 #define SERV_PORT   9877    /* TCP and UDP client-servers */
 #define LISTENQ     1024    /* 2nd argument to listen() */
 #define MAXLINE     4096    /* max text line length */
 
-/* gcc tcpserv01.c */
+void str_echo(int sockfd);
+
 int main(int argc, char **argv)
 {
     int                 err;
@@ -31,9 +31,7 @@ int main(int argc, char **argv)
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(SERV_PORT);
 
-    if ((err = bind(listenfd, (struct sockaddr *) &servaddr,
-                    sizeof(servaddr))) < 0)
-    {
+    if ((err = bind(listenfd, (struct sockaddr *) &servaddr, sizeof(servaddr))) < 0) {
         err_sys("bind error");
     }
 
@@ -44,9 +42,7 @@ int main(int argc, char **argv)
     for ( ; ; ) {
 again:
         clilen = sizeof(cliaddr);
-        if ((connfd = accept(listenfd, (struct sockaddr *) &cliaddr,
-                             &clilen)) < 0)
-        {
+        if ((connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &clilen)) < 0) {
 #ifdef EPROTP
             if (errno == EPROTO || errno == ECONNABORTED) {
 #else

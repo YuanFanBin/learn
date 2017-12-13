@@ -1,11 +1,11 @@
 #include <unistd.h>     /* ssize_t, read, write */
 #include <errno.h>      /* errno */
-#include "error.h"
+#include "../lib/error.h"
 #include "sum.h"
 
-#include "readline.c"
-
 #define MAXLINE 4096    /* max text line length */
+
+ssize_t readline(int fd, void *vptr, size_t maxlen);
 
 /* 客户端与服务端之间传递二进制 */
 void str_echo(int sockfd)

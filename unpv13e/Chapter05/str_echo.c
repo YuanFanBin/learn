@@ -1,6 +1,6 @@
 #include <unistd.h>     /* ssize_t, read, write */
 #include <errno.h>      /* errno */
-#include "error.h"
+#include "../lib/error.h"
 
 #define MAXLINE 4096    /* max text line length */
 

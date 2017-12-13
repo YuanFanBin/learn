@@ -4,12 +4,13 @@
 #include <strings.h>         /* bzero */
 #include <errno.h>          /* errno */
 #include <stdlib.h>         /* exit */
-#include "error.h"
-
-#include "str_cli.c"
+#include <stdio.h>
+#include "../lib/error.h"
 
 #define SERV_PORT   9877    /* TCP and UDP client-servers */
 #define MAXLINE     4096    /* max text line length */
+
+void str_cli(FILE *fp, int sockfd);
 
 int main(int argc, char **argv)
 {

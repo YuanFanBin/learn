@@ -1,12 +1,12 @@
 #include <stdio.h>  /* FILE */
 #include <string.h> /* strlen */
 #include <unistd.h> /* write */
-#include "error.h"
+#include "../lib/error.h"
 #include "sum.h"
 
-#include "readline.c"
-
 #define MAXLINE 4096
+
+ssize_t readline(int fd, void *vptr, size_t maxlen);
 
 void str_cli(FILE *fp, int sockfd)
 {

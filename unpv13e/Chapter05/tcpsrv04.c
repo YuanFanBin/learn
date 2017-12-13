@@ -5,7 +5,7 @@
 #include <strings.h>        /* bzero */
 #include <sys/socket.h>     /* socklen_t */
 #include <unistd.h>         /* fork, read, write */
-#include "error.h"
+#include "../lib/error.h"
 
 #include "str_echo.c"
 #include "signal.c"

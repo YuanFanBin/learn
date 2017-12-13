@@ -4,11 +4,12 @@
 #include <stdlib.h>     /* exit */
 #include <strings.h>    /* bzero */
 #include <sys/socket.h> /* socket */
-#include "error.h"
-
-#include "str_cli.c"
+#include <stdio.h>
+#include "../lib/error.h"
 
 #define SERV_PORT   9877    /* TCP and UDP client-servers */
+
+void str_cli(FILE *fp, int sockfd);
 
 int main(int argc, char **argv)
 {
