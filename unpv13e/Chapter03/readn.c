@@ -1,6 +1,6 @@
-#include <errno.h>      /* EINTR */
-#include <unistd.h>     /* read */
-#include <sys/types.h>  /* ssize_t */
+#include <errno.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 ssize_t readn(int fd, void *vptr, size_t n) /* Read "n" bytes from a descriptor. */
 {

@@ -1,7 +1,6 @@
-#include <stdio.h>  /* printf */
-#include <stdlib.h> /* exit */
+#include <stdio.h>
+#include <stdlib.h>
 
-/* gcc byteorder.c */
 int main(int argc, char **argv)
 {
     union {
@@ -14,7 +13,7 @@ int main(int argc, char **argv)
         if (un.c[0] == 1 && un.c[1] == 2) {
             printf("big-endian\n");
         } else if (un.c[0] == 2 && un.c[1] == 1) {
-            printf("litte-endian\n");
+            printf("little-endian\n");
         } else {
             printf("unknown\n");
         }

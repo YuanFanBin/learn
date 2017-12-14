@@ -1,7 +1,7 @@
-#include <stdio.h>      /* snprintf */
-#include <string.h>     /* strlen */
-#include <errno.h>      /* ENOSPC */
-#include <netinet/in.h> /* AF_INET */
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include <netinet/in.h>
 
 const char *inet_ntop(int family, const void *addrptr, char *strptr, size_t len)
 {

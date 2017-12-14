@@ -1,6 +1,6 @@
-#include <errno.h>      /* EINTR */
-#include <unistd.h>     /* write */
-#include <sys/types.h>  /* ssize_t */
+#include <errno.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 ssize_t writen(int fd, const void *vptr, size_t n)
 {

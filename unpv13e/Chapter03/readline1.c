@@ -1,6 +1,6 @@
-#include <errno.h>      /* EINTR */
-#include <unistd.h>     /* read */
-#include <sys/types.h>  /* ssize_t */
+#include <errno.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 /* PAINFULLY SLOW VERSION -- example only */
 ssize_t readline(int fd, void *vptr, size_t maxlen)
@@ -29,4 +29,3 @@ again:
     *ptr = 0;   /* null terminate like fgets() */
     return(n);
 }
-
