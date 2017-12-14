@@ -118,7 +118,7 @@ int main(int argc, char **argv)
 
 - 与具体协议相关（IPv4或IPv6），更好的做法是编写协议无关函数（如稍后提到的 *getadrinfo* 函数）
 
-- 输入为点分格式（如：127.0.0.1），而不是人们管用的 `www.unpbook.com`
+- 输入为点分格式（如：127.0.0.1），而不是人们常用的 `www.unpbook.com`
 
 #### 1.5 [一个简单的时间获取服务器程序](daytimetcpsrv.c)
 
