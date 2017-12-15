@@ -1,11 +1,12 @@
-#include <arpa/inet.h>      /* htonl, htons */
-#include <errno.h>          /* errno */
-#include <netinet/in.h>     /* sockaddr_in */
+#include <arpa/inet.h>
+#include <errno.h>
+#include <netinet/in.h>
 #include <stdio.h>
-#include <stdlib.h>         /* exit */
-#include <strings.h>        /* bzero */
-#include <sys/socket.h>     /* socklen_t */
-#include <unistd.h>         /* fork, read, write */
+#include <stdlib.h>
+#include <strings.h>
+#include <sys/socket.h>
+#include <unistd.h>
+// #include <signal.h>     // #2
 #include "../lib/error.h"
 
 #define SERV_PORT   9877    /* TCP and UDP client-servers */
@@ -13,6 +14,7 @@
 #define MAXLINE     4096    /* max text line length */
 
 void str_echo(int sockfd);
+void sig_chld(int signo);                  // #2
 
 int main(int argc, char **argv)
 {
@@ -38,6 +40,8 @@ int main(int argc, char **argv)
     if ((err = listen(listenfd, LISTENQ)) < 0) {
         err_sys("listen error");
     }
+
+    // signal(SIGCHLD, sig_chld); // #2
 
     for ( ; ; ) {
 again:
@@ -67,3 +71,27 @@ again:
         }
     }
 }
+
+// # 服务端
+// $ gcc tcpserv01.c str_echo.c ../lib/error.c -o tcpserv01
+// $ ./tcpserv01
+//
+// # 客户端
+// $ nc -vt localhost 9877
+// localhost [127.0.0.1] 9877 open
+// hello
+// hello
+//
+//
+// #2
+// # 服务端
+// $ gcc tcpserv01.c str_echo.c ../lib/error.c sigchildwait.c -o tcpserv02
+// $ ./tcpserv02
+// child 6004 terminated
+//
+// # 客户端
+// $ nc -vt 127.0.0.1 9877
+// localhost [127.0.0.1] 9877 open
+// hello
+// hello
+// ^CExiting.

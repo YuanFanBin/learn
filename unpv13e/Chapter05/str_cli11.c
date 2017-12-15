@@ -1,10 +1,11 @@
-#include <stdio.h>  /* FILE */
-#include <string.h> /* strlen */
-#include <unistd.h> /* write */
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
 #include "../lib/error.h"
 
 #define MAXLINE 4096    /* max text line length */
 
+// Chapter03/readline.c
 ssize_t readline(int fd, void *vptr, size_t maxlen);
 
 void str_cli(FILE *fp, int sockfd)
@@ -18,9 +19,7 @@ void str_cli(FILE *fp, int sockfd)
         }
         sleep(1);
         /* 产生SIGPIPE */
-        if (write(sockfd, sendline + 1, strlen(sendline) - 1)
-                != strlen(sendline) - 1)
-        {
+        if (write(sockfd, sendline + 1, strlen(sendline) - 1) != strlen(sendline) - 1) {
             err_sys("write error");
         }
         if (readline(sockfd, recvline, MAXLINE) == 0) {

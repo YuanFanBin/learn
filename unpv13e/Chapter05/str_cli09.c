@@ -6,6 +6,7 @@
 
 #define MAXLINE 4096
 
+// Chapter03/readline.c
 ssize_t readline(int fd, void *vptr, size_t maxlen);
 
 void str_cli(FILE *fp, int sockfd)

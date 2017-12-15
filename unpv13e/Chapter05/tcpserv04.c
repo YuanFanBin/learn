@@ -1,28 +1,20 @@
-#include <arpa/inet.h>      /* htonl, htons */
-#include <errno.h>          /* errno */
-#include <netinet/in.h>     /* sockaddr_in */
-#include <stdlib.h>         /* exit */
-#include <strings.h>        /* bzero */
-#include <sys/socket.h>     /* socklen_t */
-#include <unistd.h>         /* fork, read, write */
+#include <arpa/inet.h>
+#include <errno.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+#include <strings.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <signal.h>
 #include "../lib/error.h"
-
-#include "str_echo.c"
-#include "signal.c"
-#include "sigchildwaitpid.c"    /* 使用waitpid来避免产生僵死进程 */
-
-/*
- * 网络编程可能遇到的三种情况：
- * （1）当fork子进程时，必须捕获SIGCHLD信号；
- * （2）当捕获信号时，必须处理被中断的系统调用；
- * （3）SIGCHLD的信号处理函数必须正确编写，应使用waitpid函数以避免留下僵死进程。
- */
 
 #define SERV_PORT   9877    /* TCP and UDP client-servers */
 #define LISTENQ     1024    /* 2nd argument to listen() */
 #define MAXLINE     4096    /* max text line length */
 
-/* gcc tcpserv01.c */
+void str_echo(int sockfd);
+void sig_chld(int signo);
+
 int main(int argc, char **argv)
 {
     int                 err;
@@ -40,9 +32,7 @@ int main(int argc, char **argv)
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(SERV_PORT);
 
-    if ((err = bind(listenfd, (struct sockaddr *) &servaddr,
-                    sizeof(servaddr))) < 0)
-    {
+    if ((err = bind(listenfd, (struct sockaddr *) &servaddr, sizeof(servaddr))) < 0) {
         err_sys("bind error");
     }
 
@@ -50,14 +40,12 @@ int main(int argc, char **argv)
         err_sys("listen error");
     }
 
-    signal(SIGCHLD, sig_child);
+    signal(SIGCHLD, sig_chld);
 
     for ( ; ; ) {
 again:
         clilen = sizeof(cliaddr);
-        if ((connfd = accept(listenfd, (struct sockaddr *) &cliaddr,
-                             &clilen)) < 0)
-        {
+        if ((connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &clilen)) < 0) {
 #ifdef EPROTP
             if (errno == EPROTO || errno == ECONNABORTED) {
 #else
@@ -82,3 +70,10 @@ again:
         }
     }
 }
+
+/*
+ * 网络编程可能遇到的三种情况：
+ * （1）当fork子进程时，必须捕获SIGCHLD信号；
+ * （2）当捕获信号时，必须处理被中断的系统调用；
+ * （3）SIGCHLD的信号处理函数必须正确编写，应使用waitpid函数以避免留下僵死进程。
+ */

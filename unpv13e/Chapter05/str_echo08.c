@@ -1,11 +1,12 @@
 #include <stdio.h>
-#include <unistd.h>     /* ssize_t, read, write */
+#include <unistd.h>
 #include <string.h>
-#include <errno.h>      /* errno */
+#include <errno.h>
 #include "../lib/error.h"
 
 #define MAXLINE 4096    /* max text line length */
 
+// Chapter03/readline.c
 ssize_t readline(int fd, void *vptr, size_t maxlen);
 
 /* 客户端与服务端之间传递文本字符串 */

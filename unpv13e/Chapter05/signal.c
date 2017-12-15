@@ -2,7 +2,7 @@
 
 typedef void Sigfunc(int);      /* for signal handlers */
 
-Sigfunc *signal(int signo, Sigfunc *func)
+Sigfunc *Signal(int signo, Sigfunc *func)
 {
     struct sigaction act, oact;
 

@@ -1,7 +1,7 @@
-#include <stdio.h>      /* printf */
-#include <sys/wait.h>   /* wait */
+#include <stdio.h>
+#include <sys/wait.h>
 
-void sig_child(int signo)
+void sig_chld(int signo)
 {
     pid_t   pid;
     int     stat;
