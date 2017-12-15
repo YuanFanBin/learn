@@ -68,7 +68,7 @@ struct sockaddr_storage {
 }
 ```
 
-*sockaddr_storage* 类型提供的通用套接字地址结构相比 *sockaddr* 存在一下两点茶边。
+*sockaddr_storage* 类型提供的通用套接字地址结构相比 *sockaddr* 存在一下两点差别
 
 - 如果系统支持的任何套接字地址结构有对齐需要，那么 *sockaddr_storage* 能够满足最苛刻的对齐要求
 

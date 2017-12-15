@@ -20,7 +20,7 @@
 
 - 在 *select* 中阻塞等待I/O，用此替代直接阻塞在 *read* 或 *write* 调用上
 
-- 使用教新的 *SO_RCVTIMEO* 和 *SO_SNDTIMEO* 套接字选项。（并非所有实现都支持）
+- 使用较新的 *SO_RCVTIMEO* 和 *SO_SNDTIMEO* 套接字选项。（并非所有实现都支持）
 
 14.2.1 使用 *SIGALRM* 为 *connect* 设置超时
 
@@ -555,7 +555,7 @@ void str_cli(FILE *fp, int sockfd)
 - 使用由 *select* 提供的时间限制
 - 使用较新的 *SO_RCVTIMEO* 和 *SO_SNDTIMEO* 套接字选项
 
-*recv*msg* 和 *sendmsg* 是所提供的5组I/O函数中最为通用的。
+*recvmsg* 和 *sendmsg* 是所提供的5组I/O函数中最为通用的。
 
 
 图片来源：[UNP](https://www.amazon.cn/UNIX%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%A5%97%E6%8E%A5%E5%AD%97%E8%81%94%E7%BD%91API-%E5%8F%B2%E8%92%82%E6%96%87%E6%96%AF/dp/B011S72JB6/ref=sr_1_3?ie=UTF8&qid=1512463174&sr=8-3&keywords=unix+network+programming)

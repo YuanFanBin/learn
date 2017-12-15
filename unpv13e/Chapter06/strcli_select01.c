@@ -5,7 +5,7 @@
 #include "error.h"
 #include "header.h"
 
-#include "../Chapter05/readline.c"
+#include "../Chapter03/readline.c"
 
 #define MAXLINE 4096 /* max text line length */
 

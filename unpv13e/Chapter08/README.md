@@ -4,7 +4,7 @@
 
 ![udp c/s image](doc/figure-8-1.png)
 
-8.2 [recvfrom](http://man7.org/linux/man-pages/man2/recvfrom.2.html) 和 [sendto](http://man7.org/linux/man-pages/man2/sendto.2.html) 函数
+#### 8.2 [recvfrom](http://man7.org/linux/man-pages/man2/recvfrom.2.html) 和 [sendto](http://man7.org/linux/man-pages/man2/sendto.2.html) 函数
 
 ```c
 // man recvfrom; man sendto
@@ -25,19 +25,19 @@ ssize_t sendto(int socket,
                socklen_t dest_len);
 ```
 
-8.3 UDP 回射服务器程序：[main](udpserv01.c) 函数
+#### 8.3 UDP 回射服务器程序：[main](udpserv01.c) 函数
 
-8.4 UDP 回射服务器程序：[dg_echo](dg_echo.c) 函数
+#### 8.4 UDP 回射服务器程序：[dg_echo](dg_echo.c) 函数
 
 ![two udp client image](doc/figure-8-6.png)
 
-8.5 UDP 回射服务器程序：[main](udpcli01.c) 函数
+#### 8.5 UDP 回射服务器程序：[main](udpcli01.c) 函数
 
-8.6 UDP 回射服务器程序：[dg_cli](dg_cli.c) 函数
+#### 8.6 UDP 回射服务器程序：[dg_cli](dg_cli.c) 函数
 
-8.7 数据包丢失
+#### 8.7 数据包丢失
 
-8.8 验证接收到的响应
+#### 8.8 验证接收到的响应
 
 修改 [udpcli01.c](udpcli01.c)，用 **#2** 编译
 
@@ -51,15 +51,15 @@ ssize_t sendto(int socket,
 
 [网络字节序转换成IP地址](http://beej-zhtw.netdpi.net/09-man-manual/9-14-inet_ntop-inet_pton)
 
-8.9 服务器进程未运行
+#### 8.9 服务器进程未运行
 
-8.10 UDP程序例子小节
+#### 8.10 UDP程序例子小节
 
 ![udp c/s image](doc/figure-8-11.png)
 
 ![tcp c/s image](doc/figure-8-12.png)
 
-8.11 UDP的 [connect](http://man7.org/linux/man-pages/man2/connect.2.html) 函数
+#### 8.11 UDP的 [connect](http://man7.org/linux/man-pages/man2/connect.2.html) 函数
 
 ![connected udp image](doc/figure-8-15.png)
 
@@ -95,11 +95,11 @@ ssize_t sendto(int socket,
 
 内核复制**一次**目的IP地址和端口号的套接字地址结构
 
-8.12 [dg_cli](dg_cliconnect.c) 函数（修订版）
+#### 8.12 [dg_cli](dg_cliconnect.c) 函数（修订版）
 
 修改 [udpcli01.c](udpcli01.c)，用 **#3** 编译
 
-8.13 UDP缺乏流量控制
+#### 8.13 UDP缺乏流量控制
 
 [dg_cliloop1.c](dg_cliloop1.c), [dg_echoloop1.c](dg_echoloop1.c)
 
@@ -119,13 +119,13 @@ TODO: 本小节需要理解内容（当前测试环境下没有测试出文章�
 
 本小节测试说明两件事：1. UDP没有流量控制; 2. UDP是不可靠传输（可能会有丢包）
 
-8.14 UDP 中的外出接口的确定
+#### 8.14 UDP 中的外出接口的确定
 
 已连接UDP套接字还可用来确定用于某个特定目的地的外出接口, [udp_cli09.c](udp_cli09.c)。
 
 *connect* -> *getsockname*
 
-8.15 使用 *select* 函数的TCP和UDP回射服务器程序
+#### 8.15 使用 *select* 函数的TCP和UDP回射服务器程序
 
 [udpserv_select01.c](udpserv_select01.c)
 

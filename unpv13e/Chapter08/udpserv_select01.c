@@ -15,6 +15,7 @@
 #define max(a, b)   ((a) > (b) ? (a) : (b))
 
 void str_echo(int sockfd); // Chapter05 str_echo[str_echo.c, str_echo08.c, str_echo09.c]
+void sig_chld(int signo);  // Chapter05 sigchildwaitpid.c
 
 int main(int argc, char **argv) {
     int         listenfd, connfd, udpfd, nready, maxfdp1;
@@ -24,7 +25,6 @@ int main(int argc, char **argv) {
     ssize_t     n;
     socklen_t   len;
     const int   on = 1;
-    void        sig_chld(int);
     struct sockaddr_in cliaddr , servaddr;
 
     // 1. create listening TCP socket
