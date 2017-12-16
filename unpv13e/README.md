@@ -16,6 +16,7 @@
     * [第十三章 守护进程和inetd超级服务器](Chapter13)
     * [第十四章 高级I/O函数](Chapter14)
     * [第十五章 Unix域套接字](Chapter15)
+    * [第十六章 非阻塞式I/O](Chapter16)
 
 [The GNU Netcat](http://netcat.sourceforge.net/): 网络工具瑞士军刀
 
