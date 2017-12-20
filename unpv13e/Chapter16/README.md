@@ -241,3 +241,86 @@ void str_cli(FILE *fp, int sockfd)
     待处理错误总是导致该套接字变为可读又可写。
 
 #### 16.4 非阻塞 *connect*：[时间获取客户程序](connect_nob.c)
+
+```c
+#include <sys/socket.h>
+#include <sys/select.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
+#include "../lib/error.h"
+
+int connect_nonb(int sockfd, const struct sockaddr *saptr, socklen_t salen, int nsec)
+{
+    int             flags, n, error;
+    socklen_t       len;
+    fd_set          rset, wset;
+    struct timeval  tval;
+
+    if ((flags = fcntl(sockfd, F_GETFL, 0)) < 0) {
+        err_sys("fcntl error");
+    }
+    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) < 0) {
+        err_sys("fcntl error");
+    }
+
+    error = 0;
+    if ((n = connect(sockfd, saptr, salen)) < 0) {
+        if (errno != EINPROGRESS) { // 连接建立已经启动但尚未完成
+            return(-1);
+        }
+    }
+
+    // Do whatever we want while the connect is taking palce.
+    if (n == 0) {
+        goto done;  // connect completed immediately，无错误
+    }
+    FD_ZERO(&rset);
+    FD_SET(sockfd, &rset);
+    wset = rset;
+    tval.tv_sec = nsec;
+    tval.tv_usec = 0;
+    if ((n = select(sockfd + 1, &rset, &wset, NULL, nsec ? &tval : NULL)) < 0) {
+        err_sys("select error");
+    } else if (n == 0) { // 超时且没有描述符准备好
+        close(sockfd); // 关闭socket，三次握手没必要进行下去
+        errno = ETIMEDOUT;
+        return(-1);
+    }
+    if (FD_ISSET(sockfd, &rset) || FD_ISSET(sockfd, &wset)) {
+        len = sizeof(error);
+        // connect 出错，sockfd描述符可读＆可写，通过getsockopt获取错误信息
+        if (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+            return(-1);
+        }
+    } else {
+        err_quit("select error: sockfd not set");
+    }
+
+done:
+    if (fcntl(sockfd, F_SETFL, flags) < 0) { // restore file status flags
+        err_sys("fcntl error");
+    }
+    if (error) {
+        close(sockfd); // just in case
+        errno = error;
+        return(-1);
+    }
+    return(0);
+}
+```
+
+套接字的各种实现以及非阻塞 *connect* 会带来移植性问题。
+
+首先，调用 *select* 之前有可能连接已经建立并有来自对端的数据到达，这种情况下套接字既可读又可写，这和连接失败情况下套接字的读写条件一样。我们使用 *getsocketopt* 并检查套接字上是否存在待处理错误来解决此种情况。
+
+其次，既然我们不能假设套接字的可写（而不可读）条件是 *select* 返回套接字操作成功条件的唯一方法，下一个移植性问题就是怎样判断连接建立是否成功：
+
+- 调用 *getpeername* 代替 *getsocket*
+
+- 以值为0的长度参数调用 *read*
+
+- 再调用 *connect* 一次
+
+#### 16.5 非阻塞 *connect*：Web客户程序
