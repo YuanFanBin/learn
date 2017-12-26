@@ -8,6 +8,8 @@
     * [golang](golang/easy/reverse-integer_test.go)
 * [9. Palindrome Number](https://leetcode.com/problems/palindrome-number/description/)
     * [golang](golang/easy/palindrome-number_test.go)
+* [14. Longest Common Prefix](https://leetcode.com/problems/longest-common-prefix/description/)
+    * [golang](golang/easy/longest-common-prefix_test.go)
 
 #### Medium
 
@@ -23,3 +25,7 @@
     * [golang](golang/medium/string-to-integer_test.go)
 * [11. Container With Most Water](https://leetcode.com/problems/container-with-most-water/description/)
     * [golang](golang/medium/container-with-most-water_test.go)
+* [15. 3Sum](https://leetcode.com/problems/3sum/description/)
+    * [golang](golang/medium/3sum_test.go)
+* [16. 3Sum Closest](https://leetcode.com/problems/3sum-closest/description/)
+    * [golang](golang/medium/3sum-closest_test.go)
