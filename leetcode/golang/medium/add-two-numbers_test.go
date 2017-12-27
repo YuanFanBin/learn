@@ -17,11 +17,6 @@ import (
 // Output: 7 -> 0 -> 8
 // Explanation: 342 + 465 = 807.
 
-type ListNode struct {
-	Val  int
-	Next *ListNode
-}
-
 func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 	if l1 == nil {
 		return l2

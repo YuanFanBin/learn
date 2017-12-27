@@ -8,8 +8,14 @@
     * [golang](golang/easy/reverse-integer_test.go)
 * [9. Palindrome Number](https://leetcode.com/problems/palindrome-number/description/)
     * [golang](golang/easy/palindrome-number_test.go)
+* [13. Roman to Integer](https://leetcode.com/problems/roman-to-integer/description/)
+    * [golang](golang/easy/roman-to-integer_test.go)
 * [14. Longest Common Prefix](https://leetcode.com/problems/longest-common-prefix/description/)
     * [golang](golang/easy/longest-common-prefix_test.go)
+* [20. Valid Parentheses](https://leetcode.com/problems/valid-parentheses/description/)
+    * [golang](golang/easy/valid-parentheses_test.go)
+* [21. Merge Two Sorted Lists](https://leetcode.com/problems/merge-two-sorted-lists/description/)
+    * [golang](golang/easy/merge-to-sorted-lists_test.go)
 
 #### Medium
 
@@ -25,7 +31,13 @@
     * [golang](golang/medium/string-to-integer_test.go)
 * [11. Container With Most Water](https://leetcode.com/problems/container-with-most-water/description/)
     * [golang](golang/medium/container-with-most-water_test.go)
+* [12. Integer to Roman](https://leetcode.com/problems/integer-to-roman/description/)
+    * [golang](golang/medium/integer-to-roman_test.go)
 * [15. 3Sum](https://leetcode.com/problems/3sum/description/)
     * [golang](golang/medium/3sum_test.go)
 * [16. 3Sum Closest](https://leetcode.com/problems/3sum-closest/description/)
     * [golang](golang/medium/3sum-closest_test.go)
+* [18. 4Sum](https://leetcode.com/problems/4sum/description/)
+    * [golang](golang/medium/4sum_test.go)
+* [19. Remove Nth Node From End of List](https://leetcode.com/problems/remove-nth-node-from-end-of-list/description/)
+    * [golang](golang/medium/remove-nth-node-from-end-of-list_test.go)

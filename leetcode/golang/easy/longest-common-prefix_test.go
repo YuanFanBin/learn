@@ -33,12 +33,11 @@ func longestCommonPrefix(strs []string) string {
 	return strs[0][0 : i-1]
 }
 
-type Case struct {
-	strs []string
-	exp  string
-}
-
 func Test_longestCommonPrefix(t *testing.T) {
+	type Case struct {
+		strs []string
+		exp  string
+	}
 	cases := []Case{
 		{
 			strs: []string{},
