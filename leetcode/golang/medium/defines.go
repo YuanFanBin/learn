@@ -1,12 +1,6 @@
 package medium
 
-/**
- * Definition for singly-linked list.
- * type ListNode struct {
- *     Val int
- *     Next *ListNode
- * }
- */
+// ListNode definition for singly-linked list
 type ListNode struct {
 	Val  int
 	Next *ListNode
