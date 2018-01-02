@@ -42,3 +42,5 @@
     * [golang](golang/medium/swap-nodes-in-pairs_test.go)
 * [26. Remove Duplicates from Sorted Array(easy)](https://leetcode.com/problems/remove-duplicates-from-sorted-array/description/)
     * [golang](golang/easy/remove-duplicates-from-sorted-array_test.go)
+* [146. LRU Cache(hard)](https://leetcode.com/problems/lru-cache/description/)
+    * [golang](golang/hard/lru-cache_test.go)
