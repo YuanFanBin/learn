@@ -29,6 +29,7 @@ import (
 	"testing"
 )
 
+// 1656ms
 type LRUCache struct {
 	capacity int
 	list     *list.List
@@ -136,3 +137,47 @@ func Test_LRUCache(t *testing.T) {
 		}
 	}
 }
+
+// double-list & hash map: 282ms
+/*
+type LRUNode struct {
+	key   int
+	value int
+}
+
+type LRUCache struct {
+	capacity int
+	list     *list.List
+	hash     map[int]*list.Element
+}
+
+func Constructor(capacity int) LRUCache {
+	return LRUCache{capacity: capacity, list: list.New(), hash: map[int]*list.Element{}}
+}
+
+// Get from lru cache
+func (lru *LRUCache) Get(key int) int {
+	if val, ok := lru.hash[key]; ok {
+		node := val.Value.(*LRUNode)
+		lru.hash[key] = lru.list.PushFront(&LRUNode{key: key, value: node.value})
+		lru.list.Remove(val)
+		return node.value
+	}
+	return -1
+}
+
+// Put to lru cache
+func (lru *LRUCache) Put(key int, value int) {
+	if val, ok := lru.hash[key]; ok {
+		lru.list.Remove(val)
+		lru.hash[key] = lru.list.PushFront(&LRUNode{key: key, value: value})
+		return
+	}
+	if lru.list.Len() == lru.capacity {
+		back := lru.list.Back()
+		delete(lru.hash, back.Value.(*LRUNode).key)
+		lru.list.Remove(back)
+	}
+	lru.hash[key] = lru.list.PushFront(&LRUNode{key: key, value: value})
+}
+*/
