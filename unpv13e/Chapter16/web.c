@@ -87,6 +87,9 @@ int main(int argc, char **argv)
     exit(0);
 }
 
+// $ sudo systemctl start nginx
+// $ sudo systemctl start php-fpm
+
 // $ gcc web.c home_page.c ../Chapter11/tcp_connect.c  ../Chapter03/writen.c start_connect.c ../Chapter11/host_serv.c write_get_cmd.c ../lib/error.c -o web
 // $ ls -alh /data/www/
 // -rw-r--r-- 1 fanbin fanbin  134 Jul 11 17:16 index.php

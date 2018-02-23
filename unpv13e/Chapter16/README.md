@@ -324,3 +324,124 @@ done:
 - 再调用 *connect* 一次
 
 #### 16.5 非阻塞 *connect*：Web客户程序
+
+```sh
+$ sudo systemctl start nginx
+$ sudo systemctl start php-fpm
+
+$ gcc web.c home_page.c ../Chapter11/tcp_connect.c  ../Chapter03/writen.c start_connect.c ../Chapter11/host_serv.c write_get_cmd.c ../lib/error.c -o web
+$ ls -alh /data/www/
+-rw-r--r-- 1 fanbin fanbin  134 Jul 11 17:16 index.php
+$ ./web 3 127.0.0.1 / index.php index.php index.php
+nfiles = 3
+read 325 bytes of home page
+end-of-file on home page
+start_connect for index.php, fd 3
+start_connect for index.php, fd 4
+start_connect for index.php, fd 5
+connection established for index.php
+wrote 27 bytes for index.php
+connection established for index.php
+wrote 27 bytes for index.php
+connection established for index.php
+wrote 27 bytes for index.php
+read 325 bytes from index.php
+read 325 bytes from index.php
+read 325 bytes from index.php
+end-of-file on index.php
+end-of-file on index.php
+end-of-file on index.php
+```
+
+#### 16.6 非阻塞 *accept*: [tcpcli03.c](tcpcli03.c)
+
+```c
+#include <arpa/inet.h>
+#include <errno.h>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <strings.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include "../lib/error.h"
+
+#define SERV_PORT   9877    /* TCP and UDP client-servers */
+
+int main(int argc, char **argv)
+{
+    int                 n, sockfd;
+    struct linger       ling;
+    struct sockaddr_in  servaddr;
+
+    if (argc != 2) {
+        err_quit("usage: tcpcli03 <IPaddress>");
+    }
+
+    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        err_sys("socket error");
+    }
+
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port = htons(SERV_PORT);
+    if ((n = inet_pton(AF_INET, argv[1], &servaddr.sin_addr)) < 0) {
+        err_sys("inet_pton error for %s", argv[1]);
+    } else if (n == 0) {
+        err_quit("inet_pton error for %s", argv[1]);
+    }
+
+    if (connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
+        err_sys("connect error, errno = %d", errno);
+    }
+
+    // 详细说明参考7.5小节内容
+    ling.l_onoff = 1; /* cause RST to be sent on close() */
+    ling.l_linger = 0;
+    if (setsockopt(sockfd, SOL_SOCKET, SO_LINGER, &ling, sizeof(ling)) < 0) {
+        err_sys("setsockopt error");
+    }
+    close(sockfd);
+    exit(0);
+}
+```
+
+连接建立后，发送一个 **RST** 至服务器。
+
+```sh
+$ gcc tcpcli03.c ../lib/error.c -o tcpcli03
+```
+
+我们通过在[tcpsrv_select01.c](../Chapter06/tcpsrv_select01.c)中的 *accept* 前加入两行代码，用于模拟一个繁忙的服务器，在 *select* 后没有立即执行 *accept*，结合客户端发送来的 **RST**，此时问题就会出现。
+
+```c
+...
+  if (FD_ISSET(listenfd, &rset)) {    /* new client connection */
++     printf("listening socket readable\n");
++     sleep(5);
+      clilen = sizeof(cliaddr);
+      if ((connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &clilen)) < 0) {
+          err_sys("accept error");
+      }
+...
+```
+
+摘录原书解释，考虑一个源自Berkeley的实现：
+
+- 客户端建立一个连接并随后中止它（如上）
+
+- *select* 向服务器进程返回可读条件，不过服务器要过一小段时间才调用 *accept* （服务器繁忙）
+
+- 在服务器从 *select* 返回到调用 *accept* 期间，服务器TCP收到来自客户的 **RST**
+
+- 这个已完成的连接被服务器TCP驱逐出队列，我们假设队列中没有其他已经完成的连接
+
+- 服务器调用 *accept*，但是由于没有任何已完成的连接，服务器阻塞
+
+服务器会一直阻塞在 *accept* 调用上，直到其他某个客户建立一个连接为止。**但在此期间，服务器单纯阻塞在accept调用上，无法处理任何其他已就绪的描述符。**
+
+本问题的解决办法如下：
+
+- 当使用 *select* 获悉某个监听套接字上何时有已完成连接准备好被 *accept* 时，总是把这个监听套接字设置为非阻塞
+
+- 在后续的 *accept* 调用中忽略以下错误：EWOULDBLOCK（源自Berkeley的实现，客户中止连接时），ECONNABORTED（POSIX实现，客户中止连接时），EPROTO（SVR4实现，客户中止连接时）和 EINTR（如果有信号被捕获）
