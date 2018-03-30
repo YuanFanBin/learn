@@ -5,3 +5,9 @@ gcc web.c home_page.c ../Chapter11/tcp_connect.c  ../Chapter03/writen.c start_co
 rm web
 echo '[16.5 DONE]'
 echo ''
+
+# 16.6
+gcc tcpcli03.c ../lib/error.c -o tcpcli03
+rm tcpcli03
+echo '[16.6 DONE]'
+echo ''

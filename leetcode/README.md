@@ -50,5 +50,7 @@
     * [golang](golang/easy/implement-strstr_test.go)
 * [29. Divide Two Integers(medium)](https://leetcode.com/problems/divide-two-integers/description/)
     * [golang](golang/medium/divide-two-integers_test.go)
+* [31. Next Permutation(medium)](https://leetcode.com/problems/next-permutation/description/)
+    * [golang](golang/medium/next-permutation_test.go)
 * [146. LRU Cache(hard)](https://leetcode.com/problems/lru-cache/description/)
     * [golang](golang/hard/lru-cache_test.go)
