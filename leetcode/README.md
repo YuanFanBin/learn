@@ -48,5 +48,7 @@
     * [golang](golang/easy/remove-element_test.go)
 * [28. Implement strStr()(easy)](https://leetcode.com/problems/implement-strstr/description/)
     * [golang](golang/easy/implement-strstr_test.go)
+* [29. Divide Two Integers(medium)](https://leetcode.com/problems/divide-two-integers/description/)
+    * [golang](golang/medium/divide-two-integers_test.go)
 * [146. LRU Cache(hard)](https://leetcode.com/problems/lru-cache/description/)
     * [golang](golang/hard/lru-cache_test.go)
