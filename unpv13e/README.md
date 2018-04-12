@@ -17,6 +17,7 @@
     * [第十四章 高级I/O函数](Chapter14)
     * [第十五章 Unix域套接字](Chapter15)
     * [第十六章 非阻塞式I/O](Chapter16)
+    * [第十七章 ioctl操作](Chapter17)
 
 [The GNU Netcat](http://netcat.sourceforge.net/): 网络工具瑞士军刀
 
