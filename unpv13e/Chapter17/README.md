@@ -70,9 +70,9 @@ struct ifreq {
 #define ifr_metric      ifr_ifru.ifru_metric    /* metric */
 #define ifr_data        ifr_ifru.ifru_data      /* for use by interface */
 ```
-![SIOCGIFCONF前ifconf结构的初始化结果](figure-17-3.png)
+![SIOCGIFCONF前ifconf结构的初始化结果](doc/figure-17-3.png)
 
-![SIOCGIFCONF返回的值](figure-17-4.png)
+![SIOCGIFCONF返回的值](doc/figure-17-4.png)
 
 #### 17.6 [get\_ifi\_info](get_ifi_info.c) 函数
 

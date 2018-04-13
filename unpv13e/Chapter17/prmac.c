@@ -1,5 +1,5 @@
 #include "../lib/error.h"
-#include "../lib/unpifi.h"
+#include "unpifi.h"
 #include <net/if_arp.h>
 #include <netinet/in.h>
 #include <stdio.h>
