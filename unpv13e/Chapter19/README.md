@@ -37,7 +37,7 @@ struct sadb_msg {
 
 #### 19.3 倾泻安全关联数据库
 
-![SA类型](figure-19-4.png)
+![SA类型](doc/figure-19-4.png)
 
 通过密钥管理套接字发出的 *SADB_DUMP* 命令的程序
 
