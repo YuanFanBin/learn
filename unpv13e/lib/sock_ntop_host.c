@@ -10,8 +10,7 @@
 # include	<net/if_dl.h>
 #endif
 
-char *
-sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
+char *sock_ntop_host(const struct sockaddr *sa, socklen_t salen)
 {
     static char str[128];		/* Unix domain is largest */
 
