@@ -19,25 +19,27 @@ import (
 // 1,1,5 → 1,5,1
 
 func nextPermutation(nums []int) {
-	i := 0
-	if len(nums) > 2 {
-		i = len(nums) - 1
-		for ; i > 1 && nums[i-1] >= nums[i]; i-- {
+	idx := len(nums) - 1
+	for idx > 0 {
+		if nums[idx-1] < nums[idx] { // 从后向前找：前一个 < 当前(后半部分单调递减)
+			break
 		}
-		j := len(nums) - 1
-		for ; j >= i && nums[i] >= nums[j]; j-- {
-		}
-		if i != 0 {
-			nums[i-1], nums[j] = nums[j], nums[i-1]
-		} else {
-			if nums[0] < nums[1] {
-				nums[0], nums[j] = nums[j], nums[0]
-			}
-			i++
-		}
+		idx--
 	}
-	reverse(nums, i, len(nums)-1)
-	return
+	if idx == 0 {
+		reverse(nums, 0, len(nums)-1)
+		return
+	}
+	// 从后半部分从后向前找出最先出现比前一个大的并交换，后半部分逆序（使后半部分升序）
+	i := len(nums) - 1
+	for i >= idx {
+		if nums[i] > nums[idx-1] {
+			break
+		}
+		i--
+	}
+	nums[idx-1], nums[i] = nums[i], nums[idx-1]
+	reverse(nums, idx, len(nums)-1)
 }
 
 func reverse(nums []int, l, r int) {

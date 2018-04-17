@@ -9,34 +9,31 @@ import "math"
 //
 // If it is overflow, return MAX_INT.
 
-func divide(dividend int, divisor int) int {
-	if divisor == 0 {
-		return math.MaxInt32
-	}
-	if dividend == math.MinInt32 && divisor == -1 {
+func divide(dividend, divisor int) int {
+	if divisor == 0 || (dividend == math.MinInt32 && divisor == -1) {
 		return math.MaxInt32
 	}
 	sign := 1
 	if dividend < 0 {
-		sign = -1
+		sign *= -1
 		dividend = -dividend
 	}
 	if divisor < 0 {
 		sign *= -1
 		divisor = -divisor
 	}
-	ans := 0
-	for {
-		dividend -= divisor
-		switch {
-		case dividend < 0:
-			return ans * sign
-		case dividend == 0:
-			return (ans + 1) * sign
-		default:
-			ans++
+	res := 0
+	for dividend >= divisor {
+		multi := 1
+		maxShift := divisor
+		for dividend >= (maxShift << 1) { // 被减数 - divisor * {max}, max = 2 ** n ==> multi
+			maxShift <<= 1
+			multi <<= 1
 		}
+		dividend -= maxShift
+		res += multi
 	}
+	return res * sign
 }
 
 func Test_divide(t *testing.T) {
