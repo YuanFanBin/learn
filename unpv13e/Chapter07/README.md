@@ -1,5 +1,19 @@
 ## 第七章 套接字选项
 
+#### 7.2 *getsockopt* 和 *setsockopt* 函数
+
+```c
+#include <sys/socket.h>
+
+int getsockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen);
+
+int setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen);
+```
+
+![套接字层和IP层的套接字选项汇总](figure/7-1.png)
+
+![传输层的套接字选项汇总](figure/7-2.png)
+
 7.3 检查选项是否受支持并获取默认值
 
 [checkopts.c](checkopts.c)
@@ -14,7 +28,7 @@
 
 **7.5.6 SO_LINGER 套接字选项**
 
-本小节需仔细研究，多看几遍
+**本小节需仔细研究，多看几遍**
 
 7.6 IPv4 套接字选项
 
@@ -28,7 +42,7 @@
 
 7.11 [fcntl](http://man7.org/linux/man-pages/man2/fcntl.2.html) 函数
 
-![fcntl ioctl image](doc/figure-7-20.png)
+![fcntl ioctl image](figure/7-20.png)
 
 本小节研究 *fcntl* 函数如何影响套接字
 
