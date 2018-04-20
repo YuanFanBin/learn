@@ -8,5 +8,4 @@ void sig_chld(int signo)
 
     pid = wait(&stat);
     printf("child %d terminated\n", pid);
-    return;
 }

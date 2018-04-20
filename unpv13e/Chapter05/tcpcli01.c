@@ -1,11 +1,11 @@
-#include <sys/socket.h>     /* socket */
-#include <netinet/in.h>     /* sockaddr_in */
-#include <arpa/inet.h>      /* inet_pton */
-#include <strings.h>         /* bzero */
-#include <errno.h>          /* errno */
-#include <stdlib.h>         /* exit */
-#include <stdio.h>
 #include "../lib/error.h"
+#include <arpa/inet.h>      /* inet_pton */
+#include <errno.h>          /* errno */
+#include <netinet/in.h>     /* sockaddr_in */
+#include <stdio.h>
+#include <stdlib.h>         /* exit */
+#include <strings.h>         /* bzero */
+#include <sys/socket.h>     /* socket */
 
 #define SERV_PORT   9877    /* TCP and UDP client-servers */
 #define MAXLINE     4096    /* max text line length */

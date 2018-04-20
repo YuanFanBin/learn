@@ -1,12 +1,12 @@
+#include "../lib/error.h"
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netinet/in.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <strings.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <signal.h>
-#include "../lib/error.h"
 
 #define SERV_PORT   9877    /* TCP and UDP client-servers */
 #define LISTENQ     1024    /* 2nd argument to listen() */
