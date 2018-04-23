@@ -25,6 +25,7 @@
     * [第二十二章 高级UDP套接字编程](Chapter22)
     * [第二十三章 高级SCTP套接字编程](Chapter23)
     * [第二十四章 带外数据](Chapter24)
+    * [第二十五章 信号驱动式I/O](Chapter25)
 
 ![Unix & Linux历史源流](https://upload.wikimedia.org/wikipedia/commons/c/cd/Unix_timeline.en.svg)
 

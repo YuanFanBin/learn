@@ -1,7 +1,7 @@
-#include <sys/socket.h>
+#include "../lib/error.h"
 #include <netinet/in.h> /* sockaddr_in */
 #include <strings.h>
-#include "../lib/error.h"
+#include <sys/socket.h>
 
 #define SERV_PORT 9877 /* TCP and UDP client-servers */
 
