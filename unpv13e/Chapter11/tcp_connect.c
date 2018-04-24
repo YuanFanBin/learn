@@ -1,9 +1,9 @@
 #include <netdb.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <strings.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 int tcp_connect(const char *host, const char *serv)
