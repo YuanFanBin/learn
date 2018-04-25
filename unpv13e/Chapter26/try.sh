@@ -4,7 +4,7 @@
 ########################################
 gcc tcpserv01.c ../lib/error.c ../Chapter05/str_echo.c ../Chapter11/tcp_listen.c -lpthread -o tcpserv01
 gcc tcpserv02.c ../lib/error.c ../Chapter05/str_echo.c ../Chapter11/tcp_listen.c -lpthread -o tcpserv02
-gcc ../Chapter05/tcpcli01.c ../lib/error.c strclithread.c ../Chapter03/readline.c ../Chapter03/writen.c -lpthread -o tcpcli01
+gcc ../Chapter05/tcpcli01.c ../lib/error.c strclithread.c readline.c ../Chapter03/writen.c -lpthread -o tcpcli01
 rm tcpserv01 tcpserv02 tcpcli01
 echo '[26.4 DONE]'
 echo ''
