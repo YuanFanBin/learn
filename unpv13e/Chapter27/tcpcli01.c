@@ -12,8 +12,6 @@
 typedef unsigned char u_char;
 #endif
 
-int optind, opterr, optopt;
-
 // sourceroute.c
 u_char *inet_srcrt_init(int type);
 int inet_srcrt_add(char *hostptr);

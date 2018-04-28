@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 
 #define SERV_PORT 9877 /* TCP and UDP client-servers */
 
