@@ -172,7 +172,7 @@ r`a[p
 
 #### 13.5 inetd 守护进程
 
-![inetd的工作流程](doc/figure-13-7.png)
+![inetd的工作流程](figure/13-7.png)
 
 #### 13.6 [daemon_inetd](daemon_inetd.c) 函数
 

@@ -1,6 +1,6 @@
-#include <sys/socket.h>
-#include <stdlib.h>
 #include "../lib/error.h"
+#include <stdlib.h>
+#include <sys/socket.h>
 
 void Listen(int fd, int backlog) {
     char *ptr;

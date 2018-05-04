@@ -1,10 +1,10 @@
+#include "../lib/error.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include "../lib/error.h"
 
 #define MAXLINE     4096        /* max text line length */
 #define max(a, b)   ((a) > (b) ? (a) : (b))
@@ -95,9 +95,8 @@ void str_cli(FILE *fp, int sockfd)
                 fprintf(stderr, "%s: EOF on socket\n", gf_time());
                 if (stdineof) {
                     return ; // normal termination
-                } else {
-                    err_quit("str_cli: server terminated prematurely");
                 }
+                err_quit("str_cli: server terminated prematurely");
             } else {
                 fprintf(stderr, "%s: read %ld bytes from socket\n", gf_time(), n);
                 friptr += n; // just read

@@ -1,12 +1,12 @@
-#include <syslog.h>
-#include <unistd.h>
-#include <sys/types.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <signal.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <fcntl.h>
+#include <sys/types.h>
+#include <syslog.h>
+#include <unistd.h>
 
 #define MAXFD 64
 

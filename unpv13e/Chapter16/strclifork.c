@@ -1,3 +1,4 @@
+#include "../lib/error.h"
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -5,7 +6,6 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "../lib/error.h"
 
 #define MAXLINE     4096        /* max text line length */
 
@@ -32,5 +32,4 @@ void str_cli(FILE *fp, int sockfd)
     }
     shutdown(sockfd, SHUT_WR); // 这里不能使用close，close之后子进程可能无法从sockfd读取数据，数据可能丢失。
     pause();
-    return;
 }

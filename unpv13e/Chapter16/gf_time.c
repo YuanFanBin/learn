@@ -1,8 +1,8 @@
-#include <sys/time.h>
-#include <time.h>
+#include "../lib/error.h"
 #include <stdio.h>
 #include <string.h>
-#include "../lib/error.h"
+#include <sys/time.h>
+#include <time.h>
 
 char *gf_time(void)
 {

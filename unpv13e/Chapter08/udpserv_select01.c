@@ -1,12 +1,12 @@
+#include "../lib/error.h"
 #include <errno.h>
 #include <netinet/in.h>
 #include <signal.h>
-#include <strings.h>
-#include <sys/select.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <strings.h>
+#include <sys/select.h>
 #include <unistd.h>
-#include "../lib/error.h"
 
 #define MAXLINE 4096 /* max text line length */
 #define SERV_PORT 9877 /* TCP and UDP client-servers */

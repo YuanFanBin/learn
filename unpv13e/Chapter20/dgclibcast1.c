@@ -57,5 +57,5 @@ void dg_cli(FILE *fp, int sockfd, const struct sockaddr *pservaddr, socklen_t se
 
 static void recvfrom_alarm(int signo)
 {
-    return;     // just interrupt the recvfrom()
+    // just interrupt the recvfrom()
 }

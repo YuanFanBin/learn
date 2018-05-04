@@ -261,13 +261,13 @@ struct cmsghdr {
 }
 ```
 
-![对一个UDP套接字调用recvmsg时的数据结构](doc/figure-14-8.png)
+![对一个UDP套接字调用recvmsg时的数据结构](figure/14-8.png)
 
-![recvmsg返回时对图14-8的更新](doc/figure-14-9.png)
+![recvmsg返回时对图14-8的更新](figure/14-9.png)
 
 阴影部分为修改内容。
 
-![5组I/O函数的比较](doc/figure-14-10.png)
+![5组I/O函数的比较](figure/14-10.png)
 
 #### 14.6 辅助数据
 
@@ -280,9 +280,9 @@ struct cmsghdr {
 }
 ```
 
-![包含两个辅助数据对象的辅助函数](doc/figure-14-12.png)
+![包含两个辅助数据对象的辅助函数](figure/14-12.png)
 
-![用在Unix域套接字上的cmsghdr结构](doc/figure-14-13.png)
+![用在Unix域套接字上的cmsghdr结构](figure/14-13.png)
 
 在头文件 `<sys/socket.h>` 中定义了5个宏，用于操作辅助数据，简化代码处理。
 

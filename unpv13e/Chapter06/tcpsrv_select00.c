@@ -1,15 +1,15 @@
-#include <arpa/inet.h>      /* htonl, htons */
-#include <netinet/in.h>     /* sockaddr_in */
-#include <strings.h>        /* bzero */
-#include <sys/socket.h>     /* socklen_t */
-#include <stdlib.h>         /* exit */
-#include <unistd.h>         /* fork, read, write */
-#include <errno.h>          /* errno */
-#include "error.h"
+#include "../lib/error.h"
+#include <arpa/inet.h>
+#include <errno.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+#include <strings.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
-#include "../Chapter05/str_echo.c"
-#include "../Chapter05/signal.c"
 #include "../Chapter05/sigchildwaitpid.c"
+#include "../Chapter05/signal.c"
+#include "../Chapter05/str_echo.c"
 
 #define SERV_PORT   9877    /* TCP and UDP client-servers */
 #define LISTENQ     1024    /* 2nd argument to listen() */
@@ -33,23 +33,19 @@ int main(int argc, char **argv)
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(SERV_PORT);
 
-    if ((err = bind(listenfd, (struct sockaddr *) &servaddr,
-                    sizeof(servaddr))) < 0)
-    {
+    if ((err = bind(listenfd, (struct sockaddr *) &servaddr, sizeof(servaddr))) < 0) {
         err_sys("bind error");
     }
     if ((err = listen(listenfd, LISTENQ)) < 0) {
         err_sys("listen error");
     }
 
-    signal(SIGCHLD, sig_child);
+    signal(SIGCHLD, sig_chld);
 
     for ( ; ; ) {
 again:
         clilen = sizeof(cliaddr);
-        if ((connfd = accept(listenfd, (struct sockaddr *) &cliaddr,
-                             &clilen)) < 0)
-        {
+        if ((connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &clilen)) < 0) {
 #ifdef EPROTO
             if (errno == EPROTO || errno == ECONNABORTED) {
 #else

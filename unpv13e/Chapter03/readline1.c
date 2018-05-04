@@ -1,6 +1,6 @@
 #include <errno.h>
-#include <unistd.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 /* PAINFULLY SLOW VERSION -- example only */
 ssize_t readline(int fd, void *vptr, size_t maxlen)

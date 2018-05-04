@@ -4,7 +4,7 @@
 
 #### 4.2 [socket](http://man7.org/linux/man-pages/man2/socket.2.html) 函数
 
-![基本TCP客户/服务器程序的套接字函数](doc/figure-4-1.png)
+![基本TCP客户/服务器程序的套接字函数](figure/4-1.png)
 
 #### 4.3 [connect](http://man7.org/linux/man-pages/man2/connect.2.html) 函数
 
@@ -33,11 +33,11 @@ int listen(int sockfd, int backlog);
 
 － 已完成连接队列：每个已完成TCP三路握手过程的客户对应其中一项。这些套接字处于 *ESTABLISHED* 状态。
 
-![TCP为监听套接字维护的两个队列](doc/figure-4-7.png)
+![TCP为监听套接字维护的两个队列](figure/4-7.png)
 
 每当在未完成连接队列中创建一项时，来自监听套接字的参数就复制到即将建立的连接中。连接的创建机制是完全自动的，无需服务器进程插手。
 
-![TCP三路握手和监听套接字的两个队列](doc/figure-4-8.png)
+![TCP三路握手和监听套接字的两个队列](figure/4-8.png)
 
 如今的繁忙服务器可能每天要处理几百万个连接，*backlog*　过小的话根本不满足实际需求，*backlog* 我们可以自己指定，也可配置环境变量来指定，避免重新编译应用。
 
@@ -156,7 +156,7 @@ Fri Dec 15 11:47:34 2017
 
 - 一个进程想要执行另一个程序。*fork* -> *exec*
 
-![6个exec函数的关系](doc/figure-4-12.png)
+![6个exec函数的关系](figure/4-12.png)
 
 进程在调用 *exec* 之前打开着的描述符通常跨 *exec* 继续保持打开。但也可以使用 *fcntl* 设置 *FD_CLOEXEC* 描述符标志禁止掉。
 
@@ -164,7 +164,7 @@ Fri Dec 15 11:47:34 2017
 
 若父进程没有关闭 *connfd*（引用计数为2），连接状态如下：
 
-![fork返回后客户/服务器的状态](doc/figure-4-16.png)
+![fork返回后客户/服务器的状态](figure/4-16.png)
 
 #### 4.9 [close](http://man7.org/linux/man-pages/man2/close.2.html) 函数
 

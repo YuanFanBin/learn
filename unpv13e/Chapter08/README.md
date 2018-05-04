@@ -2,7 +2,7 @@
 
 [sock_ntop.c](sock_ntop.c): 确认socket的地址（IPv4，IPv6，Unix Socket，AF_LINK）
 
-![udp c/s image](doc/figure-8-1.png)
+![udp c/s image](figure/8-1.png)
 
 #### 8.2 [recvfrom](http://man7.org/linux/man-pages/man2/recvfrom.2.html) 和 [sendto](http://man7.org/linux/man-pages/man2/sendto.2.html) 函数
 
@@ -29,7 +29,7 @@ ssize_t sendto(int socket,
 
 #### 8.4 UDP 回射服务器程序：[dg_echo](dg_echo.c) 函数
 
-![two udp client image](doc/figure-8-6.png)
+![two udp client image](figure/8-6.png)
 
 #### 8.5 UDP 回射服务器程序：[main](udpcli01.c) 函数
 
@@ -55,13 +55,13 @@ ssize_t sendto(int socket,
 
 #### 8.10 UDP程序例子小节
 
-![udp c/s image](doc/figure-8-11.png)
+![udp c/s image](figure/8-11.png)
 
-![tcp c/s image](doc/figure-8-12.png)
+![tcp c/s image](figure/8-12.png)
 
 #### 8.11 UDP的 [connect](http://man7.org/linux/man-pages/man2/connect.2.html) 函数
 
-![connected udp image](doc/figure-8-15.png)
+![connected udp image](figure/8-15.png)
 
 使用 *connect* 连接的UDP套接字可用 *read*, *write* 来读写socket，不必用 *sendto*, *recvmsg*， 这个做法的好处在于，我们可以用通用的 *read*, *write* 函数读写文件描述符，而不必关系此描述符是否为 *socket* 套接字。此外还能正确的捕获到部分 *recvfrom* 所不能获取的错误（详见 8.9小节）
 

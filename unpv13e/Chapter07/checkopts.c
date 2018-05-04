@@ -1,3 +1,4 @@
+#include "../lib/error.h"
 #include <arpa/inet.h>      /* struct linger */
 #include <netinet/in.h>
 #include <netinet/tcp.h>    /* for TCP_xxx defines */
@@ -6,7 +7,6 @@
 #include <stdlib.h>         /* exit */
 #include <sys/time.h>       /* struct timeval */
 #include <unistd.h>         /* close */
-#include "error.h"
 
 union val {
     int             i_val;

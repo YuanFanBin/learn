@@ -1,12 +1,12 @@
-#include <arpa/inet.h>  /* htonl, htons */
-#include <sys/socket.h> /* socket, listen, bind */
-#include <poll.h>       /* poll */
-#include <limits.h>     /* for OPEN_MAX */
-#include <errno.h>      /* errno */
-#include <strings.h>    /* bzero */
-#include <arpa/inet.h>  /* ssize_t, socklen_t */
-#include <unistd.h>     /* read, write, close */
-#include "error.h"
+#include "../lib/error.h"
+#include <arpa/inet.h>
+#include <arpa/inet.h>
+#include <errno.h>
+#include <limits.h>
+#include <poll.h>
+#include <strings.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 #define MAXLINE     4096    /* max text line length */
 #define SERV_PORT   9877    /* TCP and UDP client-servers */
@@ -17,7 +17,7 @@
 #endif
 
 #ifndef INFTIM      /* 已被移除 */
-#define INFTIM      -1
+#define INFTIM      (-1)
 #endif
 
 /* gcc tcpsrv_poll01.c error.c -o srv01 */

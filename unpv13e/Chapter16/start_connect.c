@@ -1,9 +1,9 @@
-#include <sys/socket.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <netdb.h>
 #include "web.h"
+#include <errno.h>
+#include <fcntl.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <sys/socket.h>
 
 // Chapter11/host_serv.c
 struct addrinfo *host_serv(const char *host, const char *serv, int family, int socktype);

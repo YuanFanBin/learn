@@ -1,9 +1,9 @@
-#include <stdio.h>      /* FILE */
-#include <string.h>     /* strlen */
-#include <unistd.h>     /* write */
-#include <sys/select.h> /* fd_set */
-#include "error.h"
+#include "../lib/error.h"
 #include "header.h"
+#include <stdio.h>
+#include <string.h>
+#include <sys/select.h>
+#include <unistd.h>
 
 #include "../Chapter03/readline.c"
 

@@ -21,7 +21,7 @@ int     snaplen = 200; // amount of data to capture
 int     verbose;
 int     zerosum;       // send UDP query with no checksum
 
-static void usage(const char *);
+static void usage(const char *msg);
 
 // ../../Chapter11/host_serv.c
 struct addrinfo *host_serv(const char *host, const char *serv, int family, int socktype);
@@ -121,8 +121,7 @@ int main(int argc, char *argv[1])
     cleanup(0);
 }
 
-    static void
-usage(const char *msg)
+static void usage(const char *msg)
 {
     err_msg(
 "usage: udpcksum [ options  ] <host> <serv>\n"
@@ -130,7 +129,8 @@ usage(const char *msg)
 "         -i s  packet capture device\n"
 "         -l a.b.c.d.p  local IP=a.b.c.d, local port=p\n"
 "         -v    verbose output");
-    if (msg[0] != 0)
+    if (msg[0] != 0) {
         err_quit("%s", msg);
+    }
     exit(1);
 }

@@ -1,10 +1,10 @@
+#include "../lib/error.h"
 #include <errno.h>
 #include <signal.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include "../lib/error.h"
 
-static void connect_alarm(int);
+static void connect_alarm(int signo);
 
 typedef void Sigfunc(int);
 
@@ -31,5 +31,5 @@ int connect_timeo(int sockfd, const struct sockaddr *saptr, socklen_t salen, int
 
 static void connect_alarm(int signo)
 {
-    return; // just interrupt the connect()
+    // just interrupt the connect()
 }

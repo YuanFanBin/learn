@@ -1,8 +1,8 @@
-#include <sys/socket.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <string.h>
+#include <sys/socket.h>
 
 #define MAXLINE 4096 /* max text line length */
 

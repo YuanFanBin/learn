@@ -81,7 +81,7 @@ int main(int argc, char **argv)
             cptr[i].child_count++;
             navail--;
 
-            n = write_fd(cptr[i].child_pipefd, "", 1, connfd);
+            write_fd(cptr[i].child_pipefd, "", 1, connfd);
             close(connfd);
             if (--nsel == 0) {
                 continue;   // all done with select() results

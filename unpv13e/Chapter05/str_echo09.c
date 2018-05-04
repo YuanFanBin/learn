@@ -1,7 +1,7 @@
-#include <unistd.h>
-#include <errno.h>
 #include "../lib/error.h"
 #include "sum.h"
+#include <errno.h>
+#include <unistd.h>
 
 #define MAXLINE 4096    /* max text line length */
 

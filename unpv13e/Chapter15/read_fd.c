@@ -1,6 +1,6 @@
-#include <sys/socket.h>
-#include <stdio.h>
 #include "../lib/error.h"
+#include <stdio.h>
+#include <sys/socket.h>
 
 ssize_t read_fd(int fd, void *ptr, size_t nbytes, int *recvfd)
 {

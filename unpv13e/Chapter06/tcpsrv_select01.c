@@ -1,10 +1,10 @@
-#include <arpa/inet.h>      /* htonl, htons */
-#include <netinet/in.h>     /* sockaddr_in */
-#include <sys/socket.h>     /* socket, bind, listen */
-#include <sys/select.h>     /* select */
-#include <strings.h>        /* bzero */
-#include <unistd.h>         /* read, write, close */
-#include "error.h"
+#include "../lib/error.h"
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <strings.h>
+#include <sys/select.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 #define MAXLINE     4096    /* max text line length */
 #define SERV_PORT   9877    /* TCP and UDP client-servers */

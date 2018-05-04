@@ -1,9 +1,9 @@
-#include <sys/socket.h>
+#include "../lib/error.h"
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/socket.h>
 #include <sys/time.h>
-#include <errno.h>
-#include "../lib/error.h"
 
 #define MAXLINE 4096 /* max text line length */
 
@@ -28,9 +28,8 @@ void dg_cli(FILE *fp, int sockfd, const struct sockaddr *pservaddr, socklen_t se
             if (errno == EWOULDBLOCK) {
                 fprintf(stderr, "socket timeout\n");
                 continue;
-            } else {
-                err_sys("recvfrom error");
             }
+            err_sys("recvfrom error");
         }
         recvline[n] = '\0';
         fputs(recvline, stdout);

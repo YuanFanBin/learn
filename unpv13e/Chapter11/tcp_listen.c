@@ -1,12 +1,12 @@
+#include <errno.h>
 #include <netdb.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <strings.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <stdlib.h>
 #include <unistd.h>
-#include <errno.h>
-#include <string.h>
 
 #define LISTENQ 1024
 

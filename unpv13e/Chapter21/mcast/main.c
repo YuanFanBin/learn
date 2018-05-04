@@ -43,4 +43,5 @@ int main(int argc, char **argv)
         recv_all(recvfd, salen);        // child -> receives
     }
     send_all(sendfd, sasend, salen);    // parent -> sends
+    free(sarecv);
 }

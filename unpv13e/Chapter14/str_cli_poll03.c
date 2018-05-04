@@ -1,10 +1,10 @@
-#include <sys/devpoll.h> // for Solaris
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include "../lib/error.h"
+#include <fcntl.h>
+#include <stdio.h>
+#include <sys/devpoll.h> // for Solaris
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #define MAXLINE 4096 /* max text line length */
 
@@ -45,9 +45,8 @@ void str_cli(FILE *fp, int sockfd)
                 if ((n = read(sockfd, buf, MAXLINE)) == 0) {
                     if (stdineof == 1) {
                         return; // normal termination
-                    } else {
-                        err_quit("str_cli: server terminated prematurely");
                     }
+                    err_quit("str_cli: server terminated prematurely");
                 }
                 write(fileno(stdout), buf, n);
             } else {

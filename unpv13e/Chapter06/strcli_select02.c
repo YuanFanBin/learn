@@ -1,10 +1,10 @@
-#include <stdio.h>          /* FILE */
-#include <string.h>         /* strlen */
-#include <unistd.h>         /* write */
-#include <sys/socket.h>     /* shutdown */
-#include <sys/select.h>
-#include "error.h"
+#include "../lib/error.h"
 #include "header.h"
+#include <stdio.h>
+#include <string.h>
+#include <sys/select.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 #include "../Chapter03/readline.c"
 
@@ -36,10 +36,9 @@ void str_cli(FILE *fp, int sockfd)
                 if (stdineof == 1) {
                     // sockfd 已无数据，并且fp数据已读完
                     return;             /* normal termination */
-                } else {
-                    // sockfd 已无数据，但fp数据未读完，数据未传输完
-                    err_quit("str_cli: server terminated prematurely");
                 }
+                // sockfd 已无数据，但fp数据未读完，数据未传输完
+                err_quit("str_cli: server terminated prematurely");
             }
             if (write(fileno(stdout), buf, n) != n) {
                 err_sys("write error");

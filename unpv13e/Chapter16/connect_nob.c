@@ -1,10 +1,10 @@
-#include <sys/socket.h>
-#include <sys/select.h>
+#include "../lib/error.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <sys/select.h>
+#include <sys/socket.h>
 #include <unistd.h>
-#include "../lib/error.h"
 
 int connect_nonb(int sockfd, const struct sockaddr *saptr, socklen_t salen, int nsec)
 {

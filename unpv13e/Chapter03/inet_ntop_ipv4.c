@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <string.h>
 #include <errno.h>
 #include <netinet/in.h>
+#include <stdio.h>
+#include <string.h>
 
 const char *inet_ntop(int family, const void *addrptr, char *strptr, size_t len)
 {

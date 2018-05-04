@@ -1,10 +1,10 @@
+#include "web.h"
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
-#include <sys/socket.h>
 #include <string.h>
+#include <sys/socket.h>
 #include <unistd.h>
-#include "web.h"
 
 #define min(a, b)   ((a) < (b) ? (a) : (b))
 

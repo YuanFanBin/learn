@@ -22,7 +22,7 @@ struct sockaddr_in {
 };
 ```
 
-![POSIX规范要求的数据类型](doc/figure-3-2.png)
+![POSIX规范要求的数据类型](figure/3-2.png)
 
 3.2.2 通用套接字地址结构
 
@@ -76,7 +76,7 @@ struct sockaddr_storage {
 
 3.2.5 套接字地址结构的比较
 
-![不同套接字地址结构的比较](doc/figure-3-6.png)
+![不同套接字地址结构的比较](figure/3-6.png)
 
 #### 3.3 值-结果参数
 
@@ -86,7 +86,7 @@ struct sockaddr_storage {
 
 #### 3.4 字节排序函数
 
-![16位整数的小端字节序和大端字节序](doc/figure-3-9.png)
+![16位整数的小端字节序和大端字节序](figure/3-9.png)
 
 我们可编写一个简单的函数来实现查看当前系统的主机字节序
 
@@ -165,7 +165,7 @@ p: presentation，表达
 
 n: numeric，数值
 
-![地址转换函数小结](doc/figure-3-11.png)
+![地址转换函数小结](figure/3-11.png)
 
 示例：
 

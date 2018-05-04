@@ -1,7 +1,7 @@
+#include "../lib/error.h"
 #include <netinet/in.h>
 #include <stdio.h>
 #include <string.h>
-#include "../lib/error.h"
 
 #define NDG         2000 /* datagrams to send */
 #define DGLEN       1400 /* length of each datagram */

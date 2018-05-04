@@ -1,5 +1,8 @@
-#include <sys/select.h>
+#ifndef __web_h
+#define __web_h
+
 #include "../lib/error.h"
+#include <sys/select.h>
 
 #define MAXLINE     4096        /* max text line length */
 #define MAXFILES    20
@@ -24,3 +27,5 @@ fd_set rset, wset;
 void home_page(const char *, const char *);
 void start_connect(struct file *);
 void write_get_cmd(struct file *);
+
+#endif // __web_h

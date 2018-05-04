@@ -2,7 +2,7 @@
 
 ### 11.2 域名系统
 
-![cli-dns image](doc/figure-11-1.png)
+![cli-dns image](figure/11-1.png)
 
 ### 11.3 [gethostbyname](http://man7.org/linux/man-pages/man3/gethostbyname.3.html) 函数
 
@@ -18,7 +18,7 @@ struct hostent {
 #define h_addr h_addr_list[0] /* for backward compatibility */
 ```
 
-![hostent image](doc/figure-11-2.png)
+![hostent image](figure/11-2.png)
 
 *hostent* 的用法参考 [hostent.c](hostent.c)
 
@@ -237,7 +237,7 @@ hints.ai_family = AF_INET;
 getaddrinfo("localhost", "domain", &hints, &res);
 ```
 
-![struct addrinfo image](doc/figure-11-5.png)
+![struct addrinfo image](figure/11-5.png)
 
 我们来看一下一些常用的操作。
 

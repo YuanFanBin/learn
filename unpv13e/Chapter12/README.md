@@ -2,7 +2,7 @@
 
 #### 12.1 概述
 
-![ipv4 ipv6 image](doc/figure-12-1.png)
+![ipv4 ipv6 image](figure/12-1.png)
 
 双栈(dual stacks) 意指一个IPv4协议栈和一个IPv6协议栈。
 
@@ -10,15 +10,15 @@
 
 双栈主机的一个基本特性是其上的IPv6服务器既能处理IPv4客户，又能处理IPv6客户。这是通过使用Ipv4映射的IPv6地址实现的。
 
-![dual stacks ipv6 serv image](doc/figure-12-2.png)
+![dual stacks ipv6 serv image](figure/12-2.png)
 
-![handle ipv4 ipv6 image](doc/figure-12-3.png)
+![handle ipv4 ipv6 image](figure/12-3.png)
 
 #### 12.3 IPv6客户与IPv4服务器
 
 考虑运行在一个双栈主机上的IPv6的TCP客户端。
 
-![根据地址类型和套接字类型处理客户请求](doc/figure-12-4.png)
+![根据地址类型和套接字类型处理客户请求](figure/12-4.png)
 
 #### 12.4 IPv6地址测试宏
 

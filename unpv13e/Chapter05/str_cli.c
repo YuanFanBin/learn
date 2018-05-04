@@ -1,11 +1,11 @@
+#include "../lib/error.h"
 #include <stdio.h>      /* FILE */
 #include <string.h>     /* strlen */
 #include <unistd.h>     /* write */
-#include "../lib/error.h"
 
 #define MAXLINE     4096    /* max text line length */
 
-// Chapter03/readline.c
+// ../Chapter03/readline.c
 ssize_t readline(int fd, void *vptr, size_t maxlen);
 
 void str_cli(FILE *fp, int sockfd)

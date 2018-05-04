@@ -29,15 +29,15 @@ struct sadb_msg {
 };
 ```
 
-![通过密钥管理套接字交换的消息类型](doc/figure-19-2.png)
+![通过密钥管理套接字交换的消息类型](figure/19-2.png)
 
-![PF\_KEY扩展类型](doc/figure-19-3.1.png)
+![PF\_KEY扩展类型](figure/19-3.1.png)
 
-![PF\_KEY扩展类型（续）](doc/figure-19-3.2.png)
+![PF\_KEY扩展类型（续）](figure/19-3.2.png)
 
 #### 19.3 倾泻安全关联数据库
 
-![SA类型](doc/figure-19-4.png)
+![SA类型](figure/19-4.png)
 
 通过密钥管理套接字发出的 *SADB_DUMP* 命令的程序
 

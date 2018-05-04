@@ -1,3 +1,4 @@
+#include "../lib/error.h"
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netinet/in.h>
@@ -7,7 +8,6 @@
 #include <sys/socket.h>
 #include <time.h>
 #include <unistd.h>
-#include "../lib/error.h"
 
 #define MAXLINE 4096    /* max text line length */
 #define LISTENQ 1024    /* 2nd argument to listen() */

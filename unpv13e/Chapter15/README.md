@@ -318,9 +318,9 @@ hello           # output
 
 名为 *mycat* 的程序，它通过命令行参数取得一个路径名，打开这个文件，再把文件的内容复制到标准输出。
 
-![使用socketpair创建流管道后的mycat进程](doc/figure-14-7.png)
+![使用socketpair创建流管道后的mycat进程](figure/15-7.png)
 
-![启动执行openfile程序后的mycat进程](doc/figure-14-8.png)
+![启动执行openfile程序后的mycat进程](figure/15-8.png)
 
 通过执行另一个程序来打开文件的优势在于，另一个程序可以是一个 *setuid* 到 *root* 的程序，能够打开我们通常没有打开权限的文件。
 

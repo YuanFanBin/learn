@@ -1,11 +1,11 @@
-#include <sys/socket.h> /* socket */
-#include <netinet/in.h> /* sockaddr_in */
-#include <arpa/inet.h>  /* inet_pton */
-#include <strings.h>    /* bzero */
-#include <stdlib.h>     /* exit */
-#include <errno.h>      /* errno */
-#include "error.h"
+#include "../lib/error.h"
 #include "header.h"
+#include <arpa/inet.h>
+#include <errno.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+#include <strings.h>
+#include <sys/socket.h>
 
 #define SERV_PORT 9877 /* TCP and UDP client-servers */
 

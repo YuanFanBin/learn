@@ -44,7 +44,7 @@ int tcp_connect(const char *host, const char *serv);
 
 int main(int argc, char **argv)
 {
-    int          i, n, maxnconn, e;
+    int          i, maxnconn, e;
     pthread_t    tid;
     struct file *fptr;
 

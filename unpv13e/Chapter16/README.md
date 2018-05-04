@@ -14,11 +14,11 @@
 
 #### 16.2 非阻塞读和写：[str_cli](strclinonb.c) 函数（修订版）
 
-![容纳从标准输入到套接字的数据的缓冲区](doc/figure-16-1.png)
+![容纳从标准输入到套接字的数据的缓冲区](figure/16-1.png)
 
-![容纳从套接字到标准输出的数据的缓冲区](doc/figure-16-2.png)
+![容纳从套接字到标准输出的数据的缓冲区](figure/16-2.png)
 
-![非阻塞式I/O例子的时间线](doc/figure-16-8.png)
+![非阻塞式I/O例子的时间线](figure/16-8.png)
 
 ```c
 #include <errno.h>
@@ -211,13 +211,13 @@ void str_cli(FILE *fp, int sockfd)
 }
 ```
 
-![使用两个进程的str_cli函数](doc/figure-16-9.png)
+![使用两个进程的str_cli函数](figure/16-9.png)
 
 16.2.2 str_cli执行时间
 
 摘录原书内容：
 
-![str_cli time](doc/time.png)
+![str_cli time](figure/time.png)
 
 #### 16.3 非阻塞 *connect*
 

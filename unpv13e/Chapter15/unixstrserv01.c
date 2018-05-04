@@ -1,12 +1,12 @@
+#include "../lib/error.h"
+#include <errno.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
-#include <strings.h>
-#include <string.h>
-#include <signal.h>
-#include <errno.h>
-#include <stdlib.h>
-#include "../lib/error.h"
 
 #define UNIXSTR_PATH    "/tmp/unix.str"     /* Unix domain stream */
 #define LISTENQ 1024            /* 2nd argument to listen() */
@@ -46,9 +46,8 @@ int main(int argc, char **argv)
         if ((connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &clilen)) < 0) {
             if (errno == EINTR) {
                 continue;
-            } else {
-                err_sys("accept error");
             }
+            err_sys("accept error");
         }
         if ((childpid = fork()) == -1) {
             err_sys("fork error");

@@ -1,9 +1,9 @@
-#include <netinet/in.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <arpa/inet.h>
 #include "../lib/error.h"
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 char * Sock_ntop(const struct sockaddr *sa, socklen_t salen);
 
@@ -44,4 +44,5 @@ void dg_cli(FILE *fp, int sockfd, const struct sockaddr *pservaddr, socklen_t se
         recvline[n] = 0; /* null terminate */
         fputs(recvline, stdout);
     }
+    free(preply_addr);
 }

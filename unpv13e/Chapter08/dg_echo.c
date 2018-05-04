@@ -1,5 +1,5 @@
-#include <netinet/in.h>
 #include "../lib/error.h"
+#include <netinet/in.h>
 
 #define MAXLINE 4096 /* max text line length */
 

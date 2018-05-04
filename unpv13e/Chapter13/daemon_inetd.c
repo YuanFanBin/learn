@@ -1,5 +1,5 @@
-#include <syslog.h>
 #include "../lib/error.h"
+#include <syslog.h>
 
 extern int daemon_proc; // default in error.c
 

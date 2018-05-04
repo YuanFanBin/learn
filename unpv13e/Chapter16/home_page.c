@@ -1,6 +1,6 @@
+#include "web.h"
 #include <stdio.h>
 #include <unistd.h>
-#include "web.h"
 
 // Chapter11/tcp_connect.c
 int tcp_connect(const char *host, const char *serv);

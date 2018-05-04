@@ -1,9 +1,9 @@
+#include "../lib/error.h"
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
-#include "../lib/error.h"
 
 #define SERV_PORT 9877 /* TCP and UDP client-servers */
 

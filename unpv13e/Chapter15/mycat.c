@@ -1,6 +1,6 @@
+#include "../lib/error.h"
 #include <fcntl.h>
 #include <unistd.h>
-#include "../lib/error.h"
 
 #define BUFFSIZE    8192        /* buffer size for reads and writes */
 

@@ -1,9 +1,9 @@
-#include <sys/socket.h>
-#include <sys/un.h>
+#include "../lib/error.h"
 #include <string.h>
 #include <strings.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 #include <unistd.h>
-#include "../lib/error.h"
 
 #define UNIXSTR_PATH    "/tmp/unix.str"     /* Unix domain stream */
 

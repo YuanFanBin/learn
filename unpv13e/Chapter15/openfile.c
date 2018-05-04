@@ -1,9 +1,9 @@
+#include "../lib/error.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include "../lib/error.h"
 
 ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd);
 

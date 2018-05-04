@@ -34,9 +34,9 @@ struct sockaddr_dl {
 
 #### 18.3 读和写
 
-![通过路由套接字交换的消息类型](doc/figure-18-2.1.png)
+![通过路由套接字交换的消息类型](figure/18-2.1.png)
 
-![通过路由套接字交换的消息类型](doc/figure-18-2.2.png)
+![通过路由套接字交换的消息类型](figure/18-2.2.png)
 
 `struct rt_msghdr`
 
@@ -121,13 +121,13 @@ struct if_announcemsghdr {
 }
 ```
 
-![在路由消息中用户指称套接字地址结构的常值](doc/figure-18-4.png)
+![在路由消息中用户指称套接字地址结构的常值](figure/18-4.png)
 
 例子：[获取并输出用户一个路由表项](getrt.c)
 
-![RTM\_GET 命令通过路由套接字与内核交换的数据](doc/figure-18-5.png)
+![RTM\_GET 命令通过路由套接字与内核交换的数据](figure/18-5.png)
 
-![get\_rtaddrs函数填写的rti\_info结构](doc/figure-18-8.png)
+![get\_rtaddrs函数填写的rti\_info结构](figure/18-8.png)
 
 ```c
 #include "../lib/error.h"
@@ -222,7 +222,7 @@ int sysctl(int *name, u_int namelen, void *oldp, size_t *oldlenp, void *newp, si
 
 *name* 参数是指定名字的一个整数数组，该数组中的第一个元素指定本请求定向到内核的哪个子系统，第二个及其后元素逐次细化指定该子系统的某个部分。
 
-![sysctl名字的分层排列](doc/figure-18-11.png)
+![sysctl名字的分层排列](figure/18-11.png)
 
 *sysctl* 的手册中详细叙述了可使用该函数获取各种系统信息，有文件系统，虚拟内存，内核限制，硬件等各方面的信息，我们感兴趣的是网络子系统，通过把 *name* 数组的第一个元素设置为 *CTL_NET* (`<sys/sysctl.h>` 头文件中定义)来指定。
 
@@ -236,9 +236,9 @@ int sysctl(int *name, u_int namelen, void *oldp, size_t *oldlenp, void *newp, si
 
 - *AF_UNSPEC*: 获取或设置一些套接字层变量，譬如套接字发送或接受缓冲区最大大小
 
-![sysctl在AF\_ROUTE域返回的信息](doc/figure-18-12.png)
+![sysctl在AF\_ROUTE域返回的信息](figure/18-12.png)
 
-![由sysctl的CTL\_NET/AF\_ROUTE/NET\_RT\_IFLIST命令返回的信息](doc/figure-18-13.png)
+![由sysctl的CTL\_NET/AF\_ROUTE/NET\_RT\_IFLIST命令返回的信息](figure/18-13.png)
 
 检查 *UDP* 校验和是否开启
 
