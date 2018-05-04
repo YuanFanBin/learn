@@ -30,6 +30,7 @@
     * [第二十七章 IP选项](Chapter27)
     * [第二十八章 原始套接字](Chapter28)
     * [第二十九章 数据链路访问](Chapter29)
+    * [第三十章 客户/服务器程序设计范式](Chapter30)
 
 ![Unix & Linux历史源流](https://upload.wikimedia.org/wikipedia/commons/c/cd/Unix_timeline.en.svg)
 

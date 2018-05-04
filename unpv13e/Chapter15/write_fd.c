@@ -1,5 +1,5 @@
-#include <sys/socket.h>
 #include <stdio.h>
+#include <sys/socket.h>
 
 ssize_t write_fd(int fd, void *ptr, size_t nbytes, int sendfd)
 {
