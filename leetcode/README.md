@@ -64,3 +64,5 @@
     * [golang](golang/easy/count-and-say_test.go)
 * [146. LRU Cache(hard)](https://leetcode.com/problems/lru-cache/description/)
     * [golang](golang/hard/lru-cache_test.go)
+* [202. 快乐数](https://leetcode-cn.com/problems/happy-number/)
+    * [golang](golang/easy/is-happy_test.go)
